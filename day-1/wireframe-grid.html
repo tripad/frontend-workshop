@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Grid — two directions at once</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: #1a1a1a; }
+
+    .page-header {
+      margin-bottom: 2.5rem;
+      max-width: 680px;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ---- Controls ---- */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .ctrl-btn {
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #555;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .ctrl-btn:hover  { background: #e2ddd6; }
+    .ctrl-btn.active { background: #a8d8ea; border-color: #90c8da; color: #1a1a1a; }
+
+    .code-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #888;
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 6px;
+      padding: 0.5rem 0.9rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    .code-hint .prop { color: #d19a66; }
+    .code-hint .val  { color: #98c379; }
+
+    /* ---- The grid container ---- */
+    /*
+      display: grid turns this into a GRID CONTAINER.
+      Unlike flexbox (one direction), grid works in BOTH directions simultaneously:
+      rows and columns.
+
+      grid-template-columns defines how many columns and how wide each one is.
+      "repeat(3, 1fr)" means: 3 columns, each taking an equal fraction of space.
+    */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* default: 3 equal columns */
+      gap: 12px;  /* gap works for BOTH row and column gaps in grid */
+      padding: 1.5rem;
+      background: white;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 10px;
+      transition: grid-template-columns 0.3s ease;
+    }
+
+    /* ---- Grid items ---- */
+    /*
+      Each .box is a GRID ITEM. Grid places them automatically:
+      left to right, top to bottom — wrapping to the next row when
+      the column count is reached.
+
+      You can override auto-placement with grid-column and grid-row
+      to span multiple cells.
+    */
+    .box {
+      height: 80px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      transition: transform 0.25s ease;
+    }
+
+    .box:hover { transform: scale(1.04); }
+
+    /* Same palette as the flexbox demo */
+    .box-1 { background: #c1593c; }
+    .box-2 { background: #8b6954; }
+    .box-3 { background: #8fa68e; }
+    .box-4 { background: #d4a843; color: #1a1a1a; }
+    .box-5 { background: #b5714e; }
+    .box-6 { background: #7a9e9a; }
+
+    /* ---- Explainer ---- */
+    .explainer {
+      margin-top: 2.5rem;
+      max-width: 600px;
+    }
+
+    .explainer h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1rem;
+    }
+
+    .vs-note {
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-top: 1.5rem;
+    }
+
+    .vs-note h3 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+
+    .vs-note p {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 0.4rem;
+    }
+
+    .prop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .prop-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #d19a66;
+      background: #282c34;
+      padding: 0.25em 0.5em;
+      border-radius: 4px;
+    }
+
+    .prop-desc {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.4;
+      padding-top: 0.2em;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+
+  <div class="page-header">
+    <h1>CSS Grid</h1>
+    <p>Grid arranges items in <strong>rows and columns simultaneously</strong>. You define the structure; the browser places items.</p>
+    <p>Change the number of columns and watch items reflow.</p>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" onclick="setCols('repeat(1, 1fr)', this)">1 column</button>
+    <button class="ctrl-btn" onclick="setCols('repeat(2, 1fr)', this)">2 columns</button>
+    <button class="ctrl-btn active" onclick="setCols('repeat(3, 1fr)', this)">3 columns</button>
+    <button class="ctrl-btn" onclick="setCols('repeat(6, 1fr)', this)">6 columns</button>
+  </div>
+
+  <div class="code-hint">
+    .grid-container { <span class="prop">grid-template-columns</span>: <span class="val" id="hint-val">repeat(3, 1fr)</span>; }
+  </div>
+
+  <!--
+    THE GRID CONTAINER
+    The key property is grid-template-columns.
+    "repeat(3, 1fr)" = 3 columns, each 1 fraction of available width.
+    Change this value and the layout completely restructures.
+  -->
+  <div class="grid-container" id="grid-container">
+    <!--
+      GRID ITEMS
+      These are placed automatically left-to-right, row-by-row.
+      When a row is full (3 columns), the next item starts a new row.
+    -->
+    <div class="box box-1">1</div>
+    <div class="box box-2">2</div>
+    <div class="box box-3">3</div>
+    <div class="box box-4">4</div>
+    <div class="box box-5">5</div>
+    <div class="box box-6">6</div>
+  </div>
+
+  <div class="explainer">
+    <h2>What these properties do</h2>
+    <div class="prop-list">
+      <div class="prop-row">
+        <span class="prop-name">display: grid</span>
+        <span class="prop-desc">Activates grid layout. Children become grid items.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">grid-template-columns</span>
+        <span class="prop-desc">Defines the column structure. <code>1fr</code> = one equal fraction of available space. <code>200px 1fr</code> = fixed sidebar + flexible content.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">gap</span>
+        <span class="prop-desc">Space between both rows and columns. You can also use <code>row-gap</code> and <code>column-gap</code> separately.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">grid-template-rows</span>
+        <span class="prop-desc">Same idea, but for rows. Often left to auto (browser decides row heights).</span>
+      </div>
+    </div>
+
+    <div class="vs-note">
+      <h3>Grid vs. Flexbox — when to use which</h3>
+      <p><strong>Flexbox:</strong> one-dimensional layouts — a nav bar, a row of cards, a centered element.</p>
+      <p><strong>Grid:</strong> two-dimensional layouts — a full page layout, an image gallery, a dashboard with rows and columns that need to line up.</p>
+      <p>In practice you'll use both. They work fine together.</p>
+    </div>
+  </div>
+
+  <script>
+    function setCols(value, btn) {
+      document.getElementById('grid-container').style.gridTemplateColumns = value;
+      document.getElementById('hint-val').textContent = value;
+
+      document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

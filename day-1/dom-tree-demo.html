@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM Tree Demo — Explore the Skeleton</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,700;1,6..96,600&display=swap" rel="stylesheet">
+  <style>
+
+    /* ---- Reset ---- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    /* ---- Inspect banner at the top ---- */
+    /*
+      This is a <div> styled as a fixed top bar — it doesn't scroll away.
+      We use position: fixed + top: 0 + width: 100% to pin it.
+    */
+    .inspect-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #282c34;
+      color: #98c379;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 0.7rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 100;
+    }
+
+    .inspect-banner strong { color: #e06c75; }
+    .inspect-banner span   { color: #abb2bf; }
+
+    /* Offset body content so it doesn't hide under the fixed banner */
+    body { padding-top: 3.2rem; }
+
+    /* ---- Back link ---- */
+    .back-link {
+      position: fixed;
+      top: 3.8rem;
+      left: 1.2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+      z-index: 99;
+    }
+    .back-link:hover { color: #1a1a1a; }
+
+    /* ---- Page layout ---- */
+    /*
+      max-width + margin: 0 auto = centered column.
+      This is the most common layout pattern on the web.
+    */
+    .page-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ---- Semantic structure styles ---- */
+
+    /*
+      <header> — top of page content. Often contains the logo, site title, nav.
+      Semantic: tells search engines and screen readers "this is the page header."
+    */
+    header {
+      border-bottom: 2px solid #e2ddd6;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-family: 'Bodoni Moda', Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    header p {
+      color: #555;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    /*
+      <nav> — navigation. Screen readers announce this as a landmark.
+      Use <nav> for primary and secondary navigation, not just any list of links.
+    */
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    nav a {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #555;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover { color: #1a1a1a; }
+
+    nav a.active {
+      color: #1a1a1a;
+      border-bottom: 2px solid #c7b8ea;
+      padding-bottom: 2px;
+    }
+
+    /*
+      <main> — the primary content of the page.
+      Only one <main> per page. Browsers and screen readers use this
+      as the "skip to main content" landmark.
+    */
+    main {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /*
+      <article> — a self-contained piece of content that makes sense
+      on its own: a blog post, a news story, a product listing.
+      Unlike <div>, this tells the browser "this content stands alone."
+    */
+    article {
+      min-width: 0;
+    }
+
+    article h2 {
+      font-family: 'Bodoni Moda', Georgia, serif;
+      font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    article p {
+      color: #444;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    /*
+      <figure> and <figcaption> — semantic image with a caption.
+      Better than just <img>; tells the browser the image and caption
+      belong together.
+    */
+    figure {
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+    }
+
+    figure .img-placeholder {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #999;
+      background: linear-gradient(135deg, #edeae3 0%, #e2ddd6 100%);
+    }
+
+    figcaption {
+      padding: 0.6rem 0.9rem;
+      font-size: 0.8rem;
+      color: #777;
+      border-top: 1px solid #e2ddd6;
+    }
+
+    /*
+      <ul> and <ol> — unordered and ordered lists.
+      Use <ul> when order doesn't matter (features, ingredients).
+      Use <ol> when order matters (steps, rankings).
+    */
+    article ul {
+      margin: 0.75rem 0 1rem 1.2rem;
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    article ul li {
+      margin-bottom: 0.35rem;
+    }
+
+    /*
+      <blockquote> — a quotation from another source.
+      Semantic: distinguishes a quote from regular paragraph text.
+    */
+    blockquote {
+      border-left: 3px solid #c7b8ea;
+      margin: 1.5rem 0;
+      padding: 0.75rem 1.2rem;
+      background: #f0edf8;
+      border-radius: 0 6px 6px 0;
+    }
+
+    blockquote p {
+      font-style: italic;
+      color: #444;
+      margin-bottom: 0.35rem;
+    }
+
+    blockquote cite {
+      font-size: 0.8rem;
+      color: #888;
+      font-style: normal;
+    }
+
+    /*
+      <aside> — content that's related to the main content but not
+      essential. Sidebars, related links, callout boxes.
+    */
+    aside {
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 8px;
+      padding: 1.2rem;
+      position: sticky;
+      top: 4.5rem;
+    }
+
+    aside h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.75rem;
+    }
+
+    aside ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    aside ul li {
+      font-size: 0.85rem;
+      color: #555;
+      padding-left: 0.8em;
+      position: relative;
+    }
+
+    aside ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #c7b8ea;
+    }
+
+    /*
+      <footer> — the bottom of the page. Often has copyright, links, contact.
+      Semantic: browsers, screen readers, and search engines recognise this.
+    */
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2ddd6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Fixed instruction banner — this is the first thing in <body> -->
+  <div class="inspect-banner" role="note">
+    <strong>Try it:</strong>
+    <span>Right-click anywhere on this page → <strong>Inspect</strong> → explore the DOM tree on the left panel.</span>
+  </div>
+
+  <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+
+  <div class="page-wrapper">
+
+    <!--
+      <header>
+      This is the page-level header. It wraps the site name, tagline, and nav.
+      Don't confuse it with <head> — <head> is invisible metadata,
+      <header> is visible content at the top of the page.
+    -->
+    <header>
+      <h1>The Weekly Design Brief</h1>
+      <p>A made-up blog post — open Inspect to see the DOM tree.</p>
+
+      <!--
+        <nav> inside <header> is a common pattern.
+        Screen readers jump between landmarks (<header>, <nav>, <main>, <footer>)
+        so users can skip around the page without reading everything.
+      -->
+      <nav aria-label="Main navigation">
+        <a href="#" class="active">Articles</a>
+        <a href="#">Resources</a>
+        <a href="#">About</a>
+      </nav>
+    </header>
+
+    <!--
+      <main>
+      Everything important to the current page goes here.
+      This is the content a "skip to main content" link would jump to.
+    -->
+    <main>
+
+      <!--
+        <article>
+        A self-contained piece of content. If you copy-pasted this
+        to another website, it would still make sense on its own.
+      -->
+      <article>
+        <h2>Why designers who can read code get different answers</h2>
+
+        <p>
+          When you can read the browser's output — the actual rendered HTML, the
+          computed CSS values, the live DOM — you stop accepting "it can't be done"
+          at face value. You can see <em>why</em> something is hard.
+        </p>
+
+        <!--
+          <figure> + <figcaption> — semantic image with caption.
+          Even if you can't include a real image, this structure
+          tells the browser "these two things go together."
+        -->
+        <figure>
+          <div class="img-placeholder" role="img" aria-label="Illustration placeholder">
+            [ image: devtools inspector screenshot ]
+          </div>
+          <figcaption>DevTools inspector — the browser's built-in X-ray vision.</figcaption>
+        </figure>
+
+        <p>
+          The key insight is that a browser isn't magic. It's parsing a text file,
+          building a tree of objects, and painting pixels. That tree is the DOM.
+          Once you can see it, everything becomes debuggable.
+        </p>
+
+        <!--
+          <ul> for a list of items where order doesn't matter.
+        -->
+        <ul>
+          <li>Every element is a node in the tree</li>
+          <li>Nodes can be nested — children inside parents</li>
+          <li>CSS selects nodes by tag, class, or ID</li>
+          <li>JavaScript manipulates nodes at runtime</li>
+        </ul>
+
+        <!--
+          <blockquote> for a pull quote or citation.
+          cite="" attribute (on the element) points to the source URL.
+        -->
+        <blockquote cite="#">
+          <p>"The best way to understand the web is to break it — in DevTools, where nothing is permanent."</p>
+          <cite>— Nobody in particular, but it's true</cite>
+        </blockquote>
+
+        <p>
+          Spend 10 minutes right-clicking things you use every day.
+          The gap between "designer" and "developer" gets a lot smaller
+          once you realize both are just reading the same tree.
+        </p>
+      </article>
+
+      <!--
+        <aside>
+        Related but non-essential content. Sidebars, recommendations,
+        "related articles" blocks. Sighted users see it as a sidebar;
+        screen readers announce it as "complementary content."
+      -->
+      <aside aria-label="Related resources">
+        <h3>In this deck</h3>
+        <ul>
+          <li>HTML = the skeleton</li>
+          <li>CSS = the clothes</li>
+          <li>JS = the behavior</li>
+          <li>Frontend vs. backend</li>
+          <li>APIs explained</li>
+        </ul>
+      </aside>
+
+    </main>
+
+    <!--
+      <footer>
+      Page-level footer. Often has copyright, secondary nav, contact info.
+    -->
+    <footer>
+      <p>DOM Tree Demo — Day 1, How the Web Works</p>
+      <p>Open this in DevTools to see the full structure.</p>
+    </footer>
+
+  </div><!-- .page-wrapper -->
+
+</body>
+</html>

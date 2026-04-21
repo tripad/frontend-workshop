@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1 · Wrap + Project Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-outer:       #2a2826;
+      --paper-bg:       #f8f6f1;
+      --paper-edge:     #edeae3;
+      --text-primary:   #1a1a1a;
+      --text-secondary: #555;
+      --text-muted:     #999;
+      --border-color:   #e2ddd6;
+
+      --tab-intro:  #98d4bb;
+      --tab-why:    #c7b8ea;
+      --tab-shift:  #f4b8c5;
+      --tab-plan:   #a8d8ea;
+
+      --accent-lavender: #c7b8ea;
+      --accent-mint:     #98d4bb;
+      --accent-pink:     #f4b8c5;
+      --accent-sky:      #a8d8ea;
+
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+
+      --size-xs:   clamp(0.5rem,  0.8vw,  0.72rem);
+      --size-sm:   clamp(0.65rem, 1vw,    0.85rem);
+      --size-base: clamp(0.8rem,  1.4vw,  1.05rem);
+      --size-md:   clamp(1rem,    1.8vw,  1.35rem);
+      --size-lg:   clamp(1.25rem, 2.4vw,  2rem);
+      --size-xl:   clamp(1.8rem,  3.5vw,  3.2rem);
+      --size-2xl:  clamp(2.5rem,  5vw,    5rem);
+      --size-3xl:  clamp(3.5rem,  7vw,    7.5rem);
+      --size-mega: clamp(4.5rem,  9.5vw,  11rem);
+
+      --pad-outer:   clamp(1.5rem, 3vw, 3.5rem);
+      --gap-content: clamp(0.6rem, 1.4vw, 1.4rem);
+      --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg-outer);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      height: 100%;
+    }
+
+    /* ---- Progress bar ---- */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent-lavender);
+      transition: width 0.3s ease;
+      z-index: 1000;
+      width: 0%;
+    }
+
+    /* ---- Slide shell ---- */
+    .slide {
+      scroll-snap-align: start;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-outer);
+    }
+
+    /* ---- Notebook wrapper ---- */
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    /* ---- Notebook frame ---- */
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      background: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      border-radius: 6px 0 0 6px;
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    /* ---- Binder strip ---- */
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      flex-shrink: 0;
+      background: var(--paper-edge);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .binder-hole {
+      width: clamp(0.8rem, 1.6vw, 1.4rem);
+      height: clamp(0.8rem, 1.6vw, 1.4rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* ---- Page area ---- */
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ---- Slide footer ---- */
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      border-top: 1px solid var(--border-color);
+      padding: 0 var(--pad-outer);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .footer-section {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    /* ---- Tabs rail ---- */
+    .tabs-rail {
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      opacity: 0.28;
+      transition: opacity 0.3s ease;
+      cursor: default;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; }
+    .tab-intro { background: var(--tab-intro); color: #1a4535; }
+    .tab-why   { background: var(--tab-why);   color: #3d2b6b; }
+    .tab-shift { background: var(--tab-shift);  color: #6b1f35; }
+    .tab-plan  { background: var(--tab-plan);   color: #1a3a4a; }
+
+    /* ---- Reveal animations ---- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.93);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-scale { opacity: 1; transform: scale(1); }
+
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+    .d6 { transition-delay: 0.54s; }
+
+    /* ==============================================
+       TYPOGRAPHY HELPERS
+       ============================================== */
+
+    .eyebrow-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: var(--gap-content);
+    }
+
+    .big-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: var(--gap-content);
+    }
+
+    .body-text {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .mega-text {
+      font-family: var(--font-display);
+      font-size: var(--size-2xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1.05;
+    }
+
+    .underline-lavender {
+      text-decoration: underline;
+      text-decoration-color: var(--accent-lavender);
+      text-underline-offset: 0.2em;
+      text-decoration-thickness: 3px;
+    }
+
+    .underline-mint {
+      text-decoration: underline;
+      text-decoration-color: var(--accent-mint);
+      text-underline-offset: 0.2em;
+      text-decoration-thickness: 3px;
+    }
+
+    .divider {
+      width: clamp(2rem, 4vw, 4rem);
+      height: 2px;
+      background: var(--border-color);
+      margin: clamp(0.6rem, 1.2vw, 1.2rem) 0;
+      flex-shrink: 0;
+    }
+
+    /* ---- Arrow bullet list ---- */
+    .arrow-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap-content);
+    }
+
+    .arrow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .arrow-item .arrow {
+      color: var(--accent-lavender);
+      filter: brightness(0.8);
+      flex-shrink: 0;
+      font-weight: 600;
+      margin-top: 0.1em;
+    }
+
+    /* ==============================================
+       SLIDE 1 — CELEBRATION TITLE
+       ============================================== */
+
+    /* Scattered confetti dots behind the content */
+    #slide-1 .page-content {
+      position: relative;
+    }
+
+    .confetti-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 0;
+    }
+
+    .c-dot {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+    }
+
+    .shipped-title {
+      font-family: var(--font-display);
+      font-size: var(--size-mega);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .shipped-tagline {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: clamp(1rem, 2vw, 2rem);
+      position: relative;
+    }
+
+    .shipped-tagline strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ==============================================
+       SLIDE 2 — CHECKLIST
+       ============================================== */
+
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.6rem, 1.2vw, 1.2rem);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(0.75rem, 1.4vw, 1.2rem);
+      padding: clamp(0.7rem, 1.4vw, 1.2rem) clamp(1rem, 2vw, 1.8rem);
+      background: var(--paper-edge);
+      border-radius: 8px;
+    }
+
+    .check-mark {
+      flex-shrink: 0;
+      width: clamp(1.1rem, 2vw, 1.6rem);
+      height: clamp(1.1rem, 2vw, 1.6rem);
+      border-radius: 50%;
+      background: var(--accent-mint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.15em;
+    }
+
+    .check-mark svg {
+      width: 55%;
+      height: 55%;
+    }
+
+    .check-text {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    /* ==============================================
+       SLIDE 3 — PROJECT BRIEF
+       ============================================== */
+
+    /* Two-column split: must-hit | stretch */
+    .brief-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1.2rem, 2.5vw, 2.5rem);
+      margin-top: clamp(0.8rem, 1.5vw, 1.5rem);
+    }
+
+    .brief-col-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: clamp(0.5rem, 1vw, 1rem);
+    }
+
+    .brief-col-label.must { color: #3d7a60; }
+    .brief-col-label.stretch { color: #7a5c9e; }
+
+    .brief-arrow-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 1vw, 0.9rem);
+    }
+
+    .brief-arrow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-primary);
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .brief-arrow-item .arrow {
+      flex-shrink: 0;
+      font-weight: 700;
+      margin-top: 0.1em;
+    }
+
+    .brief-arrow-item.must .arrow  { color: var(--accent-mint); filter: brightness(0.75); }
+    .brief-arrow-item.stretch .arrow { color: var(--accent-lavender); filter: brightness(0.8); }
+
+    .brief-intro-text {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: clamp(0.5rem, 1vw, 1rem);
+    }
+
+    .brief-intro-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ==============================================
+       SLIDE 4 — FOUR-LENS AUDIT
+       ============================================== */
+
+    .lens-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.7rem, 1.4vw, 1.4rem);
+      flex: 1;
+    }
+
+    .lens-quad {
+      border-radius: 10px;
+      padding: clamp(0.9rem, 1.8vw, 1.6rem) clamp(1rem, 2vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35em;
+    }
+
+    .lens-quad.states       { background: #e6f6ef; border: 1.5px solid #b8e4d0; }
+    .lens-quad.responsive   { background: #ece7f8; border: 1.5px solid #d0c4ef; }
+    .lens-quad.accessibility { background: #fce9ed; border: 1.5px solid #f0c8d2; }
+    .lens-quad.content      { background: #e3f4fb; border: 1.5px solid #b8d9ef; }
+
+    .lens-name {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .lens-quad.states       .lens-name { color: #1a5c40; }
+    .lens-quad.responsive   .lens-name { color: #4a2e8a; }
+    .lens-quad.accessibility .lens-name { color: #7a1e30; }
+    .lens-quad.content      .lens-name { color: #1a4060; }
+
+    .lens-desc {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .audit-footer-note {
+      font-family: var(--font-display);
+      font-size: var(--size-lg);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-top: clamp(0.8rem, 1.5vw, 1.5rem);
+      flex-shrink: 0;
+    }
+
+    /* ==============================================
+       SLIDE 5 — HOMEWORK
+       ============================================== */
+
+    .hw-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.8rem, 1.6vw, 1.6rem);
+    }
+
+    .hw-item {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(0.8rem, 1.5vw, 1.4rem);
+      padding: clamp(0.9rem, 1.8vw, 1.6rem) clamp(1.2rem, 2vw, 2rem);
+      background: var(--paper-edge);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-lavender);
+    }
+
+    .hw-arrow {
+      color: var(--accent-lavender);
+      filter: brightness(0.8);
+      font-weight: 700;
+      font-size: var(--size-md);
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .hw-text {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .hw-text .placeholder {
+      background: var(--accent-lavender);
+      color: #3d2b6b;
+      padding: 0.1em 0.45em;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+
+    /* ==============================================
+       SLIDE 6 — DAY 2 PREVIEW
+       ============================================== */
+
+    .day2-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: var(--gap-content);
+    }
+
+    .day2-headline {
+      font-family: var(--font-display);
+      font-size: var(--size-3xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      color: var(--text-primary);
+    }
+
+    .day2-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin: clamp(1rem, 2vw, 2rem) 0;
+    }
+
+    .day2-topic {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .day2-topic .arrow { color: var(--accent-sky); font-weight: 600; flex-shrink: 0; filter: brightness(0.75); }
+
+    .day2-closer {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.2;
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.8rem, 1.5vw, 1.5rem);
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+
+    /* ==============================================
+       SLIDE 7 — THANK YOU + QR
+       ============================================== */
+
+    .thankyou-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .thankyou-word {
+      font-family: var(--font-display);
+      font-size: var(--size-mega);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      color: var(--text-primary);
+    }
+
+    .thankyou-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-top: clamp(0.8rem, 1.5vw, 1.5rem);
+      max-width: 54ch;
+    }
+
+    .qr-pair {
+      display: flex;
+      gap: clamp(2rem, 5vw, 5rem);
+      margin-top: clamp(1.2rem, 2.5vw, 2.5rem);
+      justify-content: center;
+    }
+
+    .qr-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .qr-placeholder {
+      width: clamp(120px, 16vw, 200px);
+      height: clamp(120px, 16vw, 200px);
+      border: 2px dashed var(--border-color);
+      background: var(--paper-edge);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    /* QR grid pattern (decorative) */
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      opacity: 0.25;
+    }
+
+    .qr-cell {
+      width: clamp(8px, 1.2vw, 14px);
+      height: clamp(8px, 1.2vw, 14px);
+      border-radius: 2px;
+    }
+
+    .qr-cell.filled { background: var(--text-primary); }
+
+    .qr-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .qr-caption {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <!-- ============================================================
+       SLIDE 1 — You shipped something today
+       Tab: Today (mint) | active
+       ============================================================ -->
+  <section class="slide slide-1" id="slide-1">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+
+            <!-- Confetti dots background -->
+            <div class="confetti-bg" aria-hidden="true">
+              <div class="c-dot" style="width:clamp(28px,4vw,56px);height:clamp(28px,4vw,56px);background:#98d4bb;top:8%;left:72%"></div>
+              <div class="c-dot" style="width:clamp(16px,2.5vw,36px);height:clamp(16px,2.5vw,36px);background:#c7b8ea;top:18%;left:85%"></div>
+              <div class="c-dot" style="width:clamp(20px,3vw,44px);height:clamp(20px,3vw,44px);background:#f4b8c5;top:65%;left:78%"></div>
+              <div class="c-dot" style="width:clamp(12px,1.8vw,26px);height:clamp(12px,1.8vw,26px);background:#a8d8ea;top:80%;left:88%"></div>
+              <div class="c-dot" style="width:clamp(18px,2.8vw,40px);height:clamp(18px,2.8vw,40px);background:#f4b8c5;top:12%;left:10%"></div>
+              <div class="c-dot" style="width:clamp(10px,1.5vw,22px);height:clamp(10px,1.5vw,22px);background:#98d4bb;top:30%;left:5%"></div>
+              <div class="c-dot" style="width:clamp(36px,5vw,72px);height:clamp(36px,5vw,72px);background:#a8d8ea;top:72%;left:3%"></div>
+            </div>
+
+            <div class="eyebrow-label reveal d1">Day 1 — Wrap</div>
+
+            <div class="shipped-title reveal d2">
+              You shipped<br>
+              <span class="underline-mint">something</span><br>
+              today.
+            </div>
+
+            <p class="shipped-tagline reveal d3">
+              <strong>4 hours ago</strong> you had zero code on your computer.<br>
+              Now you have a <strong>live URL.</strong>
+            </p>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">01 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 2 — What you learned today
+       Tab: Today (mint) | active
+       ============================================================ -->
+  <section class="slide slide-2" id="slide-2">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+
+            <div class="eyebrow-label reveal d1">In the last 4 hours:</div>
+
+            <div class="check-list">
+
+              <div class="check-item reveal d2">
+                <div class="check-mark" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a4535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">The 3 languages of the web</span>
+              </div>
+
+              <div class="check-item reveal d3">
+                <div class="check-mark" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a4535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">How frontend and backend talk</span>
+              </div>
+
+              <div class="check-item reveal d4">
+                <div class="check-mark" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a4535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">How to prompt AI for code — in steps, not one-shots</span>
+              </div>
+
+              <div class="check-item reveal d5">
+                <div class="check-mark" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a4535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">How to deploy to a public URL</span>
+              </div>
+
+              <div class="check-item reveal d6">
+                <div class="check-mark" aria-hidden="true">
+                  <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a4535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">That "Figma → code" is not a 1:1 translation</span>
+              </div>
+
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">02 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 3 — Your project brief (most important)
+       Tab: Brief (lavender) | active
+       ============================================================ -->
+  <section class="slide slide-3" id="slide-3">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+
+            <div class="eyebrow-label reveal d1">Your project brief</div>
+
+            <div class="big-heading reveal d2" style="font-size: var(--size-xl); font-style: italic; font-weight: 700;">
+              The next 2 weeks.
+            </div>
+
+            <p class="brief-intro-text reveal d3">
+              Each trio will build out <strong>one of your existing semester design projects</strong> into a real, deployed website.
+              One project per trio — lightning pitch, pick one.
+            </p>
+
+            <div class="brief-columns reveal d4">
+
+              <div>
+                <div class="brief-col-label must">Must hit</div>
+                <div class="brief-arrow-list">
+                  <div class="brief-arrow-item must">
+                    <span class="arrow">→</span>
+                    <span><strong>Responsive</strong> — works on mobile + desktop</span>
+                  </div>
+                  <div class="brief-arrow-item must">
+                    <span class="arrow">→</span>
+                    <span><strong>Accessible</strong> — keyboard navigable, good contrast</span>
+                  </div>
+                  <div class="brief-arrow-item must">
+                    <span class="arrow">→</span>
+                    <span><strong>Deployed</strong> — real public URL</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="brief-col-label stretch">Stretch</div>
+                <div class="brief-arrow-list">
+                  <div class="brief-arrow-item stretch">
+                    <span class="arrow">→</span>
+                    <span>Real data / API integration</span>
+                  </div>
+                  <div class="brief-arrow-item stretch">
+                    <span class="arrow">→</span>
+                    <span>Animations / transitions</span>
+                  </div>
+                  <div class="brief-arrow-item stretch">
+                    <span class="arrow">→</span>
+                    <span>An AI feature</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">03 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why active">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 4 — The four-lens audit
+       Tab: Brief (lavender) | active
+       ============================================================ -->
+  <section class="slide slide-4" id="slide-4">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="gap: var(--gap-content);">
+
+            <div class="eyebrow-label reveal d1">Before you prompt a single line of code:</div>
+
+            <div class="lens-grid reveal-scale d2">
+
+              <div class="lens-quad states">
+                <div class="lens-name">States</div>
+                <div class="lens-desc">Loading. Empty. Error. Success.</div>
+              </div>
+
+              <div class="lens-quad responsive">
+                <div class="lens-name">Responsive</div>
+                <div class="lens-desc">320px? 1440px? Long content?</div>
+              </div>
+
+              <div class="lens-quad accessibility">
+                <div class="lens-name">Accessibility</div>
+                <div class="lens-desc">Keyboard. Contrast. Semantics.</div>
+              </div>
+
+              <div class="lens-quad content">
+                <div class="lens-name">Content</div>
+                <div class="lens-desc">Real data, not lorem ipsum.</div>
+              </div>
+
+            </div>
+
+            <div class="audit-footer-note reveal d3">
+              Audit your Figma first. Then build.
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">04 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why active">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 5 — Between now and Day 2 (homework)
+       Tab: Homework (pink) | active
+       ============================================================ -->
+  <section class="slide slide-5" id="slide-5">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+
+            <div class="eyebrow-label reveal d1">Homework — no grades, but bring it</div>
+
+            <div class="hw-list">
+
+              <div class="hw-item reveal d2">
+                <span class="hw-arrow">→</span>
+                <span class="hw-text">Pick your trio's project</span>
+              </div>
+
+              <div class="hw-item reveal d3">
+                <span class="hw-arrow">→</span>
+                <span class="hw-text">Audit it with the 4 lenses</span>
+              </div>
+
+              <div class="hw-item reveal d4">
+                <span class="hw-arrow">→</span>
+                <span class="hw-text">Start prompting — hit walls, note your questions</span>
+              </div>
+
+              <div class="hw-item reveal d5">
+                <span class="hw-arrow">→</span>
+                <span class="hw-text">Share progress in <span class="placeholder">#workshop-channel</span></span>
+              </div>
+
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">05 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift active">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — Day 2 preview
+       Tab: Homework (pink) | active
+       ============================================================ -->
+  <section class="slide slide-6" id="slide-6">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="justify-content: space-between;">
+
+            <div>
+              <div class="day2-kicker reveal d1">Next session</div>
+              <div class="day2-headline reveal d2">
+                The<br>
+                <span class="underline-lavender">Leverage</span>
+              </div>
+
+              <div class="day2-topics reveal d3">
+                <div class="day2-topic">
+                  <span class="arrow">→</span>
+                  <span>Components, design systems, tokens</span>
+                </div>
+                <div class="day2-topic">
+                  <span class="arrow">→</span>
+                  <span>Prompting as a craft — reading code, iterating</span>
+                </div>
+                <div class="day2-topic">
+                  <span class="arrow">→</span>
+                  <span>Figma → code pipelines (Stitch, MCP)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="day2-closer reveal d4">
+              By end of Day 2:<br>
+              your project is 60% built.
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">06 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift active">Homework</div>
+        <div class="tab tab-plan">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 7 — Thank you + QR codes
+       Tab: Day 2 (sky) | active
+       ============================================================ -->
+  <section class="slide slide-7" id="slide-7">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="align-items: center; text-align: center;">
+
+            <div class="thankyou-block">
+
+              <div class="thankyou-word reveal d1">Thank you.</div>
+
+              <p class="thankyou-sub reveal d2">
+                Now: install Antigravity, make GitHub accounts,<br>
+                and ask me anything.
+              </p>
+
+              <div class="qr-pair reveal d3">
+
+                <div class="qr-block">
+                  <div class="qr-placeholder" aria-label="QR code placeholder — Workshop Slack/Discord">
+                    <div class="qr-grid" aria-hidden="true">
+                      <!-- 5×5 decorative QR grid (not real QR) -->
+                      <div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div>
+                      <div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div>
+                    </div>
+                    <div class="qr-caption">Replace with your QR</div>
+                  </div>
+                  <div class="qr-label">Workshop Slack / Discord</div>
+                </div>
+
+                <div class="qr-block">
+                  <div class="qr-placeholder" aria-label="QR code placeholder — Workshop resources">
+                    <div class="qr-grid" aria-hidden="true">
+                      <div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell filled"></div>
+                      <div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell filled"></div><div class="qr-cell"></div>
+                      <div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div><div class="qr-cell"></div><div class="qr-cell filled"></div>
+                    </div>
+                    <div class="qr-caption">Replace with your QR</div>
+                  </div>
+                  <div class="qr-label">Workshop resources</div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">07 / 07</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan active">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides   = Array.from(document.querySelectorAll('.slide'));
+        this.total    = this.slides.length;
+        this.current  = 0;
+        this.bar      = document.getElementById('progress-bar');
+        this.wheelLock = null;
+        this.touchStartY = 0;
+
+        this.setupObserver();
+        this.setupKeyboard();
+        this.setupWheel();
+        this.setupTouch();
+        this.updateProgress();
+
+        // First slide visible immediately
+        this.slides[0].classList.add('visible');
+      }
+
+      setupObserver() {
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              this.current = this.slides.indexOf(entry.target);
+              this.updateProgress();
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach(s => obs.observe(s));
+      }
+
+      setupKeyboard() {
+        document.addEventListener('keydown', e => {
+          if (['ArrowDown','ArrowRight',' ','PageDown'].includes(e.key)) {
+            e.preventDefault(); this.goTo(this.current + 1);
+          } else if (['ArrowUp','ArrowLeft','PageUp'].includes(e.key)) {
+            e.preventDefault(); this.goTo(this.current - 1);
+          } else if (e.key === 'Home') {
+            e.preventDefault(); this.goTo(0);
+          } else if (e.key === 'End') {
+            e.preventDefault(); this.goTo(this.total - 1);
+          }
+        });
+      }
+
+      setupWheel() {
+        document.addEventListener('wheel', e => {
+          e.preventDefault();
+          if (this.wheelLock) return;
+          this.goTo(this.current + (e.deltaY > 0 ? 1 : -1));
+          this.wheelLock = setTimeout(() => { this.wheelLock = null; }, 600);
+        }, { passive: false });
+      }
+
+      setupTouch() {
+        document.addEventListener('touchstart', e => {
+          this.touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+          const dy = this.touchStartY - e.changedTouches[0].clientY;
+          if (Math.abs(dy) > 48) this.goTo(this.current + (dy > 0 ? 1 : -1));
+        }, { passive: true });
+      }
+
+      goTo(n) {
+        const idx = Math.max(0, Math.min(this.total - 1, n));
+        if (idx === this.current && this.slides[idx].getBoundingClientRect().top === 0) return;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth' });
+      }
+
+      updateProgress() {
+        const pct = this.total <= 1 ? 100 : (this.current / (this.total - 1)) * 100;
+        this.bar.style.width = pct + '%';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => new SlidePresentation());
+  </script>
+
+</body>
+</html>

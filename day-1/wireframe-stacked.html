@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Normal Flow — the default before flex and grid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: #1a1a1a; }
+
+    .page-header {
+      margin-bottom: 2.5rem;
+      max-width: 680px;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ---- The container — no flex, no grid ---- */
+    /*
+      This container has NO display: flex and NO display: grid.
+      It's just display: block, which is the browser's default.
+
+      In normal flow, BLOCK elements stack vertically — each one
+      takes up the full available width and sits below the previous one.
+      This is how HTML has worked since 1993.
+    */
+    .flow-container {
+      padding: 1.5rem;
+      background: white;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 10px;
+      max-width: 520px;
+    }
+
+    /* ---- The boxes ---- */
+    /*
+      Each .box here is display: block (default for div).
+      Block elements:
+      - Take full available width
+      - Stack top-to-bottom
+      - Respect margin-top / margin-bottom
+
+      You don't need flexbox or grid for this.
+      Normal flow IS the layout.
+    */
+    .box {
+      /* height and border-radius for visual clarity */
+      height: 72px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+
+      /*
+        margin-bottom: the gap between stacked blocks.
+        In normal flow this is how you add vertical spacing.
+      */
+      margin-bottom: 12px;
+    }
+
+    /* Last box — no margin after it */
+    .box:last-child { margin-bottom: 0; }
+
+    /* Same palette */
+    .box-1 { background: #c1593c; }
+    .box-2 { background: #8b6954; }
+    .box-3 { background: #8fa68e; }
+    .box-4 { background: #d4a843; color: #1a1a1a; }
+    .box-5 { background: #b5714e; }
+    .box-6 { background: #7a9e9a; }
+
+    /* ---- CSS code preview ---- */
+    /*
+      We show the actual CSS applied to the container — which is almost nothing.
+      That's the point: you don't always need flex or grid.
+    */
+    .code-panel {
+      margin-top: 2rem;
+      background: #282c34;
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      max-width: 520px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.8;
+      color: #abb2bf;
+    }
+
+    .code-panel .syn-selector { color: #e06c75; }
+    .code-panel .syn-prop     { color: #d19a66; }
+    .code-panel .syn-val      { color: #98c379; }
+    .code-panel .syn-comment  { color: #5c6370; font-style: italic; }
+
+    /* ---- Explainer ---- */
+    .explainer {
+      margin-top: 2.5rem;
+      max-width: 600px;
+    }
+
+    .explainer h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1rem;
+    }
+
+    .note-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .note-arrow {
+      color: #98d4bb;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 0.1em;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+
+  <div class="page-header">
+    <h1>Normal Flow</h1>
+    <p>Before flexbox and grid, everything was <strong>normal flow</strong>: block elements stacking top-to-bottom, inline elements flowing left-to-right like text.</p>
+    <p>Normal flow is still the right tool for many layouts — especially simple stacked content like this page.</p>
+  </div>
+
+  <!--
+    THE FLOW CONTAINER
+    No display: flex. No display: grid.
+    Just a regular div. Its children stack naturally because
+    block-level elements stack in normal flow.
+  -->
+  <div class="flow-container">
+    <!--
+      These boxes are laid out with ZERO layout CSS on the container.
+      The browser's default block flow is doing all the work.
+      Each div stacks below the previous one automatically.
+    -->
+    <div class="box box-1">Box 1</div>
+    <div class="box box-2">Box 2</div>
+    <div class="box box-3">Box 3</div>
+    <div class="box box-4">Box 4</div>
+    <div class="box box-5">Box 5</div>
+    <div class="box box-6">Box 6</div>
+  </div>
+
+  <!-- Show the actual CSS — which barely exists -->
+  <div class="code-panel">
+    <span class="syn-comment">/* CSS on the container — that's it */</span><br>
+    <span class="syn-selector">.flow-container</span> {<br>
+    &nbsp;&nbsp;<span class="syn-prop">padding</span>: <span class="syn-val">1.5rem</span>;<br>
+    &nbsp;&nbsp;<span class="syn-comment">/* no display: flex, no display: grid */</span><br>
+    }<br>
+    <br>
+    <span class="syn-selector">.box</span> {<br>
+    &nbsp;&nbsp;<span class="syn-prop">margin-bottom</span>: <span class="syn-val">12px</span>; <span class="syn-comment">/* vertical spacing in normal flow */</span><br>
+    }
+  </div>
+
+  <div class="explainer">
+    <h2>How normal flow works</h2>
+    <div class="note-list">
+      <div class="note">
+        <span class="note-arrow">→</span>
+        <span><strong>Block elements</strong> (div, p, h1, section...) take the full width available and stack vertically. No extra CSS needed.</span>
+      </div>
+      <div class="note">
+        <span class="note-arrow">→</span>
+        <span><strong>Inline elements</strong> (span, a, strong...) flow like text — left to right, wrapping when they run out of space.</span>
+      </div>
+      <div class="note">
+        <span class="note-arrow">→</span>
+        <span>You can space stacked blocks with <code>margin-top</code> and <code>margin-bottom</code>. No flexbox required.</span>
+      </div>
+      <div class="note">
+        <span class="note-arrow">→</span>
+        <span>Normal flow is <strong>responsive by default</strong> — stack layouts work fine on mobile without any media queries.</span>
+      </div>
+      <div class="note">
+        <span class="note-arrow">→</span>
+        <span>Most of what you see on the web is normal flow + small amounts of flexbox/grid for the parts that need two-dimensional control.</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

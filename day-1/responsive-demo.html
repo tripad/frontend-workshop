@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Demo — resize your browser window</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,700&display=swap" rel="stylesheet">
+  <style>
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+    }
+
+    /* ---- Resize banner ---- */
+    /*
+      Fixed at the top so it's always visible as you resize.
+      This is the first thing students should read.
+    */
+    .resize-banner {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #282c34;
+      color: #98c379;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    /*
+      The width indicator — updates via JavaScript as you resize.
+      Useful for seeing exactly which breakpoint you're in.
+    */
+    .width-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #abb2bf;
+      white-space: nowrap;
+    }
+
+    .width-indicator .wval { color: #c7b8ea; }
+
+    /* ---- Back link ---- */
+    .back-link {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+    .back-link:hover { color: #e06c75; }
+
+    /* =====================================================
+       PAGE LAYOUT — no media queries needed for the outer shell.
+       Mobile-first: we start with the narrowest layout and
+       layer on complexity as the screen gets wider.
+
+       This is mobile-first CSS:
+       1. Write styles for small screens first (no query needed)
+       2. Use min-width media queries to upgrade for larger screens
+       ===================================================== */
+
+    /* ---- Header ---- */
+    /*
+      Mobile: nav links stack (or compress to label+hamburger).
+      768px+: nav links shown in a row.
+    */
+    .site-header {
+      background: white;
+      border-bottom: 1px solid #e2ddd6;
+      padding: 0 1.2rem;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .site-logo {
+      font-family: 'Bodoni Moda', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-style: italic;
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+
+    /*
+      MOBILE: hide full nav, show mobile nav label instead.
+      We're starting with the narrow layout as our baseline.
+    */
+    .nav-full {
+      display: none; /* hidden on mobile */
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-full a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #555;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-full a:hover { color: #1a1a1a; }
+
+    .nav-mobile-hint {
+      font-size: 0.75rem;
+      color: #999;
+      font-style: italic;
+    }
+
+    /*
+      @media (min-width: 768px) — this block only applies when the
+      viewport is AT LEAST 768px wide.
+      Below that, the rules inside are ignored entirely.
+    */
+    @media (min-width: 768px) {
+      .nav-full        { display: flex; }   /* show the real nav */
+      .nav-mobile-hint { display: none; }   /* hide the hint */
+    }
+
+    /* ---- Hero section ---- */
+    .hero {
+      background: linear-gradient(135deg, #ddd4f5, #c7b8ea);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: 'Bodoni Moda', Georgia, serif;
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      color: #444;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    /* ---- Main content area ---- */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.2rem 4rem;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ---- Card grid ---- */
+    /*
+      MOBILE: 1 column — cards stack.
+      No media query needed: grid-template-columns defaults to 1fr (full width).
+    */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;       /* 1 column on mobile */
+      gap: 1.2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /*
+      @media (min-width: 640px): 2 columns at tablet-ish width.
+    */
+    @media (min-width: 640px) {
+      .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /*
+      @media (min-width: 1024px): 3 columns at full desktop width.
+    */
+    @media (min-width: 1024px) {
+      .card-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ---- Individual cards ---- */
+    .card {
+      background: white;
+      border: 1px solid #e2ddd6;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-thumb {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .card-body {
+      padding: 1rem 1.2rem;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-text {
+      font-size: 0.82rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* ---- Breakpoint indicator ---- */
+    /*
+      This box shows students exactly which breakpoint they're in.
+      Each span is hidden by default; only the relevant one shows.
+    */
+    .breakpoint-box {
+      background: #282c34;
+      border-radius: 8px;
+      padding: 0.8rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #abb2bf;
+      margin-bottom: 2rem;
+    }
+
+    .bp-label {
+      display: none;
+    }
+
+    /* Mobile default */
+    .bp-mobile  { display: inline; color: #e06c75; }
+
+    @media (min-width: 640px) {
+      .bp-mobile  { display: none; }
+      .bp-tablet  { display: inline; color: #d19a66; }
+    }
+
+    @media (min-width: 1024px) {
+      .bp-tablet  { display: none; }
+      .bp-desktop { display: inline; color: #98c379; }
+    }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      border-top: 1px solid #e2ddd6;
+      padding: 1.5rem 1.2rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;  /* stack on mobile */
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    @media (min-width: 640px) {
+      .footer-inner {
+        flex-direction: row;  /* row on wider screens */
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .footer-text {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover { color: #1a1a1a; }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Sticky banner with live width readout -->
+  <div class="resize-banner">
+    <span>⟵ Resize your browser window to see this reflow in real time ⟶</span>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <span class="width-indicator">width: <span class="wval" id="vw-display">—</span></span>
+      <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+    </div>
+  </div>
+
+  <!-- Site header — nav collapses on mobile -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="site-logo">Design Brief</a>
+
+      <!--
+        Full nav: only visible at min-width: 768px (see CSS above).
+        Below that, it's display: none — hidden completely.
+      -->
+      <ul class="nav-full" aria-label="Main navigation">
+        <li><a href="#">Articles</a></li>
+        <li><a href="#">Resources</a></li>
+        <li><a href="#">Work</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+
+      <!--
+        Mobile fallback: a simple hint text.
+        Hidden when the full nav is visible.
+      -->
+      <span class="nav-mobile-hint" aria-hidden="true">[narrow — nav hidden]</span>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Frontend as a design skill</h1>
+    <p>Resize this window. Watch the layout reflow. The same HTML and CSS handles every screen size.</p>
+  </section>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- Live breakpoint indicator -->
+    <div class="breakpoint-box">
+      /*&nbsp;
+      current breakpoint:&nbsp;
+      <span class="bp-label bp-mobile">mobile — 1 column (default, no query)</span>
+      <span class="bp-label bp-tablet">tablet — 2 columns (min-width: 640px)</span>
+      <span class="bp-label bp-desktop">desktop — 3 columns (min-width: 1024px)</span>
+      &nbsp;*/
+    </div>
+
+    <p class="section-label">Articles — 3 cards, same HTML at every breakpoint</p>
+
+    <!--
+      This grid changes columns via media queries in the CSS above.
+      The HTML doesn't change at all — only the CSS rules that apply.
+    -->
+    <div class="card-grid">
+
+      <article class="card">
+        <div class="card-thumb" style="background: linear-gradient(135deg, #fce8eb, #f4b8c5)">🎨</div>
+        <div class="card-body">
+          <h2 class="card-title">Colour systems in design</h2>
+          <p class="card-text">HSL is easier to reason about than hex. Here's why design tokens changed how we think about colour.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb" style="background: linear-gradient(135deg, #ddd4f5, #c7b8ea)">📐</div>
+        <div class="card-body">
+          <h2 class="card-title">Layout without a framework</h2>
+          <p class="card-text">Grid and flexbox are mature. You might not need Bootstrap. Here's what native CSS gives you for free.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-thumb" style="background: linear-gradient(135deg, #d8eef5, #a8d8ea)">⚡</div>
+        <div class="card-body">
+          <h2 class="card-title">Performance is a UX decision</h2>
+          <p class="card-text">A 3-second load time loses 50% of users. How you structure your HTML and CSS has real-world consequences.</p>
+        </div>
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- Footer — stacks on mobile, row on wider screens -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-text">Responsive Demo — Day 1, How the Web Works</p>
+      <ul class="footer-links">
+        <li><a href="deck-2-how-web-works.html">Back to slides</a></li>
+        <li><a href="wireframe-flexbox.html">Flexbox demo</a></li>
+        <li><a href="wireframe-grid.html">Grid demo</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // Update the live width display in the banner
+    function updateWidth() {
+      document.getElementById('vw-display').textContent = window.innerWidth + 'px';
+    }
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+  </script>
+
+</body>
+</html>

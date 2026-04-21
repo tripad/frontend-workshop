@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+  DOCTYPE declaration:
+  This tells the browser "use modern HTML5 rules."
+  Without it, browsers fall back to "quirks mode" — a legacy mess.
+  Always put this on line 1.
+-->
+<html lang="en">
+<!--
+  <html> is the root element. Everything lives inside it.
+  lang="en" tells screen readers and search engines the language.
+-->
+
+<head>
+  <!--
+    <head> is the metadata section. Nothing in here is displayed
+    directly on the page — it's instructions FOR the browser.
+  -->
+
+  <meta charset="UTF-8">
+  <!--
+    charset="UTF-8" means the page can use any character on earth:
+    emoji, Chinese, Arabic, etc. Always include this.
+  -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    viewport meta tag: makes the page actually fit mobile screens.
+    Without it, phones zoom out and show a tiny desktop layout.
+    Every modern HTML file needs this.
+  -->
+
+  <title>Hello, World</title>
+  <!--
+    <title> sets the text that appears in the browser tab.
+    Also used by search engines as the page headline.
+  -->
+
+  <style>
+    /*
+      You can put CSS directly inside a <style> tag in the <head>.
+      For larger projects you'd move this to a separate .css file
+      and link it — but inline CSS is fine for learning.
+    */
+
+    /* A CSS reset: removes browser default margins so our styles start clean */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; /* padding and border count INSIDE the width, not outside */
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+      min-height: 100vh;
+
+      /* Flexbox centers our main content block vertically and horizontally */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem); /* clamp(min, preferred, max) */
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      background: #c7b8ea;    /* lavender */
+      color: #1a1a1a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(199, 184, 234, 0.5);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .back-link {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: #1a1a1a; }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!--
+    Google Fonts: we load DM Sans from a CDN.
+    The <link> goes in the <head>, before the <style> tag ideally,
+    so fonts start loading as early as possible.
+  -->
+
+</head>
+
+<body>
+  <!--
+    <body> is where the visible content lives.
+    Everything the user sees and interacts with goes here.
+  -->
+
+  <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+
+  <div class="container">
+    <!--
+      <div> is a generic container — it groups elements together.
+      It has no semantic meaning, unlike <header>, <main>, <article>.
+      Use semantic elements when you can; use <div> when you just need
+      a layout wrapper.
+    -->
+
+    <h1>Hello, world.</h1>
+    <!--
+      <h1> is the main heading. One per page, ideally.
+      The browser gives it bold, large text by default.
+      We're overriding those defaults with our CSS above.
+    -->
+
+    <p>
+      This is an HTML5 boilerplate — the minimum structure every
+      web page needs. Open this file in your browser, then right-click
+      anywhere and choose <strong>Inspect</strong> to explore the DOM.
+    </p>
+    <!--
+      <p> is a paragraph.
+      <strong> makes text bold AND signals semantic importance
+      to screen readers (unlike just using CSS font-weight).
+    -->
+
+    <button onclick="this.textContent = 'It works ✓'">
+      Click me
+    </button>
+    <!--
+      onclick is a JavaScript event handler — inline here for simplicity.
+      In real projects you'd attach event listeners in a .js file instead.
+    -->
+
+  </div>
+
+</body>
+</html>

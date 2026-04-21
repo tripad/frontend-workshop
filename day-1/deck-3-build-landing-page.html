@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1 · Build #1 — Grind Landing Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-outer:       #2a2826;
+      --paper-bg:       #f8f6f1;
+      --paper-edge:     #edeae3;
+      --text-primary:   #1a1a1a;
+      --text-secondary: #555;
+      --text-muted:     #999;
+      --border-color:   #e2ddd6;
+
+      --tab-intro:  #98d4bb;
+      --tab-why:    #c7b8ea;
+      --tab-shift:  #f4b8c5;
+      --tab-plan:   #a8d8ea;
+
+      --accent-lavender: #c7b8ea;
+      --accent-mint:     #98d4bb;
+      --accent-pink:     #f4b8c5;
+      --accent-sky:      #a8d8ea;
+
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --size-xs:   clamp(0.5rem,  0.8vw,  0.72rem);
+      --size-sm:   clamp(0.65rem, 1vw,    0.85rem);
+      --size-base: clamp(0.8rem,  1.4vw,  1.05rem);
+      --size-md:   clamp(1rem,    1.8vw,  1.35rem);
+      --size-lg:   clamp(1.25rem, 2.4vw,  2rem);
+      --size-xl:   clamp(1.8rem,  3.5vw,  3.2rem);
+      --size-2xl:  clamp(2.5rem,  5vw,    5rem);
+      --size-3xl:  clamp(3.5rem,  7vw,    7.5rem);
+      --size-mega: clamp(4.5rem,  9.5vw,  11rem);
+
+      --pad-outer:   clamp(1.5rem, 3vw, 3.5rem);
+      --gap-content: clamp(0.6rem, 1.4vw, 1.4rem);
+      --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg-outer);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      height: 100%;
+    }
+
+    /* ---- Progress bar ---- */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent-lavender);
+      transition: width 0.3s ease;
+      z-index: 1000;
+      width: 0%;
+    }
+
+    /* ---- Build indicator ---- */
+    .build-indicator {
+      position: fixed;
+      top: 8px;
+      right: 1.5rem;
+      z-index: 100;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* ---- Slide shell ---- */
+    .slide {
+      scroll-snap-align: start;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-outer);
+    }
+
+    /* ---- Notebook wrapper ---- */
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    /* ---- Notebook frame ---- */
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      background: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      border-radius: 6px 0 0 6px;
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    /* ---- Binder strip ---- */
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      flex-shrink: 0;
+      background: var(--paper-edge);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .binder-hole {
+      width: clamp(0.8rem, 1.6vw, 1.4rem);
+      height: clamp(0.8rem, 1.6vw, 1.4rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* ---- Page area ---- */
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ---- Slide footer ---- */
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      border-top: 1px solid var(--border-color);
+      padding: 0 var(--pad-outer);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .footer-section {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    /* ---- Tabs rail ---- */
+    .tabs-rail {
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      opacity: 0.28;
+      transition: opacity 0.3s ease;
+      cursor: default;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; }
+    .tab-intro { background: var(--tab-intro); color: #1a4535; }
+    .tab-why   { background: var(--tab-why);   color: #3d2b6b; }
+    .tab-shift { background: var(--tab-shift);  color: #6b1f35; }
+    .tab-plan  { background: var(--tab-plan);   color: #1a3a4a; }
+
+    /* ---- Reveal animations ---- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.93);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-scale { opacity: 1; transform: scale(1); }
+
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+    .d6 { transition-delay: 0.54s; }
+
+    /* ==============================================
+       TYPOGRAPHY HELPERS
+       ============================================== */
+
+    .eyebrow-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: var(--gap-content);
+    }
+
+    .big-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: var(--gap-content);
+    }
+
+    .body-text {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .mega-quote {
+      font-family: var(--font-display);
+      font-size: var(--size-2xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1.05;
+      color: var(--text-primary);
+    }
+
+    .underline-lavender {
+      text-decoration: underline;
+      text-decoration-color: var(--accent-lavender);
+      text-underline-offset: 0.2em;
+      text-decoration-thickness: 3px;
+    }
+
+    .divider {
+      width: clamp(2rem, 4vw, 4rem);
+      height: 2px;
+      background: var(--border-color);
+      margin: clamp(0.8rem, 1.6vw, 1.6rem) 0;
+      flex-shrink: 0;
+    }
+
+    /* ---- Arrow bullet list ---- */
+    .arrow-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap-content);
+    }
+
+    .arrow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .arrow-item .arrow {
+      color: var(--accent-lavender);
+      filter: brightness(0.8);
+      flex-shrink: 0;
+      font-weight: 600;
+      margin-top: 0.1em;
+    }
+
+    /* ==============================================
+       SLIDE 1 — FILM CARD
+       ============================================== */
+
+    .film-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: var(--bg-outer);
+      border-radius: 8px;
+      padding: clamp(1.2rem, 2.5vw, 2.5rem) clamp(1.5rem, 3vw, 3.5rem);
+      margin-bottom: var(--gap-content);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .film-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 6px;
+      background: var(--accent-lavender);
+    }
+
+    .film-card-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 0.4em;
+    }
+
+    .film-card-title {
+      font-family: var(--font-display);
+      font-size: var(--size-mega);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      color: #fff;
+    }
+
+    .slide-subline {
+      font-family: var(--font-display);
+      font-size: var(--size-lg);
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    .slide-sub-muted {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-muted);
+      margin-top: 0.3em;
+    }
+
+    /* ==============================================
+       SLIDE 2 — GOAL LINES
+       ============================================== */
+
+    .goal-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.7rem, 1.4vw, 1.4rem);
+    }
+
+    .goal-item {
+      display: flex;
+      align-items: baseline;
+      gap: clamp(0.8rem, 1.5vw, 1.5rem);
+      padding: clamp(0.9rem, 1.8vw, 1.6rem) clamp(1.2rem, 2vw, 2rem);
+      background: var(--paper-edge);
+      border-radius: 8px;
+      border-left: 3px solid var(--border-color);
+    }
+
+    .goal-verb {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--text-primary);
+      flex-shrink: 0;
+      min-width: clamp(5rem, 8vw, 8rem);
+    }
+
+    .goal-desc {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ==============================================
+       SLIDES 5, 7, 8 — SCREENSHOT PLACEHOLDERS
+       ============================================== */
+
+    .screenshot-placeholder {
+      width: 100%;
+      background: var(--paper-edge);
+      border: 2px dashed var(--border-color);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      position: relative;
+      min-height: clamp(160px, 42vh, 520px);
+    }
+
+    .ph-icon {
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      opacity: 0.3;
+    }
+
+    .ph-label {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .ph-url {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* ---- QR placeholder ---- */
+    .qr-placeholder {
+      width: clamp(72px, 10vw, 120px);
+      aspect-ratio: 1;
+      background: var(--paper-edge);
+      border: 2px dashed var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .qr-placeholder .qr-icon {
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      opacity: 0.4;
+    }
+
+    .qr-placeholder .qr-text {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .step-row {
+      display: flex;
+      gap: var(--gap-content);
+      align-items: flex-start;
+      flex: 1;
+    }
+
+    /* ---- LIVE badge ---- */
+    .live-badge {
+      position: absolute;
+      top: 0; right: 0;
+      background: #c0392b;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3em 0.75em;
+      border-radius: 0 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: live-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    /* ==============================================
+       SLIDE 10 — BAD / GOOD COMPARISON
+       ============================================== */
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-content);
+      margin-bottom: var(--gap-content);
+    }
+
+    .compare-block {
+      background: #0f0f0f;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #1e1e1e;
+    }
+
+    .compare-header {
+      padding: 0.4em 0.85em;
+      display: flex;
+      align-items: center;
+      gap: 0.45em;
+    }
+
+    .compare-block.bad  .compare-header { background: #2a0808; }
+    .compare-block.good .compare-header { background: #0a2312; }
+
+    .compare-marker {
+      font-size: 0.9em;
+      font-weight: 700;
+    }
+
+    .compare-block.bad  .compare-marker { color: #e06c75; }
+    .compare-block.good .compare-marker { color: #98c379; }
+
+    .compare-tag {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare-block.bad  .compare-tag { color: #e06c75; }
+    .compare-block.good .compare-tag { color: #98c379; }
+
+    .compare-text {
+      font-family: var(--font-mono);
+      font-size: var(--size-sm);
+      color: #cdd6f4;
+      padding: 0.8em 1em;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+
+    /* ==============================================
+       SLIDE 11 — BUILD STEPS
+       ============================================== */
+
+    .build-steps {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.4rem, 0.9vw, 1rem);
+    }
+
+    .build-step {
+      display: flex;
+      align-items: baseline;
+      gap: clamp(0.7rem, 1.3vw, 1.3rem);
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: var(--size-lg);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--accent-lavender);
+      flex-shrink: 0;
+      width: clamp(1.6rem, 2.5vw, 2.5rem);
+      text-align: right;
+      filter: brightness(0.85);
+    }
+
+    .step-text {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    .step-text strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ==============================================
+       PROMPT BLOCKS (slides 12–15)
+       ============================================== */
+
+    .prompt-context {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: var(--gap-content);
+    }
+
+    .prompt-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .prompt-block {
+      background: #0f0f0f;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #252525;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5em 0.9em;
+      background: #191919;
+      border-bottom: 1px solid #252525;
+      flex-shrink: 0;
+    }
+
+    .prompt-label {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      color: #5a5a5a;
+      letter-spacing: 0.06em;
+    }
+
+    .copy-btn {
+      background: #262626;
+      border: 1px solid #363636;
+      border-radius: 4px;
+      color: #999;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      padding: 0.25em 0.7em;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover { background: #363636; color: #fff; border-color: #4a4a4a; }
+    .copy-btn.copied { background: #0f2a18; color: #98d4bb; border-color: #1e4a2a; }
+
+    .prompt-text {
+      font-family: var(--font-mono);
+      font-size: clamp(0.62rem, 1.05vw, 0.85rem);
+      color: #cdd6f4;
+      padding: 1em 1.1em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.72;
+      margin: 0;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #333 transparent;
+    }
+
+    /* ==============================================
+       SLIDE 15 — REFERENCE (scrollable stack)
+       ============================================== */
+
+    #slide-15 .page-content {
+      justify-content: flex-start;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .prompt-stack {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 1vw, 1rem);
+    }
+
+    .prompt-block-sm {
+      background: #0f0f0f;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #252525;
+    }
+
+    .prompt-block-sm .prompt-header {
+      padding: 0.38em 0.8em;
+    }
+
+    .prompt-block-sm .prompt-text {
+      font-size: clamp(0.55rem, 0.88vw, 0.76rem);
+      padding: 0.75em 0.9em;
+      line-height: 1.62;
+      overflow-y: visible;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="progress-bar" class="progress-bar"></div>
+  <div class="build-indicator">Build 1 of 1 · Day 1</div>
+
+  <!-- ================================================================
+       SLIDE 1 — Section title
+       ================================================================ -->
+  <section class="slide" id="slide-1">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="film-card reveal d1">
+              <span class="film-card-label">Day 1 · Build Along</span>
+              <h1 class="film-card-title">Build #1</h1>
+            </div>
+            <p class="slide-subline reveal d3">From prompt → to page → to public URL</p>
+            <p class="slide-sub-muted reveal d4">(in ~75 minutes)</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">01 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 2 — The goal
+       ================================================================ -->
+  <section class="slide" id="slide-2">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">The goal</p>
+            <div class="goal-list">
+              <div class="goal-item reveal d2">
+                <span class="goal-verb">Build</span>
+                <span class="goal-desc">a landing page for a coffee shop targeting designers.</span>
+              </div>
+              <div class="goal-item reveal d3">
+                <span class="goal-verb">Deploy</span>
+                <span class="goal-desc">to GitHub Pages — real URL, shareable with anyone.</span>
+              </div>
+              <div class="goal-item reveal d4">
+                <span class="goal-verb">Use</span>
+                <span class="goal-desc">Antigravity + Tailwind + your judgment.</span>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">02 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 3 — Why this exercise
+       ================================================================ -->
+  <section class="slide" id="slide-3">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Why this exercise</p>
+            <h2 class="big-heading reveal d2">Everyone gets the same brief.</h2>
+            <p class="body-text reveal d3">Different results teach us — prompting is a craft.</p>
+            <div class="divider reveal d4"></div>
+            <p class="mega-quote reveal d5">The prompt is the <span class="underline-lavender">new design document.</span></p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">03 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 4 — GitHub: what is it?
+       ================================================================ -->
+  <section class="slide" id="slide-4">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">GitHub</p>
+            <h2 class="big-heading reveal d2">GitHub = Google Drive for code.</h2>
+            <div class="arrow-list reveal d3">
+              <div class="arrow-item">
+                <span class="arrow">→</span>
+                <span>Every developer has one — it's your public portfolio.</span>
+              </div>
+              <div class="arrow-item">
+                <span class="arrow">→</span>
+                <span>It tracks every change to your code over time.</span>
+              </div>
+              <div class="arrow-item">
+                <span class="arrow">→</span>
+                <span>Bonus: it hosts websites for free.</span>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">04 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why active">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 5 — Step 1: Create your GitHub account
+       ================================================================ -->
+  <section class="slide" id="slide-5">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="gap: var(--gap-content);">
+            <p class="eyebrow-label reveal d1">Step 1 — Create your GitHub account</p>
+            <div class="step-row reveal d2">
+              <div class="screenshot-placeholder" style="flex: 1;">
+                <span class="ph-icon">🌐</span>
+                <span class="ph-label">github.com/signup</span>
+                <span class="ph-url">[ screenshot: signup page ]</span>
+              </div>
+              <div class="qr-placeholder">
+                <span class="qr-icon">▣</span>
+                <span class="qr-text">QR</span>
+              </div>
+            </div>
+            <p class="body-text reveal d3" style="font-size: var(--size-sm); flex-shrink: 0;">Use your real name. This becomes part of your portfolio.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">05 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why active">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 6 — We're going to push THIS presentation
+       ================================================================ -->
+  <section class="slide" id="slide-6">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Coming up — live demo</p>
+            <h2 class="big-heading reveal d2">The slides you're looking at right now?<br>We'll put them on GitHub Pages together.</h2>
+            <div class="divider reveal d3"></div>
+            <p class="mega-quote reveal d4">Your first deployment.<br><span class="underline-lavender">In 5 minutes.</span></p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">06 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why active">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 7 — Live demo
+       ================================================================ -->
+  <section class="slide" id="slide-7">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="gap: var(--gap-content);">
+            <p class="eyebrow-label reveal d1">Live demo</p>
+            <div class="screenshot-placeholder reveal d2" style="flex: 1;">
+              <div class="live-badge"><div class="live-dot"></div> Live</div>
+              <span class="ph-icon">💻</span>
+              <span class="ph-label">LIVE: Tripad pushes the slide deck to GitHub Pages</span>
+            </div>
+            <p class="mega-quote reveal d3" style="font-size: var(--size-xl); flex-shrink: 0;">That URL is now public. <span class="underline-lavender">Forever. Free.</span></p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">07 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why active">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 8 — Step 2: Antigravity
+       ================================================================ -->
+  <section class="slide" id="slide-8">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content" style="gap: var(--gap-content);">
+            <p class="eyebrow-label reveal d1">Step 2</p>
+            <h2 class="big-heading reveal d2" style="flex-shrink: 0;">Antigravity is your AI pair programmer.</h2>
+            <div class="screenshot-placeholder reveal d3" style="flex: 1;">
+              <span class="ph-icon">🤖</span>
+              <span class="ph-label">[ screenshot: Antigravity UI ]</span>
+            </div>
+            <p class="body-text reveal d4" style="flex-shrink: 0;">It reads, writes, and runs code based on what you ask.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">08 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift active">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 9 — The scenario
+       ================================================================ -->
+  <section class="slide" id="slide-9">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">The scenario</p>
+            <p class="mega-quote reveal d2" style="font-size: var(--size-2xl); margin-bottom: var(--gap-content);">"A landing page for <em>Grind</em> —<br>a coffee shop for people who care about details."</p>
+            <div class="arrow-list reveal d3">
+              <div class="arrow-item"><span class="arrow">→</span><span><strong>Must work on mobile</strong></span></div>
+              <div class="arrow-item"><span class="arrow">→</span><span>Must have: hero, about, menu, contact</span></div>
+              <div class="arrow-item"><span class="arrow">→</span><span>Must deploy to GitHub Pages</span></div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">09 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift active">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 10 — Prompting is a skill
+       ================================================================ -->
+  <section class="slide" id="slide-10">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Prompting is a skill</p>
+            <div class="comparison-grid reveal d2">
+              <div class="compare-block bad">
+                <div class="compare-header">
+                  <span class="compare-marker">✗</span>
+                  <span class="compare-tag">Bad</span>
+                </div>
+                <pre class="compare-text">make me a coffee shop website</pre>
+              </div>
+              <div class="compare-block good">
+                <div class="compare-header">
+                  <span class="compare-marker">✓</span>
+                  <span class="compare-tag">Better</span>
+                </div>
+                <pre class="compare-text">Create an HTML file. Include a hero
+section with a headline and CTA button.
+Use Tailwind via CDN. Warm, muted colors
+(cream, espresso, terracotta).
+Mobile-first.</pre>
+              </div>
+            </div>
+            <div class="divider reveal d3"></div>
+            <p class="mega-quote reveal d4" style="font-size: var(--size-xl);">The difference? <span class="underline-lavender">Context. Constraints. Specificity.</span></p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">10 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift active">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 11 — Our strategy: build in steps
+       ================================================================ -->
+  <section class="slide" id="slide-11">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Strategy</p>
+            <h2 class="big-heading reveal d2">We'll break this into prompts, not one.</h2>
+            <div class="build-steps">
+              <div class="build-step reveal d2">
+                <span class="step-num">0</span>
+                <span class="step-text"><strong>Install the skill</strong> — Impeccable</span>
+              </div>
+              <div class="build-step reveal d3">
+                <span class="step-num">1</span>
+                <span class="step-text">Scaffolding + Tailwind</span>
+              </div>
+              <div class="build-step reveal d3">
+                <span class="step-num">2</span>
+                <span class="step-text">Hero section</span>
+              </div>
+              <div class="build-step reveal d4">
+                <span class="step-num">3</span>
+                <span class="step-text">About + Menu sections</span>
+              </div>
+              <div class="build-step reveal d4">
+                <span class="step-num">4</span>
+                <span class="step-text">Contact + responsive pass</span>
+              </div>
+              <div class="build-step reveal d5">
+                <span class="step-num">5</span>
+                <span class="step-text">Deploy to GitHub Pages</span>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">11 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift active">Prompting</div>
+        <div class="tab tab-plan">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 12 — Prompt 0: Install the skill
+       ================================================================ -->
+  <section class="slide" id="slide-12">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Prompt 0 — Install the skill</p>
+            <p class="prompt-context reveal d2">A "skill" in Claude = reusable context. One install, every prompt after gets better.</p>
+            <div class="prompt-wrap reveal d3">
+              <div class="prompt-block">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-0 · impeccable-skill.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">I want to install a Claude skill for this session. Please fetch the skill from https://github.com/pbakaus/impeccable and install it so it's active for this project. Confirm once it's loaded and summarize what it does in 2 sentences.</pre>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">12 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan active">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 13 — Prompt 1: Scaffolding
+       ================================================================ -->
+  <section class="slide" id="slide-13">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Prompt 1 — Scaffolding</p>
+            <div class="prompt-wrap reveal d2">
+              <div class="prompt-block">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-1 · scaffold.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">Create a new folder called `grind-landing` in the current directory. Inside it, create an index.html file with:
+
+- Standard HTML5 boilerplate
+- Tailwind CSS loaded via CDN (the script tag version, not a build step)
+- Google Font: Instrument Serif (for headings) and Inter (for body)
+- A &lt;main&gt; element with a max-width container (max-w-6xl, mx-auto, px-6)
+- Background color: #FAF7F2 (warm off-white)
+- Body text color: #2B1810 (near-black, warm)
+
+Do not add any page content yet — just the scaffold.
+
+After generating, confirm the file structure and tell me what to run to preview it in the browser.</pre>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">13 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan active">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 14 — Prompt 2: Hero Section
+       ================================================================ -->
+  <section class="slide" id="slide-14">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label reveal d1">Prompt 2 — Hero Section</p>
+            <div class="prompt-wrap reveal d2">
+              <div class="prompt-block">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-2 · hero.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">Add a hero section to the top of index.html.
+
+Content:
+- Small eyebrow text: "A coffee shop for people who care about details."
+- Big headline: "Grind."
+- Subheadline: "Single-origin coffee. Considered interiors. Free wifi that actually works."
+- Primary CTA button: "Find us" (link to #visit)
+- Secondary CTA: "See the menu" (text link)
+
+Style:
+- Headline uses Instrument Serif, very large (text-8xl+)
+- Hero takes full viewport height (min-h-screen)
+- Content vertically centered
+- Generous spacing
+- CTA button: terracotta background (#D4763E), white text, rounded-full, px-8 py-4
+
+Text-only hero, editorial feel.</pre>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">14 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan active">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SLIDE 15 — Prompts 3, 4, 5 (reference — scroll within)
+       ================================================================ -->
+  <section class="slide" id="slide-15">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="eyebrow-label" style="flex-shrink: 0; padding-bottom: var(--gap-content); border-bottom: 1px solid var(--border-color); margin-bottom: var(--gap-content);">Prompts 3 · 4 · 5 — Reference&nbsp;&nbsp;<span style="font-weight:400; letter-spacing:0; text-transform:none; color: var(--text-muted);">scroll ↓ if needed</span></p>
+
+            <div class="prompt-stack">
+
+              <!-- Prompt 3 -->
+              <div class="prompt-block-sm">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-3 · about-menu.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">Add two sections below the hero.
+
+ABOUT section:
+- Heading: "Why Grind" (Instrument Serif, text-5xl)
+- Two-column layout on desktop, stacked on mobile
+- Left column: a paragraph about the shop's philosophy (single-origin, ethically sourced, designer-friendly)
+- Right column: three bullet points:
+  • "Ethically sourced, single-origin beans"
+  • "Designed for long working sessions"
+  • "Quiet hours, 2pm–5pm, Mon–Fri"
+
+MENU section:
+- Heading: "The Menu"
+- 6 items with prices, restaurant-menu style (dotted leader lines):
+  Espresso ₹180, Flat White ₹220, Pour Over ₹280, Cold Brew ₹240, Matcha Latte ₹260, Affogato ₹320
+- Italic footnote: "Prices include GST. Beans change weekly."
+
+Both sections: py-24 vertical padding. Warm palette.</pre>
+              </div>
+
+              <!-- Prompt 4 -->
+              <div class="prompt-block-sm">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-4 · contact-responsive.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">Two things.
+
+FIRST — CONTACT section (id="visit"):
+- Heading: "Come find us"
+- Address: "12, Design District, 2nd Floor. Open 8am–8pm, closed Wednesdays."
+- Static map placeholder: a div, bg-stone-200, aspect-video, rounded-2xl, word "Map" centered
+- Social links: Instagram, Are.na (text links)
+
+SECOND — responsive pass:
+- Test at 375px width
+- Hero headline shrinks proportionally (no overflow)
+- Menu stacks cleanly
+- About columns become one column below md breakpoint
+- Sticky nav bar: "Grind" logo left, links right (About, Menu, Visit). Mobile: simple hamburger scrolling to sections.
+
+After this, show me the rendered page and flag anything broken at small widths.</pre>
+              </div>
+
+              <!-- Prompt 5 -->
+              <div class="prompt-block-sm">
+                <div class="prompt-header">
+                  <span class="prompt-label">prompt-5 · deploy.txt</span>
+                  <button class="copy-btn" onclick="copyPrompt(this)">📋 Copy</button>
+                </div>
+                <pre class="prompt-text">I want to deploy this to GitHub Pages. Walk me through it with exact commands.
+
+Assume I already have a GitHub account (username: [FILL IN]) and git installed.
+
+Give me:
+1. Exact terminal commands to init the git repo and make the first commit
+2. Exact commands to push to a new repo called `grind-landing`
+3. Instructions for enabling GitHub Pages in the repo settings
+4. The final URL format my site will be available at
+
+Then do as much of this for me as you can directly from here.</pre>
+              </div>
+
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Build #1</span>
+            <span class="footer-num">15 / 15</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Overview</div>
+        <div class="tab tab-why">GitHub</div>
+        <div class="tab tab-shift">Prompting</div>
+        <div class="tab tab-plan active">Prompts</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* ---- Copy prompt to clipboard ---- */
+    function copyPrompt(btn) {
+      const block = btn.closest('.prompt-block, .prompt-block-sm');
+      const text  = block.querySelector('.prompt-text').textContent;
+
+      const markDone = () => {
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      const markFail = () => {
+        btn.textContent = '⚠ Failed';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text.trim()).then(markDone).catch(() => fallback(text, markDone, markFail));
+      } else {
+        fallback(text, markDone, markFail);
+      }
+    }
+
+    function fallback(text, onSuccess, onFail) {
+      const ta = document.createElement('textarea');
+      ta.value = text.trim();
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy') ? onSuccess() : onFail();
+      } catch (e) {
+        onFail();
+      }
+      document.body.removeChild(ta);
+    }
+
+    /* ---- Slide presentation controller ---- */
+    class SlidePresentation {
+      constructor() {
+        this.slides    = Array.from(document.querySelectorAll('.slide'));
+        this.total     = this.slides.length;
+        this.current   = 0;
+        this.wheelLock = null;
+        this.bar       = document.getElementById('progress-bar');
+
+        this.observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              this.current = this.slides.indexOf(entry.target);
+              this.updateBar();
+            }
+          });
+        }, { threshold: 0.55 });
+
+        this.slides.forEach(s => this.observer.observe(s));
+        this.slides[0].classList.add('visible');
+        this.updateBar();
+
+        document.addEventListener('keydown', this.onKey.bind(this));
+        window.addEventListener('wheel', this.onWheel.bind(this), { passive: false });
+        this.initTouch();
+      }
+
+      updateBar() {
+        const pct = this.total > 1 ? (this.current / (this.total - 1)) * 100 : 0;
+        this.bar.style.width = pct + '%';
+      }
+
+      goTo(idx) {
+        idx = Math.max(0, Math.min(this.total - 1, idx));
+        this.slides[idx].scrollIntoView({ behavior: 'smooth' });
+      }
+
+      onKey(e) {
+        const fwd  = { ArrowDown: 1, ArrowRight: 1, ' ': 1, PageDown: 1 };
+        const back = { ArrowUp: -1, ArrowLeft: -1, PageUp: -1 };
+        if (e.key === 'Home') { e.preventDefault(); this.goTo(0); return; }
+        if (e.key === 'End')  { e.preventDefault(); this.goTo(this.total - 1); return; }
+        if (fwd[e.key]  !== undefined) { e.preventDefault(); this.goTo(this.current + 1); }
+        if (back[e.key] !== undefined) { e.preventDefault(); this.goTo(this.current - 1); }
+      }
+
+      onWheel(e) {
+        /* Allow natural scrolling inside slide-15's scrollable content area */
+        const scrollable = e.target.closest('.page-content');
+        if (scrollable && scrollable.scrollHeight > scrollable.clientHeight + 4) {
+          const atTop    = scrollable.scrollTop <= 0;
+          const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 4;
+          if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) return;
+        }
+
+        e.preventDefault();
+        if (this.wheelLock) return;
+        this.goTo(this.current + (e.deltaY > 0 ? 1 : -1));
+        this.wheelLock = setTimeout(() => { this.wheelLock = null; }, 600);
+      }
+
+      initTouch() {
+        let startY = 0;
+        window.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+        window.addEventListener('touchend', e => {
+          const dy = startY - e.changedTouches[0].clientY;
+          if (Math.abs(dy) > 48) this.goTo(this.current + (dy > 0 ? 1 : -1));
+        }, { passive: true });
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+
+</body>
+</html>

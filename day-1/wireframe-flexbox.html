@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flexbox — one direction at a time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #f8f6f1;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #999;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: #1a1a1a; }
+
+    .page-header {
+      margin-bottom: 2.5rem;
+      max-width: 680px;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ---- Controls ---- */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .ctrl-btn {
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #555;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .ctrl-btn:hover    { background: #e2ddd6; }
+    .ctrl-btn.active   { background: #c7b8ea; border-color: #b8a6d8; color: #1a1a1a; }
+
+    /* ---- Code hint ---- */
+    /*
+      We show the live CSS value so students see exactly what property changed.
+    */
+    .code-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #888;
+      background: #edeae3;
+      border: 1px solid #e2ddd6;
+      border-radius: 6px;
+      padding: 0.5rem 0.9rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    .code-hint .prop { color: #d19a66; }
+    .code-hint .val  { color: #98c379; }
+
+    /* ---- The flex container ---- */
+    /*
+      display: flex turns this element into a "flex container."
+      Its direct children become "flex items" and arrange themselves
+      according to the flex rules.
+
+      By default, flex lays items out in a row (flex-direction: row).
+    */
+    .flex-container {
+      display: flex;
+      gap: 12px;              /* gap adds space between flex items, not outside */
+      align-items: center;    /* align-items controls cross-axis (vertical here) */
+      padding: 1.5rem;
+      background: white;
+      border: 1.5px solid #e2ddd6;
+      border-radius: 10px;
+      min-height: 120px;
+      transition: justify-content 0.3s ease;
+    }
+
+    /*
+      justify-content controls how items are distributed along the MAIN axis.
+      Main axis = the direction flex is flowing (left-to-right by default).
+
+      Options:
+      - flex-start    → pack to the left
+      - center        → center everything
+      - flex-end      → pack to the right
+      - space-between → first item left, last item right, equal gaps between
+      - space-around  → equal space around each item
+      - space-evenly  → equal space between AND around items
+    */
+
+    /* ---- Flex items (the boxes) ---- */
+    /*
+      Each .box is a "flex item." By default they just sit next to each other.
+      We haven't set flex: 1 here — so each box stays its natural width.
+    */
+    .box {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      flex-shrink: 0; /* don't squeeze me when space is tight */
+      transition: transform 0.25s ease;
+    }
+
+    .box:hover { transform: scale(1.06); }
+
+    /* A 6-colour palette — terracotta, cream, espresso, sage, mustard, clay */
+    .box-1 { background: #c1593c; }  /* terracotta */
+    .box-2 { background: #8b6954; color: rgba(255,255,255,0.85); } /* espresso */
+    .box-3 { background: #8fa68e; }  /* sage */
+    .box-4 { background: #d4a843; color: #1a1a1a; } /* mustard */
+    .box-5 { background: #b5714e; }  /* clay */
+    .box-6 { background: #7a9e9a; }  /* dusty teal */
+
+    /* ---- Explanation section ---- */
+    .explainer {
+      margin-top: 2.5rem;
+      max-width: 600px;
+    }
+
+    .explainer h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1rem;
+    }
+
+    .prop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .prop-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #d19a66;
+      background: #282c34;
+      padding: 0.25em 0.5em;
+      border-radius: 4px;
+    }
+
+    .prop-desc {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.4;
+      padding-top: 0.2em;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <a href="deck-2-how-web-works.html" class="back-link">← back to slides</a>
+
+  <div class="page-header">
+    <h1>Flexbox</h1>
+    <p>Flexbox arranges items in <strong>one direction</strong> — either a row or a column.</p>
+    <p>Use the buttons below to change <code>justify-content</code> and watch the boxes move.</p>
+  </div>
+
+  <!-- Controls: each button changes justify-content on the flex container -->
+  <div class="controls">
+    <button class="ctrl-btn active" onclick="setJustify('flex-start', this)">justify: flex-start</button>
+    <button class="ctrl-btn" onclick="setJustify('center', this)">justify: center</button>
+    <button class="ctrl-btn" onclick="setJustify('flex-end', this)">justify: flex-end</button>
+    <button class="ctrl-btn" onclick="setJustify('space-between', this)">justify: space-between</button>
+    <button class="ctrl-btn" onclick="setJustify('space-around', this)">justify: space-around</button>
+    <button class="ctrl-btn" onclick="setJustify('space-evenly', this)">justify: space-evenly</button>
+  </div>
+
+  <!-- Live CSS hint — updates when you click a button -->
+  <div class="code-hint" id="code-hint">
+    .flex-container { <span class="prop">justify-content</span>: <span class="val" id="hint-val">flex-start</span>; }
+  </div>
+
+  <!--
+    THE FLEX CONTAINER
+    display: flex is the single property that activates flexbox.
+    The justify-content value is changed by the JS below.
+  -->
+  <div class="flex-container" id="flex-container">
+    <!--
+      These are FLEX ITEMS. Their only job is to exist inside the container.
+      Flexbox takes care of where to place them based on the container's rules.
+    -->
+    <div class="box box-1">1</div>
+    <div class="box box-2">2</div>
+    <div class="box box-3">3</div>
+    <div class="box box-4">4</div>
+    <div class="box box-5">5</div>
+    <div class="box box-6">6</div>
+  </div>
+
+  <!-- Property reference -->
+  <div class="explainer">
+    <h2>What these properties do</h2>
+    <div class="prop-list">
+      <div class="prop-row">
+        <span class="prop-name">display: flex</span>
+        <span class="prop-desc">Turns the element into a flex container. Its children become flex items.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">justify-content</span>
+        <span class="prop-desc">Controls how items are spread along the main axis (left-right in a row).</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">align-items</span>
+        <span class="prop-desc">Controls alignment on the cross axis (top-bottom in a row). Try: flex-start, center, flex-end, stretch.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">gap</span>
+        <span class="prop-desc">Sets space between items. Much cleaner than margin on individual items.</span>
+      </div>
+      <div class="prop-row">
+        <span class="prop-name">flex-direction</span>
+        <span class="prop-desc">Switches from row (default) to column. All the same rules apply, just rotated.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Update justify-content on the flex container and highlight the active button
+    function setJustify(value, btn) {
+      document.getElementById('flex-container').style.justifyContent = value;
+      document.getElementById('hint-val').textContent = value;
+
+      // Update active state on buttons
+      document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

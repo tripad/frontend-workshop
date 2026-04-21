@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend + AI Workshop — Day 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:          #f8f6f1;
+      --bg-edge:     #edeae3;
+      --bg-dark:     #2a2826;
+      --text:        #1a1a1a;
+      --text-mid:    #555;
+      --text-muted:  #999;
+      --border:      #e2ddd6;
+      --mint:        #98d4bb;
+      --lavender:    #c7b8ea;
+      --pink:        #f4b8c5;
+      --sky:         #a8d8ea;
+      --font-d:      'Bodoni Moda', Georgia, serif;
+      --font-b:      'DM Sans', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: var(--font-b);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    .site-header {
+      background: var(--bg-dark);
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+    }
+
+    .header-eyebrow {
+      font-family: var(--font-b);
+      font-size: clamp(0.6rem, 0.9vw, 0.72rem);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 0.6rem;
+    }
+
+    .header-title {
+      font-family: var(--font-d);
+      font-size: clamp(2.2rem, 5vw, 5rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      color: #fff;
+    }
+
+    .header-title span {
+      color: var(--lavender);
+    }
+
+    .header-sub {
+      margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+      font-family: var(--font-b);
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      color: rgba(255,255,255,0.5);
+      max-width: 52ch;
+      line-height: 1.6;
+    }
+
+    /* Tab swatches */
+    .header-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: clamp(1.2rem, 2.5vw, 2rem);
+    }
+
+    .htab {
+      height: 4px;
+      border-radius: 2px;
+      flex: 1;
+      max-width: 60px;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+    }
+
+    /* ---- Section label ---- */
+    .section-label {
+      font-family: var(--font-b);
+      font-size: clamp(0.58rem, 0.85vw, 0.7rem);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(1rem, 2vw, 1.8rem);
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ---- Deck cards grid ---- */
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(clamp(220px, 24vw, 260px), 1fr));
+      gap: clamp(0.8rem, 1.8vw, 1.4rem);
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .deck-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .deck-card:hover {
+      box-shadow: 0 6px 28px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .deck-card-top {
+      height: clamp(6px, 1.2vw, 10px);
+      flex-shrink: 0;
+    }
+
+    .deck-card-body {
+      padding: clamp(1rem, 2vw, 1.5rem);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .deck-num {
+      font-family: var(--font-b);
+      font-size: clamp(0.55rem, 0.8vw, 0.65rem);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .deck-name {
+      font-family: var(--font-d);
+      font-size: clamp(1rem, 1.8vw, 1.45rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .deck-desc {
+      font-family: var(--font-b);
+      font-size: clamp(0.72rem, 1.1vw, 0.82rem);
+      color: var(--text-mid);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .deck-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .deck-slides {
+      font-family: var(--font-b);
+      font-size: clamp(0.6rem, 0.85vw, 0.7rem);
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .deck-arrow {
+      margin-left: auto;
+      font-size: clamp(0.7rem, 1vw, 0.85rem);
+      color: var(--text-muted);
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .deck-card:hover .deck-arrow {
+      transform: translateX(3px);
+      color: var(--text);
+    }
+
+    /* ---- Supplementary list ---- */
+    .supp-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(clamp(200px, 28vw, 300px), 1fr));
+      gap: 0.5rem;
+    }
+
+    .supp-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: clamp(0.7rem, 1.4vw, 1rem) clamp(0.9rem, 1.8vw, 1.2rem);
+      background: var(--bg-edge);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .supp-link:hover {
+      background: white;
+      border-color: #ccc;
+    }
+
+    .supp-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .supp-name {
+      font-family: var(--font-b);
+      font-size: clamp(0.75rem, 1.1vw, 0.85rem);
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .supp-desc {
+      font-family: var(--font-b);
+      font-size: clamp(0.62rem, 0.9vw, 0.72rem);
+      color: var(--text-muted);
+    }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: clamp(1.2rem, 2.5vw, 2rem) clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-text {
+      font-family: var(--font-b);
+      font-size: clamp(0.65rem, 0.9vw, 0.75rem);
+      color: var(--text-muted);
+    }
+
+    .footer-note {
+      font-family: var(--font-b);
+      font-size: clamp(0.62rem, 0.85vw, 0.72rem);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-eyebrow">B.Des UX — 3-Day Workshop</div>
+    <h1 class="header-title">Frontend &amp; <span>AI-Assisted</span><br>Design</h1>
+    <p class="header-sub">Slide decks and interactive demos for Day 1. Open any deck and use arrow keys or swipe to navigate.</p>
+    <div class="header-tabs" aria-hidden="true">
+      <div class="htab" style="background:#98d4bb"></div>
+      <div class="htab" style="background:#c7b8ea"></div>
+      <div class="htab" style="background:#f4b8c5"></div>
+      <div class="htab" style="background:#a8d8ea"></div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="section-label">Day 1 — Slide Decks</div>
+
+    <div class="deck-grid">
+
+      <a href="day-1/deck-1-intro-why.html" class="deck-card">
+        <div class="deck-card-top" style="background:#98d4bb"></div>
+        <div class="deck-card-body">
+          <div class="deck-num">Deck 01</div>
+          <div class="deck-name">Intro &amp; Why Frontend</div>
+          <div class="deck-desc">What is the web, why designers should code, and what this workshop covers.</div>
+          <div class="deck-meta">
+            <span class="deck-slides">14 slides</span>
+            <span class="deck-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="day-1/deck-2-how-web-works.html" class="deck-card">
+        <div class="deck-card-top" style="background:#c7b8ea"></div>
+        <div class="deck-card-body">
+          <div class="deck-num">Deck 02</div>
+          <div class="deck-name">How the Web Works</div>
+          <div class="deck-desc">HTML, CSS, the browser rendering model, flexbox, grid, and responsive design.</div>
+          <div class="deck-meta">
+            <span class="deck-slides">18 slides</span>
+            <span class="deck-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="day-1/deck-3-build-landing-page.html" class="deck-card">
+        <div class="deck-card-top" style="background:#f4b8c5"></div>
+        <div class="deck-card-body">
+          <div class="deck-num">Deck 03</div>
+          <div class="deck-name">Build #1 — Grind</div>
+          <div class="deck-desc">Step-by-step build-along: prompt a landing page, deploy to GitHub Pages.</div>
+          <div class="deck-meta">
+            <span class="deck-slides">15 slides</span>
+            <span class="deck-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="day-1/deck-4-wrap-project-brief.html" class="deck-card">
+        <div class="deck-card-top" style="background:#a8d8ea"></div>
+        <div class="deck-card-body">
+          <div class="deck-num">Deck 04</div>
+          <div class="deck-name">Wrap + Project Brief</div>
+          <div class="deck-desc">What you built today, the 2-week project brief, the four-lens audit, and Day 2 preview.</div>
+          <div class="deck-meta">
+            <span class="deck-slides">7 slides</span>
+            <span class="deck-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="section-label">Day 1 — Supplementary Files</div>
+
+    <div class="supp-list">
+
+      <a href="day-1/boilerplate.html" class="supp-link">
+        <div class="supp-dot" style="background:#98d4bb"></div>
+        <span class="supp-name">Boilerplate</span>
+        <span class="supp-desc">Annotated HTML5 skeleton</span>
+      </a>
+
+      <a href="day-1/dom-tree-demo.html" class="supp-link">
+        <div class="supp-dot" style="background:#98d4bb"></div>
+        <span class="supp-name">DOM Tree Demo</span>
+        <span class="supp-desc">Blog page for DevTools exploration</span>
+      </a>
+
+      <a href="day-1/wireframe-stacked.html" class="supp-link">
+        <div class="supp-dot" style="background:#c7b8ea"></div>
+        <span class="supp-name">Normal Flow</span>
+        <span class="supp-desc">Block layout without flex or grid</span>
+      </a>
+
+      <a href="day-1/wireframe-flexbox.html" class="supp-link">
+        <div class="supp-dot" style="background:#c7b8ea"></div>
+        <span class="supp-name">Flexbox Demo</span>
+        <span class="supp-desc">Live justify-content controls</span>
+      </a>
+
+      <a href="day-1/wireframe-grid.html" class="supp-link">
+        <div class="supp-dot" style="background:#c7b8ea"></div>
+        <span class="supp-name">Grid Demo</span>
+        <span class="supp-desc">Live column controls</span>
+      </a>
+
+      <a href="day-1/responsive-demo.html" class="supp-link">
+        <div class="supp-dot" style="background:#f4b8c5"></div>
+        <span class="supp-name">Responsive Demo</span>
+        <span class="supp-desc">3-card page with media queries</span>
+      </a>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-text">Frontend + AI-Assisted Design — Day 1 of 3</span>
+    <span class="footer-note">Arrow keys or swipe to navigate decks</span>
+  </footer>
+
+</body>
+</html>

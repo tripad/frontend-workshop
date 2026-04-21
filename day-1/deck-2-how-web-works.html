@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How the Web Actually Works — Day 1, Deck 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+
+    /* ===================================================
+       CSS CUSTOM PROPERTIES — Notebook Tabs (locked spec)
+       =================================================== */
+    :root {
+      --bg-outer:       #2a2826;
+      --paper-bg:       #f8f6f1;
+      --paper-edge:     #edeae3;
+      --text-primary:   #1a1a1a;
+      --text-secondary: #555;
+      --text-muted:     #999;
+      --border-color:   #e2ddd6;
+
+      --tab-intro:  #98d4bb;
+      --tab-why:    #c7b8ea;
+      --tab-shift:  #f4b8c5;
+      --tab-plan:   #a8d8ea;
+
+      --accent-lavender: #c7b8ea;
+      --accent-mint:     #98d4bb;
+      --accent-pink:     #f4b8c5;
+      --accent-sky:      #a8d8ea;
+
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --size-xs:   clamp(0.5rem,  0.8vw,  0.72rem);
+      --size-sm:   clamp(0.65rem, 1vw,    0.85rem);
+      --size-base: clamp(0.8rem,  1.4vw,  1.05rem);
+      --size-md:   clamp(1rem,    1.8vw,  1.35rem);
+      --size-lg:   clamp(1.25rem, 2.4vw,  2rem);
+      --size-xl:   clamp(1.8rem,  3.5vw,  3.2rem);
+      --size-2xl:  clamp(2.5rem,  5vw,    5rem);
+      --size-3xl:  clamp(3.5rem,  7vw,    7.5rem);
+      --size-mega: clamp(4.5rem,  9.5vw,  11rem);
+
+      --pad-outer:   clamp(1.5rem, 3vw, 3.5rem);
+      --gap-content: clamp(0.6rem, 1.4vw, 1.4rem);
+      --ease-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out:    cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===================================================
+       RESET
+       =================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===================================================
+       VIEWPORT BASE — mandatory, do not abbreviate
+       =================================================== */
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100%;
+      overflow: hidden;
+      padding: var(--pad-outer);
+    }
+
+    img, .image-container {
+      max-width: 100%;
+      max-height: min(50vh, 400px);
+      object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+      :root {
+        --pad-outer:   clamp(0.75rem, 3vw, 2rem);
+        --gap-content: clamp(0.4rem,  1.5vw, 1rem);
+        --size-2xl:    clamp(1.5rem,  3.5vw, 2.5rem);
+        --size-3xl:    clamp(2rem,    4.5vw, 3.5rem);
+        --size-mega:   clamp(2.5rem,  6vw,   5rem);
+      }
+    }
+    @media (max-height: 600px) {
+      :root {
+        --pad-outer:   clamp(0.5rem, 2.5vw, 1.5rem);
+        --gap-content: clamp(0.3rem, 1vw,   0.75rem);
+        --size-base:   clamp(0.7rem, 1.2vw, 0.95rem);
+      }
+    }
+    @media (max-width: 600px) {
+      :root { --size-3xl: clamp(2rem, 7vw, 3.5rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ===================================================
+       GLOBAL BASE
+       =================================================== */
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    /* ===================================================
+       NOTEBOOK FRAME
+       =================================================== */
+    .slide { background: var(--bg-outer); align-items: center; justify-content: center; }
+
+    .notebook-wrapper {
+      display: flex;
+      width:  clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    /* ===================================================
+       BINDER STRIP
+       =================================================== */
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width:  clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow:
+        inset 0 2px 6px rgba(0,0,0,0.55),
+        inset 0 0 0 1px rgba(0,0,0,0.2),
+        0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    /* ===================================================
+       PAGE AREA
+       =================================================== */
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ===================================================
+       SLIDE FOOTER
+       =================================================== */
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    /* ===================================================
+       TABS RAIL
+       =================================================== */
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro  { background: var(--tab-intro); }
+    .tab-why    { background: var(--tab-why); }
+    .tab-shift  { background: var(--tab-shift); }
+    .tab-plan   { background: var(--tab-plan); }
+
+    /* ===================================================
+       PROGRESS BAR
+       =================================================== */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    /* ===================================================
+       REVEAL ANIMATIONS
+       =================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+    .d6 { transition-delay: 0.54s; }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-28px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.93);
+      transition: opacity 0.75s var(--ease-expo), transform 0.75s var(--ease-expo);
+    }
+    .slide.visible .reveal-scale { opacity: 1; transform: scale(1); }
+
+    /* ===================================================
+       SHARED TYPOGRAPHY
+       =================================================== */
+    .t-display { font-family: var(--font-display); font-weight: 700; line-height: 1.05; letter-spacing: -0.015em; }
+    .t-label   { font-family: var(--font-body); font-size: var(--size-xs); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); }
+    .t-italic  { font-style: italic; }
+
+    /* ===================================================
+       LIVE DEMO BADGE — slides 4, 6
+       =================================================== */
+    .live-badge {
+      position: absolute;
+      top: 0; right: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #c0392b;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: clamp(0.5rem, 0.9vw, 0.7rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35em 0.9em;
+      border-radius: 0 0 0 8px;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #fff;
+      animation: live-pulse 1.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    /* ===================================================
+       CODE BLOCKS — shared across slides 3 and 8
+       =================================================== */
+    .code-block {
+      background: #282c34;
+      border-radius: 8px;
+      padding: clamp(0.9rem, 1.8vh, 1.6rem) clamp(1rem, 2vw, 1.8rem);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .code-block pre {
+      font-family: var(--font-mono);
+      font-size: clamp(0.7rem, 1.2vw, 0.92rem);
+      line-height: 1.7;
+      color: #abb2bf;
+      white-space: pre;
+      overflow: hidden;
+    }
+
+    .syn-tag  { color: #e06c75; }
+    .syn-attr { color: #d19a66; }
+    .syn-val  { color: #98c379; }
+    .syn-txt  { color: #abb2bf; }
+    .syn-dim  { color: #5c6370; }
+    .syn-kw   { color: #c678dd; }
+    .syn-str  { color: #98c379; }
+
+    /* ===================================================
+       SLIDE 01 — Section title, film-card style
+       =================================================== */
+    .slide-01 .page-content {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .s1-deco-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(26,26,26,0.07);
+      pointer-events: none;
+    }
+    .s1-ring-a { width: clamp(10rem, 22vw, 24rem); height: clamp(10rem, 22vw, 24rem); top: -8%; right: 2%; }
+    .s1-ring-b { width: clamp(5rem, 12vw, 13rem);  height: clamp(5rem, 12vw, 13rem);  top: -2%; right: 7%; border-color: rgba(26,26,26,0.11); }
+    .s1-ring-c { width: clamp(7rem, 16vw, 18rem);  height: clamp(7rem, 16vw, 18rem);  bottom: 5%; left: -3%; border-color: rgba(26,26,26,0.05); }
+
+    .s1-eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: clamp(0.8rem, 1.5vh, 1.5rem);
+    }
+
+    .s1-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8.5vw, 10.5rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .s1-accent {
+      position: relative;
+      display: inline;
+    }
+    .s1-accent::after {
+      content: '';
+      position: absolute;
+      bottom: 0.06em; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent-mint);
+      border-radius: 2px;
+    }
+
+    .s1-rule {
+      width: clamp(3rem, 7vw, 8rem);
+      height: 1px;
+      background: var(--text-primary);
+      opacity: 0.15;
+      margin: clamp(1rem, 2vh, 2rem) auto 0;
+    }
+
+    /* ===================================================
+       SLIDE 02 — Three languages
+       =================================================== */
+    .s2-eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.75rem, 1.5vh, 1.4rem);
+    }
+
+    .s2-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: clamp(1rem, 2.5vh, 2.5rem);
+    }
+
+    .s2-langs {
+      display: flex;
+      gap: clamp(0.8rem, 1.8vw, 1.8rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .s2-lang {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: clamp(1.2rem, 2.5vh, 2.5rem) clamp(1rem, 2.5vw, 2rem);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .s2-lang-ext {
+      font-family: var(--font-mono);
+      font-size: var(--size-sm);
+      font-weight: 400;
+      opacity: 0.65;
+      margin-bottom: auto;
+      padding-top: 0.2em;
+    }
+
+    .s2-lang-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 6rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.2em;
+    }
+
+    .s2-lang-role {
+      font-family: var(--font-body);
+      font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+      font-weight: 400;
+      opacity: 0.8;
+      letter-spacing: 0.04em;
+    }
+
+    .s2-lang.html { background: #E34F26; color: #fff; }
+    .s2-lang.css  { background: #2965F1; color: #fff; }
+    .s2-lang.js   { background: #F7DF1E; color: #1a1a1a; }
+
+    .s2-lang-ghost {
+      position: absolute;
+      top: -0.1em; right: 0.05em;
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 11vw, 14rem);
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0.08;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ===================================================
+       SLIDE 03 — What is HTML?
+       =================================================== */
+    .s3-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 0.25em;
+    }
+
+    .s3-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      margin-bottom: clamp(0.8rem, 1.8vh, 1.6rem);
+    }
+
+    .s3-code-note {
+      margin-top: clamp(0.6rem, 1.2vh, 1rem);
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .s3-code-note code {
+      font-family: var(--font-mono);
+      background: var(--paper-edge);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    /* ===================================================
+       SLIDE 04 — Live demo: boilerplate
+       =================================================== */
+    .s4-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s4-big {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.8vw, 4.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    .s4-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      font-family: var(--font-mono);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.1em;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .s4-link:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+
+    .s4-link-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.35em;
+    }
+
+    /* ===================================================
+       SLIDE 05 — The DOM tree
+       =================================================== */
+    .s5-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 0.2em;
+    }
+
+    .s5-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      margin-bottom: clamp(0.8rem, 1.8vh, 1.6rem);
+    }
+
+    .s5-tree {
+      width: 100%;
+      max-height: clamp(140px, 50vh, 380px);
+      height: auto;
+    }
+
+    /* ===================================================
+       SLIDE 06 — See the DOM yourself
+       =================================================== */
+    .s6-content {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.6rem, 1.8vh, 1.8rem);
+    }
+
+    .s6-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    .s6-shortcut {
+      display: inline-block;
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.25em 0.6em;
+      font-family: var(--font-mono);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+    }
+
+    .s6-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .s6-link-row {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      margin-top: clamp(0.5rem, 1.2vh, 1rem);
+    }
+
+    .s6-link-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .demo-link {
+      font-family: var(--font-mono);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border-color);
+      transition: color 0.2s ease;
+    }
+    .demo-link:hover { color: var(--text-primary); }
+
+    /* ===================================================
+       SLIDE 07 — What is CSS?
+       =================================================== */
+    .s7-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 0.2em;
+    }
+
+    .s7-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      margin-bottom: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s7-tiles {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.6rem, 1.5vw, 1.4rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .s7-tile {
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.8rem, 1.5vh, 1.4rem) clamp(0.8rem, 1.5vw, 1.2rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 1vh, 0.9rem);
+      overflow: hidden;
+    }
+
+    .s7-tile-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .s7-tile-demo { flex: 1; display: flex; align-items: center; }
+
+    /* Colors tile */
+    .s7-swatches { display: flex; gap: 5px; align-items: center; }
+    .s7-swatch { width: clamp(18px, 2vw, 28px); height: clamp(18px, 2vw, 28px); border-radius: 4px; }
+
+    /* Spacing tile */
+    .s7-spacing-outer {
+      border: 2px solid #98d4bb;
+      padding: clamp(4px, 0.8vh, 8px);
+      border-radius: 4px;
+      display: inline-flex;
+    }
+    .s7-spacing-inner {
+      background: var(--accent-lavender);
+      width: clamp(20px, 3vw, 36px);
+      height: clamp(14px, 2vh, 22px);
+      border-radius: 3px;
+    }
+
+    /* Fonts tile */
+    .s7-font-stack { display: flex; flex-direction: column; gap: 4px; }
+    .s7-font-a { font-family: var(--font-display); font-size: clamp(0.85rem, 1.5vw, 1.1rem); font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+    .s7-font-b { font-family: var(--font-body);    font-size: clamp(0.7rem, 1.2vw, 0.9rem);  font-weight: 300; color: var(--text-secondary); }
+
+    /* Layout tile */
+    .s7-layout-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .s7-lb { background: var(--accent-sky); border-radius: 3px; height: clamp(10px, 1.5vh, 16px); }
+    .s7-lb.wide { grid-column: span 2; }
+
+    /* ===================================================
+       SLIDE 08 — Before CSS existed
+       =================================================== */
+    .s8-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+    }
+
+    .s8-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-muted);
+      margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
+      font-style: italic;
+    }
+
+    /* ===================================================
+       SLIDE 09 — What is JavaScript?
+       =================================================== */
+    .s9-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 0.2em;
+    }
+
+    .s9-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      margin-bottom: clamp(1rem, 2.5vh, 2.5rem);
+    }
+
+    .s9-rows {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.7rem, 1.8vh, 1.6rem);
+    }
+
+    .s9-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.8rem, 2vw, 1.8rem);
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.7rem, 1.4vh, 1.2rem) clamp(0.9rem, 2vw, 1.6rem);
+    }
+
+    .s9-icon {
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .s9-text {
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .s9-arrow {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--accent-lavender);
+      filter: brightness(0.75);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ===================================================
+       SLIDE 10 — The three together
+       =================================================== */
+    .s10-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(0.6rem, 1.5vh, 1.4rem);
+    }
+
+    .s10-eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .s10-svg-wrap {
+      width: 100%;
+      max-height: clamp(140px, 50vh, 380px);
+    }
+
+    .s10-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2.2vw, 2rem);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    /* ===================================================
+       SLIDE 11 — Frontend vs Backend
+       =================================================== */
+    .s11-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s11-split {
+      display: grid;
+      grid-template-columns: 1fr clamp(1px, 0.2vw, 2px) 1fr;
+      gap: clamp(1rem, 3vw, 3rem);
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .s11-divider {
+      background: var(--border-color);
+      align-self: stretch;
+    }
+
+    .s11-side { display: flex; flex-direction: column; gap: clamp(0.6rem, 1.4vh, 1.2rem); }
+
+    .s11-side-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.35em 0.8em;
+      border-radius: 4px;
+      display: inline-block;
+      align-self: flex-start;
+    }
+
+    .s11-side-label.fe { background: var(--accent-mint);    color: #1a1a1a; }
+    .s11-side-label.be { background: var(--paper-edge); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+    .s11-items { display: flex; flex-direction: column; gap: clamp(0.5rem, 1.2vh, 1rem); }
+
+    .s11-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7em;
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .s11-item-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 0.45em;
+    }
+
+    .s11-item-dot.fe { background: var(--accent-mint); }
+
+    /* ===================================================
+       SLIDE 12 — E-commerce sequence
+       =================================================== */
+    .s12-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+    }
+
+    .s12-diagram {
+      width: 100%;
+      max-height: clamp(160px, 56vh, 420px);
+      height: auto;
+    }
+
+    /* ===================================================
+       SLIDE 13 — What is an API?
+       =================================================== */
+    .s13-content {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s13-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    .s13-chat {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.6rem, 1.4vh, 1.2rem);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .s13-bubble {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+      gap: 0.25em;
+    }
+
+    .s13-bubble.fe { align-self: flex-start; }
+    .s13-bubble.be { align-self: flex-end; }
+
+    .s13-bubble-who {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 0.2em;
+    }
+
+    .s13-bubble-body {
+      border-radius: 10px;
+      padding: clamp(0.6rem, 1.2vh, 1rem) clamp(0.8rem, 1.6vw, 1.4rem);
+      font-family: var(--font-mono);
+      font-size: clamp(0.68rem, 1.1vw, 0.85rem);
+      line-height: 1.55;
+    }
+
+    .s13-bubble.fe .s13-bubble-body {
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-bottom-left-radius: 3px;
+      color: var(--text-primary);
+    }
+
+    .s13-bubble.be .s13-bubble-body {
+      background: #282c34;
+      color: #98c379;
+      border-bottom-right-radius: 3px;
+    }
+
+    .s13-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ===================================================
+       SLIDE 14 — Layouts on the web
+       =================================================== */
+    .s14-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s14-previews {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(0.8rem, 2vw, 2rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .s14-preview {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 1.2vh, 1rem);
+      text-decoration: none;
+    }
+
+    .s14-preview-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .s14-preview-frame {
+      flex: 1;
+      min-height: clamp(80px, 20vh, 160px);
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      padding: clamp(0.5rem, 1vh, 0.8rem);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .s14-preview:hover .s14-preview-frame { border-color: var(--accent-lavender); }
+
+    /* Flex boxes in the preview */
+    .pv-flex { display: flex; gap: 5px; width: 100%; align-items: center; align-self: center; }
+    .pv-box { border-radius: 3px; height: clamp(24px, 4vh, 36px); }
+    .pv-flex .pv-box { flex: 1; }
+
+    /* Grid boxes */
+    .pv-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; width: 100%; align-self: center; }
+    .pv-grid .pv-box { height: clamp(20px, 3.5vh, 30px); }
+
+    /* Stack boxes */
+    .pv-stack { display: flex; flex-direction: column; gap: 5px; width: 100%; align-self: center; }
+    .pv-stack .pv-box { width: 100%; height: clamp(16px, 3vh, 24px); }
+
+    .pv-c1 { background: #E34F26; opacity: 0.75; }
+    .pv-c2 { background: #2965F1; opacity: 0.75; }
+    .pv-c3 { background: #F7DF1E; opacity: 0.75; }
+    .pv-c4 { background: var(--accent-mint); opacity: 0.75; }
+    .pv-c5 { background: var(--accent-pink); opacity: 0.75; }
+    .pv-c6 { background: var(--accent-lavender); opacity: 0.75; }
+
+    .s14-open-link {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .s14-preview:hover .s14-open-link { color: var(--text-secondary); }
+
+    /* ===================================================
+       SLIDE 15 — Responsive design
+       =================================================== */
+    .s15-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.6rem, 1.5vh, 1.2rem);
+    }
+
+    .s15-frames {
+      display: flex;
+      gap: clamp(0.8rem, 2vw, 2rem);
+      flex: 1;
+      min-height: 0;
+      align-items: flex-start;
+    }
+
+    .s15-frame-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      flex: 1;
+    }
+
+    .s15-frame-label {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .s15-browser {
+      border: 1.5px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .s15-chrome {
+      background: var(--paper-edge);
+      border-bottom: 1px solid var(--border-color);
+      padding: 4px 8px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .s15-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .s15-dot:nth-child(1) { background: #ff6057; }
+    .s15-dot:nth-child(2) { background: #ffbd2e; }
+    .s15-dot:nth-child(3) { background: #27c93f; }
+
+    .s15-viewport { padding: clamp(4px, 0.8vh, 8px); }
+
+    /* 1440px viewport — 3 cols */
+    .s15-frame-wrap.full  { flex: 3.2; }
+    .s15-frame-wrap.mid   { flex: 1.8; }
+    .s15-frame-wrap.small { flex: 0.9; }
+
+    .s15-nav-bar {
+      background: var(--accent-lavender);
+      height: 8px;
+      border-radius: 2px;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    .s15-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
+    .s15-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .s15-grid1 { display: grid; grid-template-columns: 1fr; gap: 3px; }
+    .s15-card  { background: var(--paper-edge); border-radius: 2px; height: clamp(18px, 3vh, 28px); }
+
+    .s15-sub {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-secondary);
+      margin-top: clamp(0.5rem, 1.2vh, 1rem);
+    }
+
+    .s15-stat {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .s15-link-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75em;
+      margin-top: clamp(0.4rem, 1vh, 0.8rem);
+    }
+
+    /* ===================================================
+       SLIDE 16 — Colors & Fonts
+       =================================================== */
+    .s16-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s16-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 5vw, 5rem);
+      flex: 1;
+      min-height: 0;
+      align-items: start;
+    }
+
+    .s16-col-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.75rem, 1.5vh, 1.4rem);
+      padding-bottom: 0.5em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .s16-color-rows { display: flex; flex-direction: column; gap: clamp(0.6rem, 1.3vh, 1.1rem); }
+
+    .s16-color-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.6rem, 1.2vw, 1rem);
+    }
+
+    .s16-swatch {
+      width: clamp(24px, 2.5vw, 34px);
+      height: clamp(24px, 2.5vw, 34px);
+      border-radius: 5px;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .s16-color-codes {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .s16-color-val {
+      font-family: var(--font-mono);
+      font-size: clamp(0.62rem, 1.05vw, 0.82rem);
+      color: var(--text-secondary);
+    }
+
+    .s16-fonts { display: flex; flex-direction: column; gap: clamp(0.7rem, 1.5vh, 1.3rem); }
+
+    .s16-font-row { display: flex; flex-direction: column; gap: 3px; }
+
+    .s16-font-name {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .s16-font-sample {
+      font-size: clamp(0.85rem, 1.6vw, 1.2rem);
+      line-height: 1.2;
+    }
+
+    .s16-token-note {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: clamp(0.5rem, 1.2vh, 1rem);
+      padding-top: clamp(0.5rem, 1vh, 0.8rem);
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* ===================================================
+       SLIDE 17 — Limitations
+       =================================================== */
+    .s17-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: clamp(1rem, 2.5vh, 2.5rem);
+    }
+
+    .s17-bullets { display: flex; flex-direction: column; gap: clamp(0.75rem, 1.8vh, 1.6rem); }
+
+    .s17-bullet {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(0.8rem, 1.8vw, 1.5rem);
+    }
+
+    .s17-bullet-arrow {
+      font-family: var(--font-body);
+      font-size: var(--size-md);
+      color: var(--accent-lavender);
+      filter: brightness(0.75);
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .s17-bullet-text {
+      font-family: var(--font-body);
+      font-size: clamp(0.9rem, 1.7vw, 1.2rem);
+      color: var(--text-primary);
+      line-height: 1.4;
+      font-weight: 400;
+    }
+
+    .s17-bullet-text em {
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ===================================================
+       SLIDE 18 — Recap
+       =================================================== */
+    .s18-heading {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-bottom: clamp(0.8rem, 2vh, 2rem);
+    }
+
+    .s18-checks { display: flex; flex-direction: column; gap: clamp(0.55rem, 1.3vh, 1.1rem); margin-bottom: clamp(1rem, 2.5vh, 2.5rem); }
+
+    .s18-check {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.7rem, 1.5vw, 1.2rem);
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+      color: var(--text-secondary);
+    }
+
+    .s18-checkmark {
+      width: clamp(1.1rem, 2vw, 1.5rem);
+      height: clamp(1.1rem, 2vw, 1.5rem);
+      background: var(--accent-mint);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: clamp(0.55rem, 1vw, 0.75rem);
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+
+    .s18-cta {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.8vw, 4.5rem);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.05;
+    }
+
+    .s18-cta-accent {
+      position: relative;
+      display: inline;
+    }
+    .s18-cta-accent::after {
+      content: '';
+      position: absolute;
+      bottom: 0.06em; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent-mint);
+      border-radius: 2px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <!-- =============================================
+       SLIDE 01 — Section title
+       Section: HTML (mint)
+       ============================================= -->
+  <section class="slide slide-01" id="slide-1" aria-label="How the Web Actually Works — section title">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="s1-deco-ring s1-ring-a" aria-hidden="true"></div>
+            <div class="s1-deco-ring s1-ring-b" aria-hidden="true"></div>
+            <div class="s1-deco-ring s1-ring-c" aria-hidden="true"></div>
+
+            <p class="s1-eyebrow reveal d1">Day 1 · Deck 2</p>
+            <h1 class="s1-title reveal d2">
+              How the Web<br>
+              <span class="s1-accent">Actually</span> Works
+            </h1>
+            <div class="s1-rule reveal d3"></div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">01 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 02 — The three languages
+       Section: HTML
+       ============================================= -->
+  <section class="slide" id="slide-2" aria-label="Every website uses three languages: HTML, CSS, JavaScript">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <p class="s2-eyebrow reveal d1">The foundation</p>
+            <h2 class="s2-heading reveal d2">Every website, every app,<br>on every device, uses three languages.</h2>
+            <div class="s2-langs">
+              <div class="s2-lang html reveal d3">
+                <span class="s2-lang-ghost" aria-hidden="true">H</span>
+                <span class="s2-lang-ext">.html</span>
+                <p class="s2-lang-name">HTML</p>
+                <p class="s2-lang-role">structure</p>
+              </div>
+              <div class="s2-lang css reveal d4">
+                <span class="s2-lang-ghost" aria-hidden="true">C</span>
+                <span class="s2-lang-ext">.css</span>
+                <p class="s2-lang-name">CSS</p>
+                <p class="s2-lang-role">appearance</p>
+              </div>
+              <div class="s2-lang js reveal d5">
+                <span class="s2-lang-ghost" aria-hidden="true">J</span>
+                <span class="s2-lang-ext">.js</span>
+                <p class="s2-lang-name">JS</p>
+                <p class="s2-lang-role">behavior</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">02 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 03 — What is HTML?
+       Section: HTML
+       ============================================= -->
+  <section class="slide" id="slide-3" aria-label="HTML is the skeleton — labeled boxes nested inside boxes">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s3-heading reveal d1">HTML = the skeleton.</h2>
+            <p class="s3-sub reveal d2">It's just labeled boxes, nested inside other boxes.</p>
+
+            <div class="code-block reveal d3">
+              <pre><code><span class="syn-tag">&lt;header&gt;</span>
+  <span class="syn-tag">&lt;h1&gt;</span><span class="syn-txt">Hello</span><span class="syn-tag">&lt;/h1&gt;</span>
+<span class="syn-tag">&lt;/header&gt;</span>
+<span class="syn-tag">&lt;main&gt;</span>
+  <span class="syn-tag">&lt;p&gt;</span><span class="syn-txt">This is a page.</span><span class="syn-tag">&lt;/p&gt;</span>
+  <span class="syn-tag">&lt;button&gt;</span><span class="syn-txt">Click me</span><span class="syn-tag">&lt;/button&gt;</span>
+<span class="syn-tag">&lt;/main&gt;</span></code></pre>
+            </div>
+
+            <p class="s3-code-note reveal d4">
+              <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;img&gt;</code> — these are called <strong>elements</strong> or <strong>tags.</strong>
+            </p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">03 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 04 — Let's make one live
+       Section: HTML
+       ============================================= -->
+  <section class="slide" id="slide-4" aria-label="Live demo — generate a boilerplate HTML file">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="live-badge" aria-label="Live demo">
+              <span class="live-dot"></span>
+              <span>Live</span>
+            </div>
+
+            <div class="s4-content">
+              <p class="t-label reveal d1">Demo</p>
+              <h2 class="s4-big reveal d2">
+                We're going to generate a boilerplate<br>HTML file and open it in the browser.
+              </h2>
+
+              <div class="reveal d3">
+                <p class="s4-link-label">Reference file</p>
+                <a href="boilerplate.html" class="s4-link" target="_blank">boilerplate.html ↗</a>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">04 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 05 — The DOM
+       Section: CSS
+       ============================================= -->
+  <section class="slide" id="slide-5" aria-label="DOM — Document Object Model, the tree the browser renders">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s5-heading reveal d1">DOM = Document Object Model</h2>
+            <p class="s5-sub reveal d2">Fancy name. Simple idea. It's the tree of boxes the browser actually renders.</p>
+
+            <svg class="s5-tree reveal d3" viewBox="0 0 760 310" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="DOM tree diagram showing html, head, body, header, main, footer, h1, p">
+              <!-- Connector lines -->
+              <line x1="380" y1="34" x2="160" y2="96" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="380" y1="34" x2="550" y2="96" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="550" y1="124" x2="370" y2="196" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="550" y1="124" x2="550" y2="196" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="550" y1="124" x2="690" y2="196" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="550" y1="224" x2="480" y2="278" stroke="#e2ddd6" stroke-width="1.5"/>
+              <line x1="550" y1="224" x2="620" y2="278" stroke="#e2ddd6" stroke-width="1.5"/>
+
+              <!-- html -->
+              <rect x="325" y="6" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#c7b8ea" stroke-width="1.5"/>
+              <text x="380" y="24" font-family="JetBrains Mono, monospace" font-size="12" fill="#1a1a1a" text-anchor="middle">&lt;html&gt;</text>
+
+              <!-- head -->
+              <rect x="105" y="96" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#e2ddd6" stroke-width="1.5"/>
+              <text x="160" y="114" font-family="JetBrains Mono, monospace" font-size="12" fill="#555" text-anchor="middle">&lt;head&gt;</text>
+
+              <!-- body -->
+              <rect x="495" y="96" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#c7b8ea" stroke-width="1.5"/>
+              <text x="550" y="114" font-family="JetBrains Mono, monospace" font-size="12" fill="#1a1a1a" text-anchor="middle">&lt;body&gt;</text>
+
+              <!-- header -->
+              <rect x="315" y="196" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#e2ddd6" stroke-width="1.5"/>
+              <text x="370" y="214" font-family="JetBrains Mono, monospace" font-size="12" fill="#555" text-anchor="middle">&lt;header&gt;</text>
+
+              <!-- main -->
+              <rect x="495" y="196" width="110" height="28" rx="6" fill="#ddd4f5" stroke="#c7b8ea" stroke-width="1.5"/>
+              <text x="550" y="214" font-family="JetBrains Mono, monospace" font-size="12" fill="#1a1a1a" text-anchor="middle">&lt;main&gt;</text>
+
+              <!-- footer -->
+              <rect x="635" y="196" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#e2ddd6" stroke-width="1.5"/>
+              <text x="690" y="214" font-family="JetBrains Mono, monospace" font-size="12" fill="#555" text-anchor="middle">&lt;footer&gt;</text>
+
+              <!-- h1 -->
+              <rect x="425" y="278" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#e2ddd6" stroke-width="1.5"/>
+              <text x="480" y="296" font-family="JetBrains Mono, monospace" font-size="12" fill="#555" text-anchor="middle">&lt;h1&gt;</text>
+
+              <!-- p -->
+              <rect x="565" y="278" width="110" height="28" rx="6" fill="#f8f6f1" stroke="#e2ddd6" stroke-width="1.5"/>
+              <text x="620" y="296" font-family="JetBrains Mono, monospace" font-size="12" fill="#555" text-anchor="middle">&lt;p&gt;</text>
+            </svg>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">05 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why active">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 06 — See the DOM yourself
+       Section: CSS
+       ============================================= -->
+  <section class="slide" id="slide-6" aria-label="Inspect tool — right-click to see the DOM">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="live-badge" aria-label="Live demo">
+              <span class="live-dot"></span>
+              <span>Live</span>
+            </div>
+
+            <div class="s6-content">
+              <p class="t-label reveal d1">Devtools</p>
+              <h2 class="s6-heading reveal d2">
+                <span class="s6-shortcut">Right-click → Inspect</span><br>
+                That's your new X-ray vision.
+              </h2>
+              <p class="s6-sub reveal d3">Every website you've ever loved — you can see its skeleton right now.</p>
+              <div class="s6-link-row reveal d4">
+                <span class="s6-link-label">Try it on:</span>
+                <a href="dom-tree-demo.html" class="demo-link" target="_blank">dom-tree-demo.html ↗</a>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">06 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why active">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 07 — What is CSS?
+       Section: CSS
+       ============================================= -->
+  <section class="slide" id="slide-7" aria-label="CSS is the clothes — colors, spacing, fonts, layouts">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s7-heading reveal d1">CSS = the clothes.</h2>
+            <p class="s7-sub reveal d2">HTML gives you boxes. CSS makes them look like something.</p>
+
+            <div class="s7-tiles">
+              <div class="s7-tile reveal d3">
+                <span class="s7-tile-label">Colors</span>
+                <div class="s7-tile-demo">
+                  <div class="s7-swatches">
+                    <div class="s7-swatch" style="background:#E34F26"></div>
+                    <div class="s7-swatch" style="background:#2965F1"></div>
+                    <div class="s7-swatch" style="background:#F7DF1E"></div>
+                    <div class="s7-swatch" style="background:#98d4bb"></div>
+                    <div class="s7-swatch" style="background:#c7b8ea"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="s7-tile reveal d4">
+                <span class="s7-tile-label">Spacing</span>
+                <div class="s7-tile-demo">
+                  <div class="s7-spacing-outer">
+                    <div class="s7-spacing-inner"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="s7-tile reveal d5">
+                <span class="s7-tile-label">Fonts</span>
+                <div class="s7-tile-demo">
+                  <div class="s7-font-stack">
+                    <span class="s7-font-a">Bodoni Moda</span>
+                    <span class="s7-font-b">DM Sans light</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="s7-tile reveal d6">
+                <span class="s7-tile-label">Layouts</span>
+                <div class="s7-tile-demo">
+                  <div class="s7-layout-boxes">
+                    <div class="s7-lb wide" style="background:var(--accent-sky);opacity:0.7;height:clamp(8px,1.5vh,14px)"></div>
+                    <div class="s7-lb" style="background:var(--accent-lavender);opacity:0.7"></div>
+                    <div class="s7-lb" style="background:var(--accent-pink);opacity:0.7"></div>
+                    <div class="s7-lb wide" style="background:var(--paper-edge);border:1px solid var(--border-color);height:clamp(8px,1.5vh,14px)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">07 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why active">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 08 — Before CSS existed
+       Section: CSS
+       ============================================= -->
+  <section class="slide" id="slide-8" aria-label="This is what the web looked like in 1996">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s8-heading reveal d1">This is what the web looked like in 1996.</h2>
+
+            <div class="code-block reveal d2">
+              <pre><code><span class="syn-tag">&lt;font</span> <span class="syn-attr">color</span>=<span class="syn-val">"red"</span> <span class="syn-attr">size</span>=<span class="syn-val">"5"</span><span class="syn-tag">&gt;</span><span class="syn-txt">Welcome!</span><span class="syn-tag">&lt;/font&gt;</span>
+<span class="syn-tag">&lt;table</span> <span class="syn-attr">border</span>=<span class="syn-val">"1"</span> <span class="syn-attr">bgcolor</span>=<span class="syn-val">"#FFFF00"</span><span class="syn-tag">&gt;</span>
+  <span class="syn-tag">&lt;tr&gt;&lt;td&gt;&lt;b&gt;</span><span class="syn-txt">Click here</span><span class="syn-tag">&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="syn-tag">&lt;/table&gt;</span></code></pre>
+            </div>
+
+            <p class="s8-sub reveal d3">CSS was invented because mixing content and style like this doesn't scale.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">08 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why active">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 09 — What is JavaScript?
+       Section: CSS
+       ============================================= -->
+  <section class="slide" id="slide-9" aria-label="JavaScript is behavior — what makes things respond">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s9-heading reveal d1">JS = the behavior.</h2>
+            <p class="s9-sub reveal d2">HTML is static. CSS is mostly static. JavaScript is what makes things respond.</p>
+
+            <div class="s9-rows">
+              <div class="s9-row reveal d3">
+                <span class="s9-icon">🖱️</span>
+                <span class="s9-text">Click this button</span>
+                <span class="s9-arrow">→</span>
+                <span class="s9-text">something happens</span>
+              </div>
+              <div class="s9-row reveal d4">
+                <span class="s9-icon">📥</span>
+                <span class="s9-text">Load more posts without refreshing the page</span>
+              </div>
+              <div class="s9-row reveal d5">
+                <span class="s9-icon">🔎</span>
+                <span class="s9-text">Autocomplete as you type</span>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">09 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why active">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 10 — The three together
+       Section: The System
+       ============================================= -->
+  <section class="slide" id="slide-10" aria-label="HTML + CSS + JS combined make every webpage">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content s10-content">
+            <p class="s10-eyebrow reveal d1">Put it together</p>
+
+            <svg class="s10-svg-wrap reveal d2" viewBox="0 0 560 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Three stacked layers: HTML structure, CSS appearance, JS behavior">
+              <!-- HTML — bottom layer -->
+              <rect x="80" y="135" width="400" height="90" rx="8" fill="#f4b8c5" fill-opacity="0.55" stroke="#f4b8c5" stroke-width="1.5"/>
+              <text x="140" y="189" font-family="JetBrains Mono, monospace" font-size="13" fill="#1a1a1a" font-weight="500">HTML</text>
+              <text x="218" y="189" font-family="DM Sans, sans-serif" font-size="13" fill="#555">— structure</text>
+
+              <!-- CSS — middle layer -->
+              <rect x="54" y="78" width="400" height="90" rx="8" fill="#c7b8ea" fill-opacity="0.55" stroke="#c7b8ea" stroke-width="1.5"/>
+              <text x="114" y="132" font-family="JetBrains Mono, monospace" font-size="13" fill="#1a1a1a" font-weight="500">CSS</text>
+              <text x="186" y="132" font-family="DM Sans, sans-serif" font-size="13" fill="#555">— appearance</text>
+
+              <!-- JS — top layer -->
+              <rect x="28" y="20" width="400" height="90" rx="8" fill="#98d4bb" fill-opacity="0.65" stroke="#98d4bb" stroke-width="1.5"/>
+              <text x="88" y="74" font-family="JetBrains Mono, monospace" font-size="13" fill="#1a1a1a" font-weight="500">JS</text>
+              <text x="117" y="74" font-family="DM Sans, sans-serif" font-size="13" fill="#555">— behavior</text>
+            </svg>
+
+            <p class="s10-tagline reveal d3">= Every webpage. Every app. Ever.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">10 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift active">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 11 — Frontend vs Backend
+       Section: The System
+       ============================================= -->
+  <section class="slide" id="slide-11" aria-label="Frontend versus backend — what you see vs what you don't">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s11-heading reveal d1">Frontend vs. Backend</h2>
+
+            <div class="s11-split reveal d2">
+              <div class="s11-side">
+                <span class="s11-side-label fe">Frontend</span>
+                <div class="s11-items">
+                  <div class="s11-item">
+                    <div class="s11-item-dot fe"></div>
+                    <span>What you see</span>
+                  </div>
+                  <div class="s11-item">
+                    <div class="s11-item-dot fe"></div>
+                    <span>Runs in the browser</span>
+                  </div>
+                  <div class="s11-item">
+                    <div class="s11-item-dot fe"></div>
+                    <span>HTML, CSS, JS</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="s11-divider" aria-hidden="true"></div>
+
+              <div class="s11-side">
+                <span class="s11-side-label be">Backend</span>
+                <div class="s11-items">
+                  <div class="s11-item">
+                    <div class="s11-item-dot"></div>
+                    <span>What you don't see</span>
+                  </div>
+                  <div class="s11-item">
+                    <div class="s11-item-dot"></div>
+                    <span>Runs on a server</span>
+                  </div>
+                  <div class="s11-item">
+                    <div class="s11-item-dot"></div>
+                    <span>Databases, APIs, logic</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">11 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift active">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 12 — The e-commerce example
+       Section: The System
+       ============================================= -->
+  <section class="slide" id="slide-12" aria-label="You open amazon.com — sequence of events">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s12-heading reveal d1">You open amazon.com...</h2>
+
+            <svg class="s12-diagram reveal d2" viewBox="0 0 740 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Sequence diagram: user opens amazon.com, searches headphones, frontend requests backend, backend queries database, results return to frontend">
+
+              <!-- Participant headers -->
+              <rect x="8"   y="8" width="100" height="30" rx="5" fill="#edeae3" stroke="#e2ddd6" stroke-width="1"/>
+              <text x="58"  y="27" font-family="DM Sans, sans-serif" font-size="11" fill="#555" text-anchor="middle" font-weight="600">You</text>
+
+              <rect x="178" y="8" width="120" height="30" rx="5" fill="#ddd4f5" stroke="#c7b8ea" stroke-width="1"/>
+              <text x="238" y="27" font-family="DM Sans, sans-serif" font-size="11" fill="#1a1a1a" text-anchor="middle" font-weight="600">Frontend</text>
+
+              <rect x="388" y="8" width="120" height="30" rx="5" fill="#fce8eb" stroke="#f4b8c5" stroke-width="1"/>
+              <text x="448" y="27" font-family="DM Sans, sans-serif" font-size="11" fill="#1a1a1a" text-anchor="middle" font-weight="600">Backend</text>
+
+              <rect x="598" y="8" width="120" height="30" rx="5" fill="#d8eef5" stroke="#a8d8ea" stroke-width="1"/>
+              <text x="658" y="27" font-family="DM Sans, sans-serif" font-size="11" fill="#1a1a1a" text-anchor="middle" font-weight="600">Database</text>
+
+              <!-- Lifelines -->
+              <line x1="58"  y1="38" x2="58"  y2="318" stroke="#e2ddd6" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="238" y1="38" x2="238" y2="318" stroke="#c7b8ea" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="448" y1="38" x2="448" y2="318" stroke="#f4b8c5" stroke-width="1" stroke-dasharray="4,4"/>
+              <line x1="658" y1="38" x2="658" y2="318" stroke="#a8d8ea" stroke-width="1" stroke-dasharray="4,4"/>
+
+              <!-- Step 1: You → Frontend: opens amazon.com -->
+              <line x1="62"  y1="72" x2="234" y2="72" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+              <text x="148" y="66" font-family="DM Sans, sans-serif" font-size="10" fill="#555" text-anchor="middle">opens amazon.com</text>
+
+              <!-- Step 2: Frontend → You: homepage loads -->
+              <line x1="234" y1="96" x2="62"  y2="96" stroke="#c7b8ea" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrd)"/>
+              <text x="148" y="110" font-family="DM Sans, sans-serif" font-size="10" fill="#999" text-anchor="middle">homepage loads</text>
+
+              <!-- Step 3: You → Frontend: searches headphones -->
+              <line x1="62"  y1="138" x2="234" y2="138" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+              <text x="148" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#555" text-anchor="middle">searches "headphones"</text>
+
+              <!-- Step 4: Frontend → Backend: API request -->
+              <line x1="242" y1="165" x2="444" y2="165" stroke="#1a1a1a" stroke-width="1.5" marker-end="url(#arr2)"/>
+              <text x="344" y="159" font-family="DM Sans, sans-serif" font-size="10" fill="#555" text-anchor="middle">got any headphones?</text>
+
+              <!-- Step 5: Backend → Database: query -->
+              <line x1="452" y1="192" x2="654" y2="192" stroke="#1a1a1a" stroke-width="1.5" marker-end="url(#arr2)"/>
+              <text x="554" y="186" font-family="DM Sans, sans-serif" font-size="10" fill="#555" text-anchor="middle">SQL query</text>
+
+              <!-- Step 6: Database → Backend: results -->
+              <line x1="654" y1="218" x2="452" y2="218" stroke="#a8d8ea" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrd2)"/>
+              <text x="554" y="232" font-family="DM Sans, sans-serif" font-size="10" fill="#999" text-anchor="middle">10,000 results</text>
+
+              <!-- Step 7: Backend → Frontend: JSON response -->
+              <line x1="444" y1="260" x2="242" y2="260" stroke="#f4b8c5" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrd3)"/>
+              <text x="344" y="274" font-family="DM Sans, sans-serif" font-size="10" fill="#999" text-anchor="middle">JSON response</text>
+
+              <!-- Step 8: Frontend → You: displays -->
+              <line x1="234" y1="296" x2="62"  y2="296" stroke="#c7b8ea" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrd)"/>
+              <text x="148" y="310" font-family="DM Sans, sans-serif" font-size="10" fill="#999" text-anchor="middle">displays results</text>
+
+              <!-- Arrow markers -->
+              <defs>
+                <marker id="arr"   markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0,8 3,0 6" fill="#555"/>
+                </marker>
+                <marker id="arr2"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0,8 3,0 6" fill="#1a1a1a"/>
+                </marker>
+                <marker id="arrd"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0,8 3,0 6" fill="#c7b8ea"/>
+                </marker>
+                <marker id="arrd2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0,8 3,0 6" fill="#a8d8ea"/>
+                </marker>
+                <marker id="arrd3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0,8 3,0 6" fill="#f4b8c5"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">12 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift active">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 13 — What is an API?
+       Section: The System
+       ============================================= -->
+  <section class="slide" id="slide-13" aria-label="API is the menu between frontend and backend">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="s13-content">
+              <h2 class="s13-heading reveal d1">API = the menu between frontend and backend.</h2>
+
+              <div class="s13-chat">
+                <div class="s13-bubble fe reveal d2">
+                  <span class="s13-bubble-who">Frontend</span>
+                  <div class="s13-bubble-body">
+                    "Hey backend, give me the 10 latest orders."
+                  </div>
+                </div>
+
+                <div class="s13-bubble be reveal d3">
+                  <span class="s13-bubble-who" style="text-align:right">Backend</span>
+                  <div class="s13-bubble-body">
+                    { "orders": [ { "id": 1, "item": "headphones" }, { "id": 2, "item": "cable" }, ... ] }
+                  </div>
+                </div>
+              </div>
+
+              <p class="s13-sub reveal d4">That handshake, standardized, is an API.</p>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">13 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift active">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 14 — Layouts on the web
+       Section: The System
+       ============================================= -->
+  <section class="slide" id="slide-14" aria-label="Two layout systems do 95% of web layout: Flexbox and Grid">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s14-heading reveal d1">Two systems do 95% of layout on the web.</h2>
+
+            <div class="s14-previews">
+              <a href="wireframe-flexbox.html" class="s14-preview reveal d2" target="_blank">
+                <span class="s14-preview-label">Flexbox — one direction</span>
+                <div class="s14-preview-frame">
+                  <div class="pv-flex">
+                    <div class="pv-box pv-c1"></div>
+                    <div class="pv-box pv-c2"></div>
+                    <div class="pv-box pv-c3"></div>
+                    <div class="pv-box pv-c4"></div>
+                    <div class="pv-box pv-c5"></div>
+                  </div>
+                </div>
+                <span class="s14-open-link">↗ Open in browser</span>
+              </a>
+
+              <a href="wireframe-grid.html" class="s14-preview reveal d3" target="_blank">
+                <span class="s14-preview-label">Grid — two directions</span>
+                <div class="s14-preview-frame">
+                  <div class="pv-grid">
+                    <div class="pv-box pv-c1"></div>
+                    <div class="pv-box pv-c2"></div>
+                    <div class="pv-box pv-c3"></div>
+                    <div class="pv-box pv-c4"></div>
+                    <div class="pv-box pv-c5"></div>
+                    <div class="pv-box pv-c6"></div>
+                  </div>
+                </div>
+                <span class="s14-open-link">↗ Open in browser</span>
+              </a>
+
+              <a href="wireframe-stacked.html" class="s14-preview reveal d4" target="_blank">
+                <span class="s14-preview-label">Normal flow — stacked</span>
+                <div class="s14-preview-frame">
+                  <div class="pv-stack">
+                    <div class="pv-box pv-c1"></div>
+                    <div class="pv-box pv-c2"></div>
+                    <div class="pv-box pv-c3"></div>
+                    <div class="pv-box pv-c4"></div>
+                  </div>
+                </div>
+                <span class="s14-open-link">↗ Open in browser</span>
+              </a>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">14 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift active">The System</div>
+        <div class="tab tab-plan">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 15 — Responsive design
+       Section: In Practice
+       ============================================= -->
+  <section class="slide" id="slide-15" aria-label="Responsive design — same layout at every width">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s15-heading reveal d1">Your design needs to work at every width.</h2>
+
+            <div class="s15-frames reveal d2">
+              <!-- 1440px — 3 cols -->
+              <div class="s15-frame-wrap full">
+                <div class="s15-browser">
+                  <div class="s15-chrome">
+                    <div class="s15-dot"></div><div class="s15-dot"></div><div class="s15-dot"></div>
+                  </div>
+                  <div class="s15-viewport">
+                    <div class="s15-nav-bar"></div>
+                    <div class="s15-grid3">
+                      <div class="s15-card"></div>
+                      <div class="s15-card"></div>
+                      <div class="s15-card"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="s15-frame-label">1440px</span>
+              </div>
+
+              <!-- 768px — 2 cols -->
+              <div class="s15-frame-wrap mid">
+                <div class="s15-browser">
+                  <div class="s15-chrome">
+                    <div class="s15-dot"></div><div class="s15-dot"></div><div class="s15-dot"></div>
+                  </div>
+                  <div class="s15-viewport">
+                    <div class="s15-nav-bar"></div>
+                    <div class="s15-grid2">
+                      <div class="s15-card"></div>
+                      <div class="s15-card"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="s15-frame-label">768px</span>
+              </div>
+
+              <!-- 375px — 1 col, nav stacked -->
+              <div class="s15-frame-wrap small">
+                <div class="s15-browser">
+                  <div class="s15-chrome">
+                    <div class="s15-dot"></div><div class="s15-dot"></div><div class="s15-dot"></div>
+                  </div>
+                  <div class="s15-viewport">
+                    <div style="background:var(--accent-lavender);height:5px;border-radius:2px;margin-bottom:4px;opacity:0.5"></div>
+                    <div style="background:var(--paper-edge);height:4px;border-radius:1px;margin-bottom:4px;border:1px solid var(--border-color)"></div>
+                    <div style="background:var(--paper-edge);height:4px;border-radius:1px;margin-bottom:4px;border:1px solid var(--border-color)"></div>
+                    <div class="s15-grid1">
+                      <div class="s15-card"></div>
+                      <div class="s15-card" style="height:clamp(14px,2vh,22px)"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="s15-frame-label">375px</span>
+              </div>
+            </div>
+
+            <p class="s15-sub reveal d3">Mobile-first is not a trend. It's reality. <span class="s15-stat">70%+ of traffic is on phones.</span></p>
+            <div class="s15-link-row reveal d4">
+              <span class="s6-link-label">See it live:</span>
+              <a href="responsive-demo.html" class="demo-link" target="_blank">responsive-demo.html ↗</a>
+              <span class="s15-stat">— resize your browser window</span>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">15 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan active">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 16 — Colors & Fonts
+       Section: In Practice
+       ============================================= -->
+  <section class="slide" id="slide-16" aria-label="Colors are codes, fonts are downloads — design tokens">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s16-heading reveal d1">On the web...</h2>
+
+            <div class="s16-cols">
+              <div class="reveal d2">
+                <p class="s16-col-label">Colors are codes</p>
+                <div class="s16-color-rows">
+                  <div class="s16-color-row">
+                    <div class="s16-swatch" style="background:#FF6B35"></div>
+                    <div class="s16-color-codes">
+                      <span class="s16-color-val">#FF6B35</span>
+                      <span class="s16-color-val">rgb(255, 107, 53)</span>
+                      <span class="s16-color-val">hsl(20, 100%, 60%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="reveal d3">
+                <p class="s16-col-label">Fonts are downloads</p>
+                <div class="s16-fonts">
+                  <div class="s16-font-row">
+                    <span class="s16-font-name">Inter — Google Fonts</span>
+                    <span class="s16-font-sample" style="font-family:'DM Sans',sans-serif;font-weight:400">The quick brown fox</span>
+                  </div>
+                  <div class="s16-font-row">
+                    <span class="s16-font-name">Instrument Serif — Google Fonts</span>
+                    <span class="s16-font-sample" style="font-family:'Bodoni Moda',Georgia,serif;font-style:italic">The quick brown fox</span>
+                  </div>
+                  <div class="s16-font-row">
+                    <span class="s16-font-name">System UI — free, built-in</span>
+                    <span class="s16-font-sample" style="font-family:system-ui,sans-serif">The quick brown fox</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="s16-token-note reveal d4">Both live in design tokens. We'll pick this up on Day 2.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">16 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan active">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 17 — Limitations of the web
+       Section: In Practice
+       ============================================= -->
+  <section class="slide" id="slide-17" aria-label="The web is powerful but has real constraints">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s17-heading reveal d1">The web is powerful, but:</h2>
+
+            <div class="s17-bullets">
+              <div class="s17-bullet reveal d2">
+                <span class="s17-bullet-arrow">→</span>
+                <span class="s17-bullet-text">Hardware access is limited — you can't do everything a native app can</span>
+              </div>
+              <div class="s17-bullet reveal d3">
+                <span class="s17-bullet-arrow">→</span>
+                <span class="s17-bullet-text">Every user has a different screen, browser, and connection speed</span>
+              </div>
+              <div class="s17-bullet reveal d4">
+                <span class="s17-bullet-arrow">→</span>
+                <span class="s17-bullet-text"><em>Performance is always a constraint.</em> Slow sites lose users fast</span>
+              </div>
+              <div class="s17-bullet reveal d5">
+                <span class="s17-bullet-arrow">→</span>
+                <span class="s17-bullet-text"><em>Accessibility is a legal requirement</em> in many countries — not optional</span>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">17 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan active">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SLIDE 18 — Section recap
+       Section: In Practice
+       ============================================= -->
+  <section class="slide" id="slide-18" aria-label="Recap — what you now know">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <h2 class="s18-heading reveal d1">You now know:</h2>
+
+            <div class="s18-checks">
+              <div class="s18-check reveal d2">
+                <div class="s18-checkmark">✓</div>
+                <span>The 3 languages of the web</span>
+              </div>
+              <div class="s18-check reveal d3">
+                <div class="s18-checkmark">✓</div>
+                <span>DOM, devtools — you can inspect any website</span>
+              </div>
+              <div class="s18-check reveal d4">
+                <div class="s18-checkmark">✓</div>
+                <span>Frontend vs. backend, what APIs are</span>
+              </div>
+              <div class="s18-check reveal d5">
+                <div class="s18-checkmark">✓</div>
+                <span>Layouts, responsive, the real constraints</span>
+              </div>
+            </div>
+
+            <p class="s18-cta reveal d6">Next: let's <span class="s18-cta-accent">build</span> something.</p>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · How the Web Works</span>
+            <span class="footer-num">18 / 18</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">HTML</div>
+        <div class="tab tab-why">CSS</div>
+        <div class="tab tab-shift">The System</div>
+        <div class="tab tab-plan active">In Practice</div>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides      = Array.from(document.querySelectorAll('.slide'));
+        this.total       = this.slides.length;
+        this.current     = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progress-bar');
+
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+
+        // First slide visible immediately
+        this.slides[0].classList.add('visible');
+        this.updateProgress(0);
+      }
+
+      initObserver() {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+
+        this.slides.forEach(slide => observer.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total) return;
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', e => {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          switch (e.key) {
+            case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+              e.preventDefault(); this.next(); break;
+            case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+              e.preventDefault(); this.prev(); break;
+            case 'Home': e.preventDefault(); this.goto(0); break;
+            case 'End':  e.preventDefault(); this.goto(this.total - 1); break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', e => {
+          e.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          if (e.deltaY > 0) this.next();
+          else if (e.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', e => {
+          startY = e.touches[0].clientY;
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+          const dy = startY - e.changedTouches[0].clientY;
+          const dx = startX - e.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+
+</body>
+</html>
