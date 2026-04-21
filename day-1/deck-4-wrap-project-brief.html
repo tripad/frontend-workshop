@@ -709,6 +709,72 @@
       text-align: center;
     }
 
+    /* ==============================================
+       SLIDE 8 — RESOURCE LINKS
+       ============================================== */
+
+    .resource-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.65rem, 1.3vw, 1.2rem);
+    }
+
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.8rem, 1.5vw, 1.4rem);
+      padding: clamp(0.8rem, 1.6vw, 1.4rem) clamp(1rem, 2vw, 1.8rem);
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .resource-item:hover {
+      background: white;
+      border-color: #ccc;
+      transform: translateX(3px);
+    }
+
+    .resource-badge {
+      flex-shrink: 0;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.2em 0.55em;
+      border-radius: 4px;
+      min-width: 4.5em;
+      text-align: center;
+    }
+
+    .resource-badge.yt   { background: #ffe8e8; color: #c0392b; }
+    .resource-badge.read { background: #e8f0fe; color: #2c5282; }
+
+    .resource-url {
+      font-family: var(--font-body);
+      font-size: clamp(0.7rem, 1.1vw, 0.88rem);
+      color: var(--text-secondary);
+      word-break: break-all;
+      flex: 1;
+      line-height: 1.35;
+    }
+
+    .resource-arrow {
+      flex-shrink: 0;
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      transition: transform 0.18s ease, color 0.18s ease;
+    }
+
+    .resource-item:hover .resource-arrow {
+      transform: translateX(3px);
+      color: var(--text-primary);
+    }
+
   </style>
 </head>
 
@@ -758,7 +824,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">01 / 07</span>
+            <span class="footer-num">01 / 08</span>
           </footer>
         </div>
       </div>
@@ -840,7 +906,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">02 / 07</span>
+            <span class="footer-num">02 / 08</span>
           </footer>
         </div>
       </div>
@@ -922,7 +988,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">03 / 07</span>
+            <span class="footer-num">03 / 08</span>
           </footer>
         </div>
       </div>
@@ -983,7 +1049,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">04 / 07</span>
+            <span class="footer-num">04 / 08</span>
           </footer>
         </div>
       </div>
@@ -1040,7 +1106,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">05 / 07</span>
+            <span class="footer-num">05 / 08</span>
           </footer>
         </div>
       </div>
@@ -1099,7 +1165,7 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">06 / 07</span>
+            <span class="footer-num">06 / 08</span>
           </footer>
         </div>
       </div>
@@ -1174,7 +1240,68 @@
           </div>
           <footer class="slide-footer">
             <span class="footer-section">Day 1 · Wrap</span>
-            <span class="footer-num">07 / 07</span>
+            <span class="footer-num">07 / 08</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Today</div>
+        <div class="tab tab-why">Brief</div>
+        <div class="tab tab-shift">Homework</div>
+        <div class="tab tab-plan active">Day 2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 8 — Resources / further reading
+       Tab: Day 2 (sky) | active
+       ============================================================ -->
+  <section class="slide slide-8" id="slide-8">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+
+            <div class="eyebrow-label reveal d1">Resources — keep learning</div>
+
+            <div class="resource-list">
+
+              <a href="https://www.youtube.com/watch?v=eh8bcBIAAFo" target="_blank" rel="noopener" class="resource-item reveal d2">
+                <span class="resource-badge yt">YouTube</span>
+                <span class="resource-url">youtube.com/watch?v=eh8bcBIAAFo</span>
+                <span class="resource-arrow">→</span>
+              </a>
+
+              <a href="https://www.youtube.com/watch?v=s4HGbIhUgVo" target="_blank" rel="noopener" class="resource-item reveal d3">
+                <span class="resource-badge yt">YouTube</span>
+                <span class="resource-url">youtube.com/watch?v=s4HGbIhUgVo</span>
+                <span class="resource-arrow">→</span>
+              </a>
+
+              <a href="https://assist-software.net/blog/learn-frontend-development-2026" target="_blank" rel="noopener" class="resource-item reveal d4">
+                <span class="resource-badge read">Article</span>
+                <span class="resource-url">assist-software.net/blog/learn-frontend-development-2026</span>
+                <span class="resource-arrow">→</span>
+              </a>
+
+              <a href="https://www.youtube.com/watch?v=SK_sSNyJ758" target="_blank" rel="noopener" class="resource-item reveal d5">
+                <span class="resource-badge yt">YouTube</span>
+                <span class="resource-url">youtube.com/watch?v=SK_sSNyJ758</span>
+                <span class="resource-arrow">→</span>
+              </a>
+
+            </div>
+
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 1 · Wrap</span>
+            <span class="footer-num">08 / 08</span>
           </footer>
         </div>
       </div>
