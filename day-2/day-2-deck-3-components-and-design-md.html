@@ -796,6 +796,743 @@
     }
 
     /* =============================================
+       SLIDE 8 — Atomic Design hierarchy
+       ============================================= */
+    .atomic-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(1rem, 2.7vw, 2.6rem);
+      align-items: center;
+    }
+
+    .atomic-chain {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(0.45rem, 1vw, 0.9rem);
+      align-items: end;
+    }
+
+    .atomic-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.55rem, 1vw, 0.85rem);
+      min-height: var(--atomic-height);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: clamp(0.45rem, 0.9vh, 0.7rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .atomic-card:nth-child(1) { --atomic-height: clamp(7rem, 18vh, 11rem); background: rgba(152,212,187,0.32); }
+    .atomic-card:nth-child(2) { --atomic-height: clamp(8.2rem, 22vh, 13rem); background: rgba(199,184,234,0.32); }
+    .atomic-card:nth-child(3) { --atomic-height: clamp(9.4rem, 26vh, 15rem); background: rgba(244,184,197,0.3); }
+    .atomic-card:nth-child(4) { --atomic-height: clamp(10.6rem, 30vh, 17rem); background: rgba(168,216,234,0.32); }
+    .atomic-card:nth-child(5) { --atomic-height: clamp(11.8rem, 34vh, 19rem); background: rgba(237,234,227,0.75); }
+
+    .atomic-name {
+      font-family: var(--font-display);
+      font-size: clamp(0.95rem, 1.55vw, 1.35rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .atomic-copy {
+      font-size: clamp(0.55rem, 0.85vw, 0.72rem);
+      line-height: 1.25;
+      color: var(--text-secondary);
+    }
+
+    .atomic-motif {
+      height: clamp(2.2rem, 6vh, 4.2rem);
+      display: grid;
+      place-items: center;
+    }
+
+    .motif-dot {
+      width: clamp(1.1rem, 2vw, 1.9rem);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--text-primary);
+      opacity: 0.22;
+    }
+
+    .motif-search {
+      width: 86%;
+      height: clamp(1.35rem, 3vh, 2.1rem);
+      border-radius: 999px;
+      background: var(--paper-bg);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .motif-search::after {
+      content: '';
+      position: absolute;
+      right: clamp(0.35rem, 0.7vw, 0.6rem);
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(0.7rem, 1.3vw, 1rem);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--accent-lavender);
+      opacity: 0.75;
+    }
+
+    .motif-nav,
+    .motif-wire,
+    .motif-page {
+      width: 90%;
+      display: grid;
+      gap: clamp(0.25rem, 0.5vh, 0.42rem);
+    }
+
+    .motif-nav span,
+    .motif-wire span,
+    .motif-page span {
+      display: block;
+      border-radius: 99px;
+      background: rgba(85,85,85,0.18);
+      height: clamp(0.28rem, 0.6vh, 0.42rem);
+    }
+
+    .motif-nav span:first-child { background: var(--accent-pink); width: 100%; height: clamp(0.5rem, 1vh, 0.75rem); }
+    .motif-wire span:nth-child(1) { width: 100%; height: clamp(0.65rem, 1.5vh, 1rem); }
+    .motif-wire span:nth-child(2) { width: 70%; }
+    .motif-wire span:nth-child(3) { width: 84%; }
+    .motif-page span:nth-child(1) { width: 100%; height: clamp(0.75rem, 1.8vh, 1.15rem); background: var(--accent-sky); }
+    .motif-page span:nth-child(2) { width: 75%; }
+    .motif-page span:nth-child(3) { width: 92%; }
+    .motif-page span:nth-child(4) { width: 58%; }
+
+    /* =============================================
+       SLIDE 9 — Composition stack
+       ============================================= */
+    .composition-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.98fr) minmax(0, 1.02fr);
+      gap: clamp(1rem, 2.7vw, 2.6rem);
+      align-items: center;
+    }
+
+    .composition-stack {
+      display: grid;
+      gap: clamp(0.65rem, 1.35vh, 1rem);
+    }
+
+    .comp-layer {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.75rem, 1.3vw, 1.05rem);
+      display: grid;
+      gap: clamp(0.55rem, 1vh, 0.78rem);
+    }
+
+    .comp-layer.tokens { background: rgba(152,212,187,0.28); }
+    .comp-layer.components { background: rgba(199,184,234,0.28); }
+    .comp-layer.screen { background: rgba(168,216,234,0.28); }
+
+    .layer-title {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.75vw, 1.5rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .token-row,
+    .component-row {
+      display: flex;
+      gap: clamp(0.4rem, 0.8vw, 0.65rem);
+      flex-wrap: wrap;
+    }
+
+    .token-pill,
+    .component-pill {
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      background: rgba(248,246,241,0.82);
+      padding: 0.35em 0.75em;
+      font-size: var(--size-xs);
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .screen-wire {
+      min-height: clamp(8rem, 20vh, 13rem);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(248,246,241,0.72);
+      padding: clamp(0.55rem, 1vw, 0.85rem);
+      display: grid;
+      grid-template-rows: clamp(1.2rem, 2.6vh, 1.8rem) 1fr clamp(1.2rem, 2.6vh, 1.8rem);
+      gap: clamp(0.45rem, 0.9vh, 0.7rem);
+    }
+
+    .screen-wire span {
+      display: block;
+      border-radius: 6px;
+      background: rgba(85,85,85,0.14);
+    }
+
+    .screen-wire span:nth-child(1) { background: rgba(199,184,234,0.45); }
+    .screen-wire span:nth-child(2) { background: repeating-linear-gradient(90deg, rgba(244,184,197,0.28), rgba(244,184,197,0.28) 18%, transparent 18%, transparent 23%); }
+    .screen-wire span:nth-child(3) { background: rgba(152,212,187,0.5); border-radius: 999px; }
+
+    /* =============================================
+       SLIDE 10 — Modal composition worked example
+       ============================================= */
+    .modal-piece-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(1rem, 2.4vw, 2.2rem);
+      align-items: stretch;
+    }
+
+    .modal-breakdown {
+      display: grid;
+      grid-template-rows: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.45rem, 1vh, 0.75rem);
+      min-height: 0;
+      position: relative;
+    }
+
+    .modal-breakdown::before {
+      content: '';
+      position: absolute;
+      left: clamp(1rem, 1.8vw, 1.5rem);
+      top: 12%;
+      bottom: 12%;
+      border-left: 2px dotted rgba(85,85,85,0.18);
+      pointer-events: none;
+    }
+
+    .break-layer {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.42);
+      padding: clamp(0.55rem, 1vw, 0.85rem);
+      display: grid;
+      grid-template-columns: clamp(5rem, 7.4vw, 7rem) 1fr;
+      gap: clamp(0.55rem, 1vw, 0.85rem);
+      align-items: center;
+      min-height: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .break-layer.organism { background: rgba(168,216,234,0.32); }
+    .break-layer.molecules { background: rgba(199,184,234,0.28); }
+    .break-layer.atoms { background: rgba(244,184,197,0.25); }
+    .break-layer.tokens { background: rgba(152,212,187,0.28); }
+
+    .break-name {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.75vw, 1.5rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .piece-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(0.35rem, 0.7vw, 0.55rem);
+      align-items: center;
+    }
+
+    .piece-chip {
+      border: 1px solid var(--border-color);
+      background: rgba(248,246,241,0.88);
+      border-radius: 999px;
+      padding: 0.32em 0.65em;
+      font-size: clamp(0.52rem, 0.78vw, 0.68rem);
+      color: var(--text-secondary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .piece-chip.swatch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+    }
+
+    .piece-chip.swatch::before {
+      content: '';
+      width: 0.8em;
+      height: 0.8em;
+      border-radius: 50%;
+      background: #b8422e;
+      border: 1px solid rgba(26,26,26,0.1);
+    }
+
+    .mini-modal-thumb {
+      width: clamp(5.5rem, 9vw, 8rem);
+      border-radius: 7px;
+      border: 1px solid var(--border-color);
+      background: var(--paper-bg);
+      padding: clamp(0.35rem, 0.7vw, 0.55rem);
+      display: grid;
+      gap: 0.25rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.09);
+    }
+
+    .mini-modal-thumb span {
+      display: block;
+      height: 0.35rem;
+      border-radius: 99px;
+      background: rgba(85,85,85,0.16);
+    }
+
+    .mini-modal-thumb span:first-child {
+      width: 80%;
+      background: rgba(26,26,26,0.22);
+    }
+
+    .mini-modal-thumb span:last-child {
+      width: 45%;
+      justify-self: end;
+      background: #b8422e;
+    }
+
+    .molecule-sample {
+      border: 1px solid var(--border-color);
+      background: rgba(248,246,241,0.78);
+      border-radius: 7px;
+      padding: clamp(0.35rem, 0.7vw, 0.55rem);
+      min-width: clamp(5.5rem, 9vw, 8rem);
+      display: grid;
+      gap: 0.28rem;
+    }
+
+    .molecule-sample.form span:first-child {
+      width: 45%;
+      height: 0.3rem;
+      background: rgba(85,85,85,0.25);
+    }
+
+    .molecule-sample.form span:last-child {
+      height: clamp(1.2rem, 2.4vh, 1.8rem);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      background: white;
+    }
+
+    .molecule-sample.buttons {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+
+    .molecule-sample.buttons span {
+      height: clamp(1.2rem, 2.4vh, 1.8rem);
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: transparent;
+    }
+
+    .molecule-sample.buttons span:last-child {
+      background: #b8422e;
+      border-color: rgba(184,66,46,0.25);
+    }
+
+    .modal-preview-wrap {
+      border-radius: 12px;
+      background: rgba(42,40,38,0.12);
+      border: 1px solid rgba(85,85,85,0.12);
+      display: grid;
+      place-items: center;
+      padding: clamp(1rem, 2.2vw, 2rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-preview-wrap::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: clamp(2rem, 4vw, 3.8rem);
+      border-top: 2px dotted rgba(85,85,85,0.2);
+    }
+
+    .modal-preview {
+      width: min(100%, 620px);
+      border-radius: 16px;
+      background: #fbfaf7;
+      border: 1px solid rgba(226,221,214,0.9);
+      box-shadow: 0 24px 55px rgba(42,40,38,0.24), 0 2px 8px rgba(42,40,38,0.08);
+      padding: clamp(1rem, 2vw, 1.6rem);
+      display: grid;
+      gap: clamp(0.8rem, 1.7vh, 1.2rem);
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.3vw, 2.1rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      width: clamp(1.9rem, 3.3vw, 2.7rem);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--paper-edge);
+      display: grid;
+      place-items: center;
+      color: var(--text-secondary);
+      font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    }
+
+    .modal-form {
+      display: grid;
+      gap: clamp(0.7rem, 1.4vh, 1rem);
+    }
+
+    .modal-field {
+      display: grid;
+      gap: clamp(0.3rem, 0.7vh, 0.5rem);
+    }
+
+    .modal-field label {
+      font-size: var(--size-xs);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .modal-input,
+    .modal-textarea {
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      background: white;
+      min-height: clamp(2.4rem, 5vh, 3.4rem);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .modal-textarea {
+      min-height: clamp(4rem, 10vh, 6rem);
+    }
+
+    .helper-text {
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: clamp(0.55rem, 1vw, 0.8rem);
+      padding-top: clamp(0.2rem, 0.5vh, 0.4rem);
+    }
+
+    .modal-action {
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      padding: 0.65em 1.1em;
+      font-size: var(--size-sm);
+      font-weight: 600;
+      color: var(--text-primary);
+      background: transparent;
+    }
+
+    .modal-action.primary {
+      background: #b8422e;
+      border-color: rgba(184,66,46,0.32);
+      color: white;
+    }
+
+    .modal-annotation {
+      grid-column: 1 / -1;
+      font-size: clamp(0.68rem, 1vw, 0.86rem);
+      line-height: 1.38;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.55rem, 1vh, 0.8rem);
+    }
+
+    /* =============================================
+       SLIDE 11 — Ecommerce catalog composition
+       ============================================= */
+    .catalog-piece-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      gap: clamp(1rem, 2.4vw, 2.2rem);
+      align-items: stretch;
+    }
+
+    .catalog-breakdown {
+      display: grid;
+      grid-template-rows: repeat(5, minmax(0, 1fr));
+      gap: clamp(0.38rem, 0.8vh, 0.62rem);
+      min-height: 0;
+      position: relative;
+    }
+
+    .catalog-breakdown::before {
+      content: '';
+      position: absolute;
+      left: clamp(1rem, 1.8vw, 1.5rem);
+      top: 9%;
+      bottom: 9%;
+      border-left: 2px dotted rgba(85,85,85,0.18);
+      pointer-events: none;
+    }
+
+    .break-layer.page { background: rgba(168,216,234,0.32); }
+    .break-layer.organisms { background: rgba(244,184,197,0.24); }
+
+    .catalog-thumb {
+      width: clamp(5.5rem, 9vw, 8rem);
+      border-radius: 7px;
+      border: 1px solid var(--border-color);
+      background: var(--paper-bg);
+      padding: clamp(0.32rem, 0.62vw, 0.5rem);
+      display: grid;
+      grid-template-columns: 0.35fr 1fr;
+      grid-template-rows: 0.45rem repeat(2, 1fr);
+      gap: 0.24rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    }
+
+    .catalog-thumb span {
+      display: block;
+      border-radius: 4px;
+      background: rgba(85,85,85,0.14);
+    }
+
+    .catalog-thumb span:first-child {
+      grid-column: 1 / -1;
+      background: rgba(199,184,234,0.55);
+    }
+
+    .catalog-thumb span:nth-child(2) {
+      grid-row: 2 / 4;
+      background: rgba(237,234,227,0.9);
+      border: 1px solid var(--border-color);
+    }
+
+    .catalog-molecule-card {
+      border: 1px solid var(--border-color);
+      background: rgba(248,246,241,0.78);
+      border-radius: 7px;
+      padding: clamp(0.35rem, 0.7vw, 0.55rem);
+      min-width: clamp(5.3rem, 8vw, 7.4rem);
+      display: grid;
+      gap: 0.24rem;
+    }
+
+    .catalog-molecule-card span {
+      display: block;
+      border-radius: 5px;
+      background: rgba(85,85,85,0.16);
+      height: 0.34rem;
+    }
+
+    .catalog-molecule-card span:first-child {
+      height: clamp(1.7rem, 3.5vh, 2.5rem);
+      background: rgba(168,216,234,0.55);
+    }
+
+    .catalog-preview-wrap {
+      border-radius: 12px;
+      background: rgba(42,40,38,0.12);
+      border: 1px solid rgba(85,85,85,0.12);
+      padding: clamp(0.9rem, 1.8vw, 1.5rem);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .catalog-preview-wrap::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 56%;
+      width: clamp(2rem, 4vw, 3.8rem);
+      border-top: 2px dotted rgba(85,85,85,0.2);
+    }
+
+    .catalog-page-preview {
+      width: min(100%, 720px);
+      min-height: clamp(430px, 66vh, 650px);
+      border-radius: 16px;
+      background: #fbfaf7;
+      border: 1px solid rgba(226,221,214,0.95);
+      box-shadow: 0 24px 55px rgba(42,40,38,0.2), 0 2px 8px rgba(42,40,38,0.08);
+      padding: clamp(0.85rem, 1.6vw, 1.25rem);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: clamp(0.6rem, 1.2vh, 0.9rem);
+      position: relative;
+      z-index: 1;
+    }
+
+    .catalog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(0.6rem, 1.2vw, 1rem);
+    }
+
+    .catalog-brand {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.1vw, 1.9rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .catalog-search {
+      flex: 1;
+      max-width: 48%;
+      height: clamp(2rem, 4.5vh, 3rem);
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: white;
+      position: relative;
+    }
+
+    .catalog-search::before {
+      content: 'Search products';
+      position: absolute;
+      left: 1em;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: var(--size-xs);
+    }
+
+    .catalog-cart {
+      border: 1px solid var(--border-color);
+      background: var(--paper-edge);
+      border-radius: 999px;
+      padding: 0.55em 0.8em;
+      font-size: var(--size-xs);
+      font-weight: 600;
+    }
+
+    .catalog-hero {
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(199,184,234,0.45), rgba(152,212,187,0.35));
+      border: 1px solid var(--border-color);
+      padding: clamp(0.75rem, 1.4vw, 1.1rem);
+      display: flex;
+      align-items: end;
+      min-height: clamp(4rem, 10vh, 6.5rem);
+    }
+
+    .catalog-hero p {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.4vw, 2.2rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .catalog-main {
+      display: grid;
+      grid-template-columns: clamp(5.8rem, 10vw, 8.5rem) 1fr;
+      gap: clamp(0.6rem, 1.2vw, 0.9rem);
+      min-height: 0;
+    }
+
+    .catalog-filters {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(237,234,227,0.65);
+      padding: clamp(0.55rem, 1vw, 0.8rem);
+      display: grid;
+      gap: 0.42rem;
+      align-content: start;
+    }
+
+    .filter-line {
+      height: 0.42rem;
+      border-radius: 999px;
+      background: rgba(85,85,85,0.16);
+    }
+
+    .filter-line:nth-child(1) { width: 72%; background: rgba(85,85,85,0.28); }
+    .filter-line:nth-child(2) { width: 92%; }
+    .filter-line:nth-child(3) { width: 76%; }
+    .filter-line:nth-child(4) { width: 84%; }
+
+    .product-grid-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.45rem, 0.9vw, 0.7rem);
+      min-height: 0;
+    }
+
+    .product-card-preview {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: white;
+      padding: clamp(0.45rem, 0.8vw, 0.65rem);
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      gap: 0.36rem;
+      box-shadow: 0 8px 16px rgba(42,40,38,0.05);
+      min-height: clamp(6rem, 16vh, 10rem);
+    }
+
+    .product-image-preview {
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(244,184,197,0.55), rgba(215,171,87,0.28));
+    }
+
+    .product-card-preview:nth-child(2n) .product-image-preview {
+      background: linear-gradient(135deg, rgba(168,216,234,0.55), rgba(199,184,234,0.34));
+    }
+
+    .product-card-preview span {
+      height: 0.38rem;
+      border-radius: 999px;
+      background: rgba(85,85,85,0.16);
+    }
+
+    .product-card-preview span:last-child {
+      width: 48%;
+      background: #b8422e;
+    }
+
+    .catalog-annotation {
+      font-size: clamp(0.66rem, 0.96vw, 0.82rem);
+      line-height: 1.35;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.45rem, 0.8vh, 0.65rem);
+    }
+
+    /* =============================================
        SLIDE 8 — DESIGN.md intro
        ============================================= */
     .file-card {
@@ -974,7 +1711,7 @@
               </div>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">1 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">1 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1014,7 +1751,7 @@
               </div>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">2 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">2 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1042,7 +1779,7 @@
               </ul>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">3 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">3 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1066,7 +1803,7 @@
               <article class="ref-card reveal d5"><div class="ref-icon"><span class="motion-arrow">→</span></div><div><h3 class="ref-title">Motion</h3><p class="ref-copy">Durations, easings, named transitions. fast, normal, slow. The tempo of the product.</p></div></article>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">4 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">4 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1103,7 +1840,7 @@
               </div>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">5 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">5 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1142,7 +1879,7 @@
               <p>Everything else is a <em>property</em> of the component — size, has-icon, is-loading, is-disabled — not a separate variant. The discipline: fewer variants, more states.</p>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">6 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">6 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1174,7 +1911,7 @@ primary variant.</pre>
               <p>Same output. Different conversation. The component library is your shared vocabulary with the agent. Without constraints, you describe pixels every time. With constraints, you describe intent.</p>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">7 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">7 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
@@ -1182,7 +1919,277 @@ primary variant.</pre>
   </section>
 
   <!-- Slide 8 -->
-  <section class="slide" id="slide-8" aria-label="Meet DESIGN.md">
+  <section class="slide" id="slide-8" aria-label="Atomic Design vocabulary">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">A vocabulary you'll see in the wild</p><h2 class="slide-title">Atomic Design</h2></div>
+            <div class="atomic-layout">
+              <div class="atomic-chain reveal d2">
+                <article class="atomic-card">
+                  <div class="atomic-motif"><span class="motif-dot"></span></div>
+                  <div><h3 class="atomic-name">Atoms</h3><p class="atomic-copy">Smallest pieces. Button, input, label, icon.</p></div>
+                </article>
+                <article class="atomic-card">
+                  <div class="atomic-motif"><span class="motif-search"></span></div>
+                  <div><h3 class="atomic-name">Molecules</h3><p class="atomic-copy">Small groups. Search bar, form field.</p></div>
+                </article>
+                <article class="atomic-card">
+                  <div class="atomic-motif"><span class="motif-nav"><span></span><span></span><span></span></span></div>
+                  <div><h3 class="atomic-name">Organisms</h3><p class="atomic-copy">Larger sections. Nav bar, product grid, footer.</p></div>
+                </article>
+                <article class="atomic-card">
+                  <div class="atomic-motif"><span class="motif-wire"><span></span><span></span><span></span></span></div>
+                  <div><h3 class="atomic-name">Templates</h3><p class="atomic-copy">Page-level layouts without real content.</p></div>
+                </article>
+                <article class="atomic-card">
+                  <div class="atomic-motif"><span class="motif-page"><span></span><span></span><span></span><span></span></span></div>
+                  <div><h3 class="atomic-name">Pages</h3><p class="atomic-copy">Templates filled with real content.</p></div>
+                </article>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>There's a popular way of categorizing components — Atomic Design, by Brad Frost. You'll see these words in design system docs, articles, and job descriptions.</p>
+                <p>It's a categorization framework, not a working framework. Useful when you read about design systems. Less useful when you're building one.</p>
+                <p>Don't worry about which thing is an atom vs a molecule — worry about <em>fewer pieces, named well</em>.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">8 / 15</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 9 -->
+  <section class="slide" id="slide-9" aria-label="Composition in practice">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Smaller pieces, larger pieces, all the way up</p><h2 class="slide-title">Components compose</h2></div>
+            <div class="composition-layout">
+              <div class="composition-stack reveal d2">
+                <section class="comp-layer screen">
+                  <h3 class="layer-title">Screen</h3>
+                  <div class="screen-wire"><span></span><span></span><span></span></div>
+                </section>
+                <section class="comp-layer components">
+                  <h3 class="layer-title">Components</h3>
+                  <div class="component-row">
+                    <span class="component-pill">Button</span>
+                    <span class="component-pill">Input</span>
+                    <span class="component-pill">Badge</span>
+                    <span class="component-pill">Nav</span>
+                    <span class="component-pill">Card grid</span>
+                  </div>
+                </section>
+                <section class="comp-layer tokens">
+                  <h3 class="layer-title">Tokens</h3>
+                  <div class="token-row">
+                    <span class="token-pill">color</span>
+                    <span class="token-pill">spacing</span>
+                    <span class="token-pill">type</span>
+                    <span class="token-pill">radius</span>
+                  </div>
+                </section>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>The thing Atomic Design is trying to point at — and the thing that actually matters — is <em>composition</em>.</p>
+                <p>Components are built from other components. A button uses tokens for color, radius, and type. A search bar uses an input component and a button component. A page uses a nav, a hero section, a card grid, and a footer.</p>
+                <p>You don't redesign the button when you build the search bar. You don't redraw the search bar when you build the nav. Each layer trusts the layer below it.</p>
+                <p>This is what makes systems scale — and what makes AI agents useful inside them.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">9 / 15</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 10 -->
+  <section class="slide" id="slide-10" aria-label="Composition a modal in pieces">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">What composition actually looks like</p>
+              <h2 class="slide-title">A modal, broken down</h2>
+            </div>
+            <div class="modal-piece-layout">
+              <div class="modal-breakdown reveal d2">
+                <section class="break-layer organism">
+                  <h3 class="break-name">Organism</h3>
+                  <div class="piece-row">
+                    <span class="mini-modal-thumb"><span></span><span></span><span></span><span></span></span>
+                    <span class="piece-chip">Modal</span>
+                  </div>
+                </section>
+                <section class="break-layer molecules">
+                  <h3 class="break-name">Molecules</h3>
+                  <div class="piece-row">
+                    <span class="molecule-sample form"><span></span><span></span></span>
+                    <span class="molecule-sample buttons"><span></span><span></span></span>
+                    <span class="piece-chip">FormField</span>
+                    <span class="piece-chip">ButtonGroup</span>
+                  </div>
+                </section>
+                <section class="break-layer atoms">
+                  <h3 class="break-name">Atoms</h3>
+                  <div class="piece-row">
+                    <span class="piece-chip">Label</span>
+                    <span class="piece-chip">Input</span>
+                    <span class="piece-chip">Button</span>
+                    <span class="piece-chip">IconButton ×</span>
+                  </div>
+                </section>
+                <section class="break-layer tokens">
+                  <h3 class="break-name">Tokens</h3>
+                  <div class="piece-row">
+                    <span class="piece-chip swatch">surface</span>
+                    <span class="piece-chip">spacing-md</span>
+                    <span class="piece-chip">radius-lg</span>
+                    <span class="piece-chip">shadow-modal</span>
+                    <span class="piece-chip">text-label</span>
+                  </div>
+                </section>
+              </div>
+
+              <div class="modal-preview-wrap reveal d3">
+                <div class="modal-preview">
+                  <div class="modal-head">
+                    <h3 class="modal-title">Create new project</h3>
+                    <span class="modal-close">×</span>
+                  </div>
+                  <div class="modal-form">
+                    <div class="modal-field">
+                      <label>Project name</label>
+                      <div class="modal-input"></div>
+                    </div>
+                    <div class="modal-field">
+                      <label>Description</label>
+                      <div class="modal-textarea"></div>
+                      <p class="helper-text">Optional</p>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <span class="modal-action">Cancel</span>
+                    <span class="modal-action primary">Create</span>
+                  </div>
+                  <p class="modal-annotation">Looks like one thing. It is a stack: tokens → atoms → molecules → organism. Change the Input atom and every form updates. Change spacing-md and every modal gap updates.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">10 / 15</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 11 -->
+  <section class="slide" id="slide-11" aria-label="Composition ecommerce catalog page">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Composition at page scale</p>
+              <h2 class="slide-title">A catalog page, broken down</h2>
+            </div>
+            <div class="catalog-piece-layout">
+              <div class="catalog-breakdown reveal d2">
+                <section class="break-layer page">
+                  <h3 class="break-name">Page</h3>
+                  <div class="piece-row">
+                    <span class="catalog-thumb"><span></span><span></span><span></span><span></span></span>
+                    <span class="piece-chip">CatalogPage</span>
+                  </div>
+                </section>
+                <section class="break-layer organisms">
+                  <h3 class="break-name">Organisms</h3>
+                  <div class="piece-row">
+                    <span class="piece-chip">Header</span>
+                    <span class="piece-chip">FilterSidebar</span>
+                    <span class="piece-chip">ProductGrid</span>
+                  </div>
+                </section>
+                <section class="break-layer molecules">
+                  <h3 class="break-name">Molecules</h3>
+                  <div class="piece-row">
+                    <span class="catalog-molecule-card"><span></span><span></span><span></span></span>
+                    <span class="piece-chip">ProductCard</span>
+                    <span class="piece-chip">SearchBar</span>
+                    <span class="piece-chip">FilterGroup</span>
+                  </div>
+                </section>
+                <section class="break-layer atoms">
+                  <h3 class="break-name">Atoms</h3>
+                  <div class="piece-row">
+                    <span class="piece-chip">Thumbnail</span>
+                    <span class="piece-chip">Price</span>
+                    <span class="piece-chip">Badge</span>
+                    <span class="piece-chip">Button</span>
+                  </div>
+                </section>
+                <section class="break-layer tokens">
+                  <h3 class="break-name">Tokens</h3>
+                  <div class="piece-row">
+                    <span class="piece-chip swatch">accent</span>
+                    <span class="piece-chip">grid-gap</span>
+                    <span class="piece-chip">card-radius</span>
+                    <span class="piece-chip">surface</span>
+                  </div>
+                </section>
+              </div>
+
+              <div class="catalog-preview-wrap reveal d3">
+                <div class="catalog-page-preview">
+                  <header class="catalog-header">
+                    <h3 class="catalog-brand">Studio Market</h3>
+                    <div class="catalog-search"></div>
+                    <span class="catalog-cart">Cart · 2</span>
+                  </header>
+                  <section class="catalog-hero"><p>New arrivals for small spaces</p></section>
+                  <main class="catalog-main">
+                    <aside class="catalog-filters">
+                      <span class="filter-line"></span>
+                      <span class="filter-line"></span>
+                      <span class="filter-line"></span>
+                      <span class="filter-line"></span>
+                    </aside>
+                    <section class="product-grid-preview">
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                      <article class="product-card-preview"><div class="product-image-preview"></div><span></span><span></span></article>
+                    </section>
+                  </main>
+                  <p class="catalog-annotation">The page is not one giant drawing. It is Header + FilterSidebar + ProductGrid. The grid is ProductCards. Each card is thumbnail, title, price, badge, and action. Change ProductCard once — the whole catalog follows.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">11 / 15</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 12 -->
+  <section class="slide" id="slide-12" aria-label="Meet DESIGN.md">
     <div class="notebook-wrapper">
       <div class="notebook-frame">
         <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
@@ -1206,15 +2213,15 @@ primary variant.</pre>
               </div>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">8 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">12 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
     </div>
   </section>
 
-  <!-- Slide 9 -->
-  <section class="slide" id="slide-9" aria-label="Anatomy of a DESIGN.md">
+  <!-- Slide 13 -->
+  <section class="slide" id="slide-13" aria-label="Anatomy of a DESIGN.md">
     <div class="notebook-wrapper">
       <div class="notebook-frame">
         <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
@@ -1248,15 +2255,15 @@ spacing:
               </div>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">9 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">13 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
     </div>
   </section>
 
-  <!-- Slide 10: inferred sparse demo companion -->
-  <section class="slide" id="slide-10" aria-label="Live demo create a DESIGN.md">
+  <!-- Slide 14: inferred sparse demo companion -->
+  <section class="slide" id="slide-14" aria-label="Live demo create a DESIGN.md">
     <div class="notebook-wrapper">
       <div class="notebook-frame">
         <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
@@ -1273,15 +2280,15 @@ spacing:
               </ul>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">10 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">14 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
     </div>
   </section>
 
-  <!-- Slide 11: inferred sparse demo companion -->
-  <section class="slide" id="slide-11" aria-label="Live demo use DESIGN.md with an agent">
+  <!-- Slide 15: inferred sparse demo companion -->
+  <section class="slide" id="slide-15" aria-label="Live demo use DESIGN.md with an agent">
     <div class="notebook-wrapper">
       <div class="notebook-frame">
         <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
@@ -1298,7 +2305,7 @@ spacing:
               </ul>
             </div>
           </div>
-          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">11 / 11</span></footer>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">15 / 15</span></footer>
         </div>
       </div>
       <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
