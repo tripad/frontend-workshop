@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 Resource — Antigravity MCP + Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.78rem, 1.25vw, 1.02rem);
+      --size-xl: clamp(1.7rem, 3.1vw, 3rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg-outer); color: var(--text-primary); }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100%;
+      overflow: hidden;
+      padding: var(--slide-padding);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .page-content { flex: 1; padding: var(--pad-outer); overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section, .footer-num {
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+
+    .slide-kicker {
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header { margin-bottom: clamp(0.9rem, 1.8vh, 1.5rem); flex-shrink: 0; }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 2vw, 1.6rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .resource-card {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.42);
+      padding: clamp(0.9rem, 1.7vw, 1.4rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.65rem, 1.2vh, 1rem);
+      min-width: 0;
+    }
+
+    .resource-card.mcp { background: rgba(199,184,234,0.26); }
+    .resource-card.skills { background: rgba(152,212,187,0.24); }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.2vw, 2rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .small-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.45rem, 0.9vh, 0.68rem);
+      color: var(--text-secondary);
+      font-size: var(--size-base);
+      line-height: 1.38;
+    }
+
+    .small-list li::before {
+      content: '→';
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--accent-lavender);
+      margin-right: 0.5rem;
+    }
+
+    .code-block {
+      background: #0f0f0f;
+      border: 1px solid #252525;
+      border-radius: 10px;
+      color: #cdd6f4;
+      font-family: var(--font-mono);
+      font-size: clamp(0.58rem, 0.9vw, 0.78rem);
+      line-height: 1.52;
+      padding: clamp(0.8rem, 1.4vw, 1.1rem);
+      white-space: pre-wrap;
+      overflow: hidden;
+    }
+
+    .warning {
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.55rem, 1vh, 0.8rem);
+      color: var(--text-muted);
+      font-size: var(--size-sm);
+      line-height: 1.45;
+      font-style: italic;
+    }
+
+    @media (max-width: 900px) { .resource-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <section class="slide visible" id="slide-1" aria-label="Antigravity MCP servers and skills">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Day 2 resource</p>
+              <h1 class="slide-title">Antigravity: MCP servers + skills</h1>
+              <p class="slide-subtitle">Connect tools carefully. Add skills only from sources you trust.</p>
+            </div>
+            <div class="resource-grid">
+              <section class="resource-card mcp reveal d2">
+                <h2 class="card-title">Install an MCP server</h2>
+                <ul class="small-list">
+                  <li>Open Antigravity's Agent Panel.</li>
+                  <li>Use the three-dot menu and open MCP Servers / Manage MCP Servers.</li>
+                  <li>Use the store when available, or open the raw MCP config.</li>
+                  <li>Add the server config from the server's README.</li>
+                  <li>Restart, reload, or toggle the server, then test one tool.</li>
+                </ul>
+                <pre class="code-block">Ask your agent:
+
+Help me add this MCP server to Antigravity.
+Read the README, explain what access it needs,
+edit the MCP config, and verify the tools appear.</pre>
+              </section>
+              <section class="resource-card skills reveal d3">
+                <h2 class="card-title">Add a skill</h2>
+                <ul class="small-list">
+                  <li>A skill is reusable context: instructions, examples, scripts, or workflow memory.</li>
+                  <li>Find the skill repo or marketplace page.</li>
+                  <li>Read its README before installing.</li>
+                  <li>Install or import it using the tool's instructions.</li>
+                  <li>Restart/reload the agent and ask it to summarize the skill.</li>
+                </ul>
+                <pre class="code-block">Ask your agent:
+
+Install this skill for my project.
+Check the repo first, explain what it changes,
+then confirm how I should invoke it.</pre>
+              </section>
+            </div>
+            <p class="warning reveal d3">Rule of thumb: MCP servers can touch external services and local files. Skills can shape how the agent behaves. Treat both like plugins, not harmless text.</p>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Antigravity Resource</span><span class="footer-num">1 / 1</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">MCP</div><div class="tab tab-why active">Skills</div><div class="tab tab-shift">Trust</div><div class="tab tab-plan">Test</div></div>
+    </div>
+  </section>
+  <script>
+    document.querySelector('.slide')?.classList.add('visible');
+  </script>
+</body>
+</html>

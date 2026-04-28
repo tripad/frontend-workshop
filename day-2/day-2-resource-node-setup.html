@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 Resource — Node Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.78rem, 1.25vw, 1.02rem);
+      --size-md: clamp(0.95rem, 1.6vw, 1.28rem);
+      --size-lg: clamp(1.2rem, 2.2vw, 1.9rem);
+      --size-xl: clamp(1.7rem, 3.1vw, 3rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-body); background: var(--bg-outer); color: var(--text-primary); }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100%;
+      overflow: hidden;
+      padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
+    img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+    @media (max-height: 700px) {
+      :root { --pad-outer: clamp(0.75rem, 2.5vw, 2rem); --size-xl: clamp(1.35rem, 2.8vw, 2.2rem); }
+    }
+    @media (max-height: 600px) {
+      :root { --size-base: clamp(0.66rem, 1vw, 0.86rem); }
+      .nav-dots, .keyboard-hint, .decorative { display: none; }
+    }
+    @media (max-height: 500px) {
+      :root { --size-xl: clamp(1rem, 2.5vw, 1.75rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .page-content { flex: 1; padding: var(--pad-outer); overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+
+    .slide-kicker {
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header { margin-bottom: clamp(0.9rem, 1.8vh, 1.5rem); flex-shrink: 0; }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.9rem);
+      font-size: var(--size-base);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.85rem, 2vw, 1.6rem);
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .route-card {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.4);
+      padding: clamp(0.9rem, 1.7vw, 1.45rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.65rem, 1.2vh, 1rem);
+      min-width: 0;
+    }
+
+    .route-card.agent { background: rgba(199,184,234,0.26); }
+    .route-card.manual { background: rgba(152,212,187,0.24); }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.2vw, 2rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .card-note {
+      font-size: var(--size-sm);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .code-block {
+      background: #0f0f0f;
+      border: 1px solid #252525;
+      border-radius: 10px;
+      color: #cdd6f4;
+      font-family: var(--font-mono);
+      font-size: clamp(0.62rem, 0.98vw, 0.84rem);
+      line-height: 1.58;
+      padding: clamp(0.85rem, 1.5vw, 1.2rem);
+      white-space: pre-wrap;
+      overflow: auto;
+      flex: 1;
+      min-height: clamp(150px, 28vh, 300px);
+    }
+
+    .copy-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.55rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .copy-label {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .copy-btn {
+      background: #262626;
+      border: 1px solid #363636;
+      border-radius: 4px;
+      color: #999;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      padding: 0.25em 0.7em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .copy-btn.copied { background: #0f2a18; color: #98d4bb; border-color: #1e4a2a; }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.75rem, 1.5vw, 1.2rem);
+      margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
+    }
+
+    .check-card {
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.4);
+      padding: clamp(0.8rem, 1.5vw, 1.2rem);
+    }
+
+    .check-label {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2vw, 1.7rem);
+      font-weight: 700;
+      font-style: italic;
+      margin-bottom: 0.35rem;
+    }
+
+    .ok-text {
+      font-family: var(--font-mono);
+      font-size: clamp(0.7rem, 1vw, 0.9rem);
+      color: var(--text-secondary);
+    }
+
+    .small-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.5rem, 1vh, 0.75rem);
+      color: var(--text-secondary);
+      font-size: var(--size-base);
+      line-height: 1.4;
+    }
+
+    .small-list li::before {
+      content: '→';
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--accent-lavender);
+      margin-right: 0.55rem;
+    }
+
+    @media (max-width: 900px) {
+      .route-grid, .check-grid { grid-template-columns: 1fr; }
+      .code-block { min-height: clamp(120px, 22vh, 220px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <section class="slide" id="slide-1" aria-label="Node setup resource">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Workshop setup resource</p>
+              <h1 class="slide-title">Node, npm, npx</h1>
+              <p class="slide-subtitle">One install gives you all three.</p>
+            </div>
+            <div class="route-grid">
+              <div class="route-card agent reveal d2">
+                <h2 class="card-title">Route A: ask your agent</h2>
+                <p class="card-note">Best if you're unsure. Tell Claude Code / Cursor / Antigravity to inspect your machine, install what is missing, and verify the result.</p>
+                <pre class="code-block">Check whether Node, npm, and npx are installed on my machine.
+
+If anything is missing, guide me through installing Node LTS for my operating system.
+
+After installation, verify:
+node -v
+npm -v
+npx -v
+
+Do not assume it worked until all three commands print versions.</pre>
+              </div>
+              <div class="route-card manual reveal d3">
+                <h2 class="card-title">Route B: copy commands</h2>
+                <p class="card-note">Use the OS-specific slides next. Paste commands into PowerShell on Windows or Terminal on Mac.</p>
+                <ul class="small-list">
+                  <li>Install Node LTS, not random packages.</li>
+                  <li>Close and reopen the terminal after install.</li>
+                  <li>Verify before starting workshop commands.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Setup Resource</span><span class="footer-num">1 / 5</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Setup</div><div class="tab tab-why">Windows</div><div class="tab tab-shift">Mac</div><div class="tab tab-plan">Verify</div></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-2" aria-label="Windows PowerShell setup">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Windows route — PowerShell</p>
+              <h2 class="slide-title">Install Node LTS on Windows</h2>
+            </div>
+            <div class="route-grid">
+              <div class="route-card agent reveal d2">
+                <h3 class="card-title">Ask the agent</h3>
+                <pre class="code-block">I am on Windows.
+
+Help me install Node.js LTS using PowerShell.
+Check whether winget is available.
+If winget works, use it.
+If it does not, guide me to the official Node.js LTS installer.
+
+After install, make me close and reopen PowerShell, then verify node, npm, and npx.</pre>
+              </div>
+              <div class="route-card manual reveal d3">
+                <div class="copy-row"><span class="copy-label">powershell</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+                <pre class="code-block">winget install OpenJS.NodeJS.LTS
+
+# Close PowerShell. Open a new PowerShell window.
+node -v
+npm -v
+npx -v</pre>
+                <p class="card-note">If `winget` is not available, download the LTS installer from nodejs.org and run the same three checks after installing.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Setup Resource</span><span class="footer-num">2 / 5</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Setup</div><div class="tab tab-why active">Windows</div><div class="tab tab-shift">Mac</div><div class="tab tab-plan">Verify</div></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-3" aria-label="Mac Terminal setup">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Mac route — Terminal</p>
+              <h2 class="slide-title">Install Homebrew, then Node</h2>
+            </div>
+            <div class="route-grid">
+              <div class="route-card agent reveal d2">
+                <h3 class="card-title">Ask the agent</h3>
+                <pre class="code-block">I am on macOS.
+
+Help me check whether Homebrew is installed.
+If Homebrew is missing, guide me through installing it from brew.sh.
+After Homebrew works, install Node using brew.
+
+If Homebrew prints post-install PATH instructions, help me apply them.
+Then verify node, npm, and npx.</pre>
+              </div>
+              <div class="route-card manual reveal d3">
+                <div class="copy-row"><span class="copy-label">terminal</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+                <pre class="code-block">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Follow any PATH instructions Homebrew prints.
+brew install node
+
+node -v
+npm -v
+npx -v</pre>
+                <p class="card-note">If `brew` is not found after install, close Terminal and reopen it, then follow Homebrew's printed PATH instructions.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Setup Resource</span><span class="footer-num">3 / 5</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Setup</div><div class="tab tab-why">Windows</div><div class="tab tab-shift active">Mac</div><div class="tab tab-plan">Verify</div></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-4" aria-label="Verify setup">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Success check</p>
+              <h2 class="slide-title">You are ready when these print versions</h2>
+            </div>
+            <div class="check-grid reveal d2">
+              <div class="check-card"><p class="check-label">Node</p><p class="ok-text">node -v → v20.x / v22.x / newer</p></div>
+              <div class="check-card"><p class="check-label">npm</p><p class="ok-text">npm -v → a version number</p></div>
+              <div class="check-card"><p class="check-label">npx</p><p class="ok-text">npx -v → a version number</p></div>
+            </div>
+            <div class="route-card reveal d3" style="margin-top:clamp(1rem,2vh,1.5rem);">
+              <p class="card-title">If one fails</p>
+              <ul class="small-list">
+                <li>Close and reopen the terminal first.</li>
+                <li>Ask your agent to read the error and fix PATH.</li>
+                <li>Do not keep pasting random commands.</li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Setup Resource</span><span class="footer-num">4 / 5</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Setup</div><div class="tab tab-why">Windows</div><div class="tab tab-shift">Mac</div><div class="tab tab-plan active">Verify</div></div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-5" aria-label="Keep it simple">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The rule for workshop setup</p>
+              <h2 class="slide-title">Let the agent do the boring parts</h2>
+              <p class="slide-subtitle">Your job is to verify, not memorize install commands.</p>
+            </div>
+            <div class="route-grid">
+              <div class="route-card agent reveal d2">
+                <h3 class="card-title">Good agent prompt</h3>
+                <pre class="code-block">Set up my machine for this frontend workshop.
+
+I need Node, npm, and npx working.
+Ask me before installing anything.
+Explain each step briefly.
+Verify with version commands at the end.</pre>
+              </div>
+              <div class="route-card manual reveal d3">
+                <h3 class="card-title">Keep nearby</h3>
+                <ul class="small-list">
+                  <li>Windows: PowerShell + winget or Node LTS installer.</li>
+                  <li>Mac: Terminal + Homebrew + brew install node.</li>
+                  <li>Always verify with node, npm, and npx.</li>
+                  <li>If stuck, paste the exact error into your agent.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Setup Resource</span><span class="footer-num">5 / 5</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Setup</div><div class="tab tab-why">Windows</div><div class="tab tab-shift">Mac</div><div class="tab tab-plan active">Verify</div></div>
+    </div>
+  </section>
+
+  <script>
+    function copyBlock(btn) {
+      const block = btn.closest('.route-card').querySelector('.code-block');
+      const text = block.textContent.trim();
+      const done = () => {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done);
+      }
+    }
+
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach(slide => io.observe(slide));
+      }
+      goto(idx) {
+        if (idx < 0 || idx >= this.total || this.isAnimating) return;
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault(); this.next(); break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault(); this.prev(); break;
+            case 'Home':
+              event.preventDefault(); this.goto(0); break;
+            case 'End':
+              event.preventDefault(); this.goto(this.total - 1); break;
+          }
+        });
+      }
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+      initTouch() {
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+    new SlidePresentation();
+  </script>
+</body>
+</html>
