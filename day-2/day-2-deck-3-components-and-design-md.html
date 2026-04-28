@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 Deck 3 — Components &amp; DESIGN.md</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — Notebook Tabs Theme
+       Locked to Day 1 and Day 2 decks.
+       ============================================= */
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --accent-red: #cf665d;
+      --accent-amber: #d7ab57;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.76rem, 1.2vw, 1rem);
+      --size-md: clamp(0.95rem, 1.55vw, 1.25rem);
+      --size-lg: clamp(1.18rem, 2.1vw, 1.8rem);
+      --size-xl: clamp(1.65rem, 3vw, 2.9rem);
+      --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+    }
+
+    .feature-list, .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+    }
+
+    .feature-list li, .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    img, .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+        :root {
+            --slide-padding: clamp(0.75rem, 3vw, 2rem);
+            --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+            --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            --h2-size: clamp(1rem, 3vw, 1.75rem);
+            --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+            --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+            --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+    }
+
+    @media (max-height: 600px) {
+        :root {
+            --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+            --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            --title-size: clamp(1.1rem, 4vw, 2rem);
+            --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            --size-base: clamp(0.64rem, 1vw, 0.84rem);
+        }
+
+        .nav-dots, .keyboard-hint, .decorative {
+            display: none;
+        }
+    }
+
+    @media (max-height: 500px) {
+        :root {
+            --slide-padding: clamp(0.4rem, 2vw, 1rem);
+            --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+            --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    strong { font-weight: 600; color: var(--text-primary); }
+    em { font-family: var(--font-display); font-style: italic; }
+    code { font-family: var(--font-mono); }
+
+    /* =============================================
+       NOTEBOOK FRAME — shared page treatment
+       ============================================= */
+    .slide {
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num { font-weight: 400; letter-spacing: 0.06em; }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+
+    /* =============================================
+       SHARED TYPE, LISTS, CODE, AND CARDS
+       ============================================= */
+    .slide-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header {
+      margin-bottom: clamp(0.72rem, 1.45vh, 1.25rem);
+      flex-shrink: 0;
+    }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 0.95vh, 0.85rem);
+      font-size: var(--size-base);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .body-copy p { max-width: 72ch; }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.42rem, 0.8vh, 0.7rem);
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: clamp(1rem, 1.5vw, 1.35rem);
+      color: var(--text-secondary);
+      line-height: 1.38;
+      font-size: var(--size-base);
+    }
+
+    .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: clamp(0.32rem, 0.55vw, 0.48rem);
+      height: clamp(0.32rem, 0.55vw, 0.48rem);
+      border-radius: 50%;
+      background: var(--accent-lavender);
+    }
+
+    .code-block {
+      background: #0f0f0f;
+      border: 1px solid #252525;
+      border-radius: 10px;
+      color: #cdd6f4;
+      font-family: var(--font-mono);
+      font-size: clamp(0.62rem, 0.96vw, 0.84rem);
+      line-height: 1.58;
+      padding: clamp(0.85rem, 1.5vw, 1.2rem);
+      white-space: pre-wrap;
+      overflow: hidden;
+    }
+
+    .label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       SLIDE 1 — Agenda stack
+       ============================================= */
+    .agenda-stack {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: clamp(1.2rem, 3vw, 3.2rem);
+      align-items: center;
+      min-height: 0;
+    }
+
+    .system-stack {
+      display: grid;
+      gap: clamp(0.6rem, 1.3vh, 0.95rem);
+      align-content: center;
+    }
+
+    .stack-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.9rem, 1.8vw, 1.5rem);
+      background: rgba(255,255,255,0.38);
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    .stack-card:nth-child(1) { margin-left: clamp(3rem, 6vw, 6rem); background: rgba(168,216,234,0.35); }
+    .stack-card:nth-child(2) { margin-left: clamp(1.5rem, 3vw, 3rem); background: rgba(199,184,234,0.35); }
+    .stack-card:nth-child(3) { background: rgba(152,212,187,0.36); }
+
+    .stack-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.4vw, 2.4rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      margin-bottom: 0.25em;
+    }
+
+    .stack-sub {
+      color: var(--text-secondary);
+      font-size: var(--size-sm);
+      line-height: 1.35;
+    }
+
+    /* =============================================
+       SLIDE 2 — Token split
+       ============================================= */
+    .split-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(1.1rem, 3vw, 3rem);
+      align-items: center;
+    }
+
+    .token-code-wrap {
+      display: grid;
+      gap: clamp(0.7rem, 1.5vh, 1.2rem);
+    }
+
+    .figma-callout {
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: clamp(0.75rem, 1.4vw, 1.15rem);
+      display: grid;
+      grid-template-columns: clamp(2.5rem, 4vw, 4rem) 1fr;
+      gap: clamp(0.65rem, 1.2vw, 1rem);
+      align-items: center;
+    }
+
+    .figma-dots {
+      width: clamp(2.2rem, 3.6vw, 3.4rem);
+      aspect-ratio: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+    }
+
+    .figma-dots span { border-radius: 50%; }
+    .figma-dots span:nth-child(1) { background: var(--accent-mint); }
+    .figma-dots span:nth-child(2) { background: var(--accent-lavender); }
+    .figma-dots span:nth-child(3) { background: var(--accent-pink); }
+    .figma-dots span:nth-child(4) { background: var(--accent-sky); }
+
+    /* =============================================
+       SLIDE 3 AND DEMO COMPANIONS — projector frames
+       ============================================= */
+    .demo-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+      gap: clamp(1.4rem, 4vw, 4rem);
+      align-items: center;
+    }
+
+    .projector-cue {
+      min-height: clamp(260px, 52vh, 560px);
+      border-radius: 12px;
+      border: 1px dashed rgba(85,85,85,0.28);
+      background: rgba(237,234,227,0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 2vw, 2rem);
+      text-align: center;
+    }
+
+    .projector-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 4rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(26,26,26,0.75);
+    }
+
+    .projector-arrow {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 900;
+      line-height: 0.8;
+      color: rgba(26,26,26,0.14);
+      margin-top: clamp(0.7rem, 1.5vh, 1.2rem);
+    }
+
+    .prompt-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.62rem, 1.2vh, 0.95rem);
+    }
+
+    .prompt-list li {
+      display: grid;
+      grid-template-columns: clamp(2rem, 3.4vw, 3.2rem) 1fr;
+      gap: clamp(0.7rem, 1.4vw, 1.2rem);
+      align-items: start;
+      padding: clamp(0.68rem, 1.15vw, 1rem);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.36);
+      color: var(--text-secondary);
+      font-size: clamp(0.78rem, 1.2vw, 1rem);
+      line-height: 1.35;
+    }
+
+    .prompt-num {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 2.6vw, 2.4rem);
+      font-style: italic;
+      font-weight: 700;
+      color: var(--accent-lavender);
+      filter: brightness(0.84);
+      line-height: 0.9;
+    }
+
+    /* =============================================
+       SLIDE 4 — Token categories reference grid
+       ============================================= */
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.62rem, 1.1vw, 1rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .ref-card {
+      display: grid;
+      grid-template-columns: clamp(3rem, 5vw, 4.8rem) 1fr;
+      gap: clamp(0.7rem, 1.3vw, 1.05rem);
+      align-items: start;
+      background: rgba(255,255,255,0.38);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.62rem, 1.05vw, 0.92rem);
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .ref-icon {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: var(--paper-edge);
+      border: 1px solid rgba(226,221,214,0.95);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ref-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.08rem, 1.85vw, 1.62rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      margin-bottom: clamp(0.25rem, 0.5vh, 0.42rem);
+    }
+
+    .ref-copy {
+      font-size: clamp(0.62rem, 0.92vw, 0.8rem);
+      line-height: 1.31;
+      color: var(--text-secondary);
+    }
+
+    .swatches { display: flex; gap: 4px; }
+    .swatches span { width: 12px; height: 34px; border-radius: 99px; }
+    .swatches span:nth-child(1) { background: var(--accent-mint); }
+    .swatches span:nth-child(2) { background: var(--accent-lavender); }
+    .swatches span:nth-child(3) { background: var(--accent-pink); }
+    .swatches span:nth-child(4) { background: var(--accent-sky); }
+    .type-scale { display: grid; gap: 3px; width: 70%; align-items: end; }
+    .type-scale span { height: 4px; background: rgba(85,85,85,0.26); border-radius: 99px; }
+    .type-scale span:nth-child(1) { width: 100%; height: 8px; }
+    .type-scale span:nth-child(2) { width: 80%; height: 6px; }
+    .type-scale span:nth-child(3) { width: 58%; }
+    .spacing-bars { display: flex; align-items: end; gap: 4px; }
+    .spacing-bars span { width: 7px; background: rgba(199,184,234,0.8); border-radius: 99px; }
+    .spacing-bars span:nth-child(1) { height: 12px; }
+    .spacing-bars span:nth-child(2) { height: 20px; }
+    .spacing-bars span:nth-child(3) { height: 30px; }
+    .radius-sample { width: 55%; height: 55%; border: 3px solid rgba(85,85,85,0.28); border-radius: 16px; }
+    .shadow-stack { position: relative; width: 58%; height: 58%; }
+    .shadow-stack span { position: absolute; inset: 0; border-radius: 7px; background: rgba(255,255,255,0.8); border: 1px solid var(--border-color); box-shadow: 0 8px 16px rgba(0,0,0,0.12); }
+    .shadow-stack span:nth-child(2) { transform: translate(8px, 8px); opacity: 0.7; }
+    .motion-arrow { font-family: var(--font-display); font-size: clamp(2.4rem, 4vw, 3.8rem); font-weight: 900; color: rgba(244,184,197,0.85); }
+
+    /* =============================================
+       SLIDE 5 — Button states
+       ============================================= */
+    .button-state-stack {
+      display: grid;
+      gap: clamp(0.5rem, 1vh, 0.8rem);
+    }
+
+    .button-state {
+      display: grid;
+      grid-template-columns: clamp(5.2rem, 8vw, 8rem) 1fr;
+      gap: clamp(0.6rem, 1.2vw, 1rem);
+      align-items: center;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.38);
+      border-radius: 8px;
+      padding: clamp(0.55rem, 1vw, 0.85rem);
+    }
+
+    .demo-button {
+      height: clamp(2.1rem, 4.6vh, 3rem);
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: var(--accent-lavender);
+      color: var(--text-primary);
+      border: 1px solid rgba(26,26,26,0.08);
+    }
+
+    .demo-button.hover { box-shadow: 0 6px 16px rgba(0,0,0,0.14); transform: translateY(-1px); }
+    .demo-button.focus { outline: 3px solid rgba(168,216,234,0.9); outline-offset: 3px; }
+    .demo-button.disabled { opacity: 0.38; }
+    .demo-button.loading::after { content: ''; width: 0.7rem; height: 0.7rem; border-radius: 50%; border: 2px solid rgba(26,26,26,0.25); border-top-color: rgba(26,26,26,0.75); }
+
+    .state-name {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      font-style: italic;
+      color: var(--text-primary);
+    }
+
+    /* =============================================
+       SLIDE 6 — Variant trap
+       ============================================= */
+    .variant-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(1rem, 2.6vw, 2.4rem);
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .variant-panel {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.36);
+      padding: clamp(0.8rem, 1.5vw, 1.25rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.7rem, 1.4vh, 1.1rem);
+    }
+
+    .button-chaos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.3rem, 0.75vw, 0.55rem);
+      flex: 1;
+      align-content: center;
+    }
+
+    .tiny-btn {
+      height: clamp(1.35rem, 3.2vh, 2.15rem);
+      border-radius: 999px;
+      background: var(--accent-lavender);
+      border: 1px solid rgba(26,26,26,0.07);
+      opacity: 0.85;
+    }
+
+    .tiny-btn:nth-child(3n) { background: var(--accent-mint); border-radius: 6px; }
+    .tiny-btn:nth-child(4n) { background: var(--accent-pink); }
+    .tiny-btn:nth-child(5n) { opacity: 0.45; }
+    .clean-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.7rem, 1.4vw, 1.1rem);
+      align-content: center;
+      flex: 1;
+    }
+
+    .clean-btn {
+      min-height: clamp(3rem, 7vh, 4.8rem);
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      display: grid;
+      place-items: center;
+      font-size: var(--size-sm);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .clean-btn.primary { background: var(--accent-lavender); }
+    .clean-btn.secondary { background: var(--paper-edge); }
+    .clean-btn.ghost { background: transparent; }
+    .clean-btn.destructive { background: rgba(207,102,93,0.22); border-color: rgba(207,102,93,0.35); }
+
+    /* =============================================
+       SLIDE 7 — AI vocabulary prompts
+       ============================================= */
+    .prompt-compare {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.8rem, 1.8vw, 1.5rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .prompt-card {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.8rem);
+      min-height: 0;
+    }
+
+    .prompt-card .code-block {
+      flex: 1;
+      min-height: clamp(230px, 42vh, 430px);
+      font-size: clamp(0.68rem, 1.05vw, 0.9rem);
+    }
+
+    .highlight-token {
+      color: var(--accent-mint);
+      font-weight: 600;
+    }
+
+    /* =============================================
+       SLIDE 8 — DESIGN.md intro
+       ============================================= */
+    .file-card {
+      min-height: clamp(300px, 54vh, 560px);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.44);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+      padding: clamp(0.9rem, 1.8vw, 1.45rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .file-name {
+      font-family: var(--font-mono);
+      font-size: clamp(1rem, 1.8vw, 1.55rem);
+      font-weight: 600;
+    }
+
+    .file-lines {
+      display: grid;
+      gap: clamp(0.35rem, 0.7vh, 0.6rem);
+      margin-top: clamp(1rem, 2vh, 1.8rem);
+    }
+
+    .file-lines span {
+      display: block;
+      height: clamp(0.35rem, 0.75vh, 0.55rem);
+      border-radius: 999px;
+      background: rgba(85,85,85,0.14);
+    }
+
+    .file-lines span:nth-child(2) { width: 82%; }
+    .file-lines span:nth-child(3) { width: 65%; }
+    .file-lines span:nth-child(4) { width: 92%; }
+    .date-tag {
+      align-self: flex-start;
+      border: 1px solid var(--border-color);
+      background: var(--paper-edge);
+      border-radius: 999px;
+      padding: 0.35em 0.8em;
+      font-size: var(--size-xs);
+      color: var(--text-secondary);
+      font-style: italic;
+      font-family: var(--font-display);
+    }
+
+    /* =============================================
+       SLIDE 9 — Anatomy of DESIGN.md
+       ============================================= */
+    .anatomy-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: clamp(1rem, 2.7vw, 2.6rem);
+      align-items: center;
+    }
+
+    .design-file {
+      min-height: clamp(420px, 64vh, 680px);
+      max-height: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.52);
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .file-header {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      background: var(--paper-edge);
+      padding: clamp(0.55rem, 1vw, 0.8rem) clamp(0.8rem, 1.4vw, 1.1rem);
+    }
+
+    .file-body {
+      padding: clamp(0.8rem, 1.5vw, 1.2rem);
+      display: grid;
+      gap: clamp(0.7rem, 1.3vh, 1rem);
+      align-content: start;
+    }
+
+    .yaml-snippet {
+      font-family: var(--font-mono);
+      font-size: clamp(0.58rem, 0.86vw, 0.78rem);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      color: #24313a;
+      background: rgba(237,234,227,0.68);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: clamp(0.65rem, 1.1vw, 0.9rem);
+    }
+
+    .prose-snippet {
+      font-family: var(--font-display);
+      font-size: clamp(0.9rem, 1.45vw, 1.22rem);
+      line-height: 1.42;
+      font-style: italic;
+      color: var(--text-secondary);
+      border-left: 3px solid var(--accent-lavender);
+      padding-left: clamp(0.7rem, 1.2vw, 1rem);
+    }
+
+    /* =============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================= */
+    @media (max-width: 900px) {
+      .agenda-stack,
+      .split-layout,
+      .demo-layout,
+      .anatomy-layout {
+        grid-template-columns: 1fr;
+        gap: clamp(0.75rem, 2vh, 1.4rem);
+      }
+
+      .reference-grid,
+      .variant-layout,
+      .prompt-compare {
+        grid-template-columns: 1fr;
+      }
+
+      .projector-cue,
+      .file-card,
+      .design-file {
+        min-height: 0;
+        max-height: 38vh;
+      }
+    }
+
+    @media (max-height: 740px) {
+      .body-copy { line-height: 1.36; gap: clamp(0.32rem, 0.7vh, 0.52rem); }
+      .slide-title { font-size: clamp(1.35rem, 2.7vw, 2.35rem); }
+      .ref-copy { font-size: clamp(0.56rem, 0.82vw, 0.72rem); line-height: 1.23; }
+      .ref-title { font-size: clamp(0.94rem, 1.5vw, 1.28rem); }
+      .ref-card { padding: clamp(0.45rem, 0.75vw, 0.68rem); }
+      .code-block, .yaml-snippet { font-size: clamp(0.52rem, 0.78vw, 0.7rem); line-height: 1.38; }
+      .projector-cue, .phone-wire, .file-card, .design-file { min-height: clamp(210px, 44vh, 430px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- Slide 1 -->
+  <section class="slide" id="slide-1" aria-label="From screens to systems">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">How designers stop drawing and start authoring</p>
+              <h1 class="slide-title">From screens to systems</h1>
+            </div>
+            <div class="agenda-stack">
+              <div class="system-stack reveal d2">
+                <div class="stack-card"><p class="stack-title">DESIGN.md</p><p class="stack-sub">Persistent context for the AI agent</p></div>
+                <div class="stack-card"><p class="stack-title">Components</p><p class="stack-sub">Reusable constraints and states</p></div>
+                <div class="stack-card"><p class="stack-title">Tokens</p><p class="stack-sub">Named design decisions at the base</p></div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>We just spent two hours on states — what your screens need to handle. Now the next question.</p>
+                <p>Look at any real product you use. Every button feels related. Every input has the same corners. The spacing between things is consistent across screens you've never opened together. The product <em>feels</em> coherent.</p>
+                <p>That coherence isn't drawn one screen at a time. It comes from a system underneath — a small set of rules every screen follows.</p>
+                <p>For the next hour, three pieces of that system: <strong>tokens</strong>, <strong>components</strong>, and <strong>DESIGN.md</strong>.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">1 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" id="slide-2" aria-label="A token is a named decision">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The smallest unit of a design system</p>
+              <h2 class="slide-title">A token is a named decision</h2>
+            </div>
+            <div class="split-layout">
+              <div class="token-code-wrap reveal d2">
+                <pre class="code-block">:root {
+  --color-accent: #FF6B35;
+}</pre>
+                <div class="figma-callout">
+                  <div class="figma-dots" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                  <p class="body-copy">If you've used Figma variables, you've already met tokens. They translate one-to-one to code.</p>
+                </div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>A <em>token</em> is a name attached to a design value.</p>
+                <p>Instead of writing <code>#FF6B35</code> in twenty places, you write <code>--color-accent</code> and define it once. The hex is implementation. The name — <em>accent</em> — is the design.</p>
+                <p>Why it matters:</p>
+                <ul class="bullet-list">
+                  <li>Change the value, twenty places update at once.</li>
+                  <li>The name carries intent. <em>accent</em> says why. <code>#FF6B35</code> only says what.</li>
+                  <li>Anyone reading the code sees the system, not a pile of hex codes.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">2 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" id="slide-3" aria-label="A real token system live walkthrough">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Live walkthrough — vibe.monday.com</p>
+              <h2 class="slide-title">A real token system</h2>
+            </div>
+            <div class="demo-layout">
+              <div class="projector-cue reveal d2"><div><p class="projector-title">vibe.monday.com</p><span class="projector-arrow">→</span></div></div>
+              <ul class="prompt-list reveal d3">
+                <li><span class="prompt-num">1</span><span>How colors are named: semantic, not literal.</span></li>
+                <li><span class="prompt-num">2</span><span>The token categories: color, spacing, typography, radius, motion.</span></li>
+                <li><span class="prompt-num">3</span><span>How each token has a <em>role</em>, not just a value.</span></li>
+                <li><span class="prompt-num">4</span><span>The rationale: why each decision exists.</span></li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">3 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" id="slide-4" aria-label="What tokens cover">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">A reference card</p><h2 class="slide-title">What tokens cover</h2></div>
+            <div class="reference-grid">
+              <article class="ref-card reveal d2"><div class="ref-icon"><div class="swatches"><span></span><span></span><span></span><span></span></div></div><div><h3 class="ref-title">Color</h3><p class="ref-copy">Palette + roles. Primary, secondary, surface, accent, error, success. Named by purpose, not by hue.</p></div></article>
+              <article class="ref-card reveal d3"><div class="ref-icon"><div class="type-scale"><span></span><span></span><span></span></div></div><div><h3 class="ref-title">Typography</h3><p class="ref-copy">Font families, scales, weights, line heights. h1, body-md, label-caps. Each name implies use.</p></div></article>
+              <article class="ref-card reveal d4"><div class="ref-icon"><div class="spacing-bars"><span></span><span></span><span></span></div></div><div><h3 class="ref-title">Spacing</h3><p class="ref-copy">A small ladder. xs, sm, md, lg, xl. All multiples of a base unit, usually 4 or 8.</p></div></article>
+              <article class="ref-card reveal d5"><div class="ref-icon"><div class="radius-sample"></div></div><div><h3 class="ref-title">Radius</h3><p class="ref-copy">The corner-curve language of your product. sm, md, lg, full. Subtle but enormously consistent.</p></div></article>
+              <article class="ref-card reveal d5"><div class="ref-icon"><div class="shadow-stack"><span></span><span></span></div></div><div><h3 class="ref-title">Shadow</h3><p class="ref-copy">Elevation. card, modal, popover. Each shadow says <em>this is at this layer</em>.</p></div></article>
+              <article class="ref-card reveal d5"><div class="ref-icon"><span class="motion-arrow">→</span></div><div><h3 class="ref-title">Motion</h3><p class="ref-copy">Durations, easings, named transitions. fast, normal, slow. The tempo of the product.</p></div></article>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">4 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why active">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" id="slide-5" aria-label="A component is a constraint">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Not a piece, a rule</p><h2 class="slide-title">A component is a constraint</h2></div>
+            <div class="split-layout">
+              <div class="button-state-stack reveal d2">
+                <div class="button-state"><span class="demo-button">Book now</span><span class="state-name">Default</span></div>
+                <div class="button-state"><span class="demo-button hover">Book now</span><span class="state-name">Hover</span></div>
+                <div class="button-state"><span class="demo-button focus">Book now</span><span class="state-name">Focus</span></div>
+                <div class="button-state"><span class="demo-button disabled">Book now</span><span class="state-name">Disabled</span></div>
+                <div class="button-state"><span class="demo-button loading"></span><span class="state-name">Loading</span></div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>Tokens are the alphabet. Components are the words.</p>
+                <p>A <em>component</em> isn't "blue rectangle with text." It's a rule: every action in this product looks like <em>this</em>, behaves like <em>this</em>, and you can't accidentally make a different one.</p>
+                <p>A button is more than its appearance. It includes:</p>
+                <ul class="bullet-list">
+                  <li><strong>Visual style</strong> — colors, padding, radius, all from tokens</li>
+                  <li><strong>Behavior</strong> — hover, focus, active, disabled, loading</li>
+                  <li><strong>Variants</strong> — primary, secondary, ghost, destructive</li>
+                  <li><strong>States</strong> — the states from this morning, applied at component level</li>
+                </ul>
+                <p>Use the Button. You inherit all of it.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">5 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide" id="slide-6" aria-label="The variant trap">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Why your Figma file has 47 button variants</p><h2 class="slide-title">The variant trap</h2></div>
+            <div class="variant-layout">
+              <div class="variant-panel reveal d2">
+                <p class="label">What designers usually do</p>
+                <div class="button-chaos" aria-hidden="true">
+                  <span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span>
+                  <span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span>
+                  <span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span>
+                  <span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span><span class="tiny-btn"></span>
+                </div>
+              </div>
+              <div class="variant-panel reveal d3">
+                <p class="label">What real systems do</p>
+                <div class="clean-buttons">
+                  <span class="clean-btn primary">Primary</span>
+                  <span class="clean-btn secondary">Secondary</span>
+                  <span class="clean-btn ghost">Ghost</span>
+                  <span class="clean-btn destructive">Destructive</span>
+                </div>
+              </div>
+            </div>
+            <div class="body-copy reveal d4" style="margin-top:var(--gap-content);">
+              <p>Everything else is a <em>property</em> of the component — size, has-icon, is-loading, is-disabled — not a separate variant. The discipline: fewer variants, more states.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">6 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 7 -->
+  <section class="slide" id="slide-7" aria-label="Components are how AI speaks your design">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">The leverage moment</p><h2 class="slide-title">Components are how AI speaks your design</h2></div>
+            <div class="prompt-compare">
+              <div class="prompt-card reveal d2">
+                <p class="label">Without components</p>
+                <pre class="code-block">Make a blue rounded button with white text,
+16px padding, Inter font, slight drop shadow,
+and a hover state that's 10% darker.</pre>
+              </div>
+              <div class="prompt-card reveal d3">
+                <p class="label">With components</p>
+                <pre class="code-block">Use the <span class="highlight-token">Button</span> component,
+primary variant.</pre>
+              </div>
+            </div>
+            <div class="body-copy reveal d4" style="margin-top:var(--gap-content);">
+              <p>Same output. Different conversation. The component library is your shared vocabulary with the agent. Without constraints, you describe pixels every time. With constraints, you describe intent.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">7 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift active">Components</div><div class="tab tab-plan">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 8 -->
+  <section class="slide" id="slide-8" aria-label="Meet DESIGN.md">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">One file. Open-sourced last week.</p><h2 class="slide-title">DESIGN.md</h2></div>
+            <div class="split-layout">
+              <div class="file-card reveal d2">
+                <div>
+                  <p class="file-name">DESIGN.md</p>
+                  <div class="file-lines"><span></span><span></span><span></span><span></span></div>
+                </div>
+                <span class="date-tag">Open-sourced April 21, 2026.</span>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>DESIGN.md is a single markdown file that lives in your project root.</p>
+                <p>It contains your design system — tokens, component rules, rationale — in a format any AI agent can read. Drop it in your project. Claude Code, Cursor, Antigravity, Stitch — all of them read it as persistent context.</p>
+                <p>Every prompt you send is paired with this file before reaching the model.</p>
+                <p>The result: AI generates UI in <em>your</em> design language by default, not generic defaults.</p>
+                <p>Google open-sourced the spec on April 21, 2026. You're learning a format the industry hasn't standardized on yet.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">8 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 9 -->
+  <section class="slide" id="slide-9" aria-label="Anatomy of a DESIGN.md">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Tokens above, rationale below</p><h2 class="slide-title">What's in it</h2></div>
+            <div class="anatomy-layout">
+              <div class="design-file reveal d2">
+                <div class="file-header">DESIGN.md</div>
+                <div class="file-body">
+                  <pre class="yaml-snippet">---
+colors:
+  primary: "#1A1C1E"
+  accent: "#B8422E"
+typography:
+  h1: { fontFamily: "Public Sans", fontSize: "3rem" }
+spacing:
+  md: 16px
+---</pre>
+                  <div class="prose-snippet">
+                    <p>## Overview</p>
+                    <p>Architectural minimalism meets journalistic gravitas. The UI evokes a premium matte finish — a high-end broadsheet or contemporary gallery.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>A DESIGN.md has two halves.</p>
+                <p><strong>Top — YAML tokens:</strong> machine-readable values the AI parses exactly.</p>
+                <p><strong>Bottom — Markdown prose:</strong> human-readable intent. When no exact rule covers a decision, the AI falls back to the prose.</p>
+                <p>Together: precise values plus reasoning. That's the file.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">9 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 10: inferred sparse demo companion -->
+  <section class="slide" id="slide-10" aria-label="Live demo create a DESIGN.md">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Live demo companion</p><h2 class="slide-title">Create the design contract</h2><p class="slide-subtitle">Turn style decisions into a DESIGN.md file</p></div>
+            <div class="demo-layout">
+              <div class="projector-cue reveal d2"><div><p class="projector-title">Claude Code<br>+ DESIGN.md</p><span class="projector-arrow">→</span></div></div>
+              <ul class="prompt-list reveal d3">
+                <li><span class="prompt-num">1</span><span>What tokens does the agent extract?</span></li>
+                <li><span class="prompt-num">2</span><span>Which component rules does it name?</span></li>
+                <li><span class="prompt-num">3</span><span>Where does the rationale feel too generic?</span></li>
+                <li><span class="prompt-num">4</span><span>What would you correct as the designer?</span></li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">10 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 11: inferred sparse demo companion -->
+  <section class="slide" id="slide-11" aria-label="Live demo use DESIGN.md with an agent">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1"><p class="slide-kicker">Live demo companion</p><h2 class="slide-title">Use the design contract</h2><p class="slide-subtitle">Same agent, better defaults</p></div>
+            <div class="demo-layout">
+              <div class="projector-cue reveal d2"><div><p class="projector-title">Build with<br>context</p><span class="projector-arrow">→</span></div></div>
+              <ul class="prompt-list reveal d3">
+                <li><span class="prompt-num">1</span><span>Does it use the named tokens instead of inventing values?</span></li>
+                <li><span class="prompt-num">2</span><span>Does it reuse component rules instead of drawing one-off UI?</span></li>
+                <li><span class="prompt-num">3</span><span>Does the output feel like the same product?</span></li>
+                <li><span class="prompt-num">4</span><span>Where does the designer still need to intervene?</span></li>
+              </ul>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 2 · Components &amp; DESIGN.md</span><span class="footer-num">11 / 11</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Systems</div><div class="tab tab-why">Tokens</div><div class="tab tab-shift">Components</div><div class="tab tab-plan active">DESIGN.md</div></div>
+    </div>
+  </section>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach(slide => io.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total || this.isAnimating) return;
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault(); this.next(); break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault(); this.prev(); break;
+            case 'Home':
+              event.preventDefault(); this.goto(0); break;
+            case 'End':
+              event.preventDefault(); this.goto(this.total - 1); break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0;
+        let startX = 0;
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>

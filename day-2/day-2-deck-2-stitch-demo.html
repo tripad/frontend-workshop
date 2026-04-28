@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 Deck 2 — Stitch Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — Notebook Tabs Theme
+       Locked to Day 1 and Day 2 Deck 1.
+       ============================================= */
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --accent-red: #cf665d;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.78rem, 1.25vw, 1.02rem);
+      --size-md: clamp(0.95rem, 1.6vw, 1.28rem);
+      --size-lg: clamp(1.18rem, 2.15vw, 1.8rem);
+      --size-xl: clamp(1.7rem, 3.1vw, 3rem);
+      --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+    }
+
+    .feature-list, .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+    }
+
+    .feature-list li, .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    img, .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+        :root {
+            --slide-padding: clamp(0.75rem, 3vw, 2rem);
+            --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+            --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            --h2-size: clamp(1rem, 3vw, 1.75rem);
+            --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+            --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+            --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+    }
+
+    @media (max-height: 600px) {
+        :root {
+            --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+            --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            --title-size: clamp(1.1rem, 4vw, 2rem);
+            --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            --size-base: clamp(0.66rem, 1vw, 0.86rem);
+        }
+
+        .nav-dots, .keyboard-hint, .decorative {
+            display: none;
+        }
+    }
+
+    @media (max-height: 500px) {
+        :root {
+            --slide-padding: clamp(0.4rem, 2vw, 1rem);
+            --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+            --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    strong { font-weight: 600; color: var(--text-primary); }
+    em { font-family: var(--font-display); font-style: italic; }
+
+    /* =============================================
+       NOTEBOOK FRAME — shared Day 1 page treatment
+       ============================================= */
+    .slide {
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num {
+      font-weight: 400;
+      letter-spacing: 0.06em;
+    }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active {
+      opacity: 1;
+      box-shadow: inset -3px 0 0 rgba(0,0,0,0.12);
+    }
+
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+
+    /* =============================================
+       SHARED TYPE AND BODY COMPONENTS
+       ============================================= */
+    .slide-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header {
+      margin-bottom: clamp(0.75rem, 1.5vh, 1.35rem);
+      flex-shrink: 0;
+    }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.9rem);
+      font-size: var(--size-base);
+      line-height: 1.52;
+      color: var(--text-secondary);
+    }
+
+    .body-copy p { max-width: 70ch; }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 1vh, 0.85rem);
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: clamp(1rem, 1.5vw, 1.35rem);
+      color: var(--text-secondary);
+      line-height: 1.4;
+      font-size: var(--size-base);
+    }
+
+    .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: clamp(0.32rem, 0.55vw, 0.48rem);
+      height: clamp(0.32rem, 0.55vw, 0.48rem);
+      border-radius: 50%;
+      background: var(--accent-lavender);
+    }
+
+    .note-card {
+      background: rgba(255,255,255,0.38);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.85rem, 1.6vw, 1.4rem);
+      min-width: 0;
+    }
+
+    /* =============================================
+       PROMPT BLOCKS — identical treatment for slides 3, 4, and 6
+       ============================================= */
+    .prompt-slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      justify-content: center;
+    }
+
+    .prompt-run-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.55rem, 1vh, 0.85rem);
+    }
+
+    .prompt-wrap {
+      height: min(54vh, 520px);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .prompt-block {
+      background: #0f0f0f;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #252525;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5em 0.9em;
+      background: #191919;
+      border-bottom: 1px solid #252525;
+      flex-shrink: 0;
+    }
+
+    .prompt-label {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      color: #777;
+      letter-spacing: 0.06em;
+    }
+
+    .copy-btn {
+      background: #262626;
+      border: 1px solid #363636;
+      border-radius: 4px;
+      color: #999;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      padding: 0.25em 0.7em;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+      background: #363636;
+      color: #fff;
+      border-color: #4a4a4a;
+    }
+
+    .copy-btn.copied {
+      background: #0f2a18;
+      color: #98d4bb;
+      border-color: #1e4a2a;
+    }
+
+    .prompt-text {
+      font-family: var(--font-mono);
+      font-size: clamp(0.65rem, 1.03vw, 0.9rem);
+      color: #cdd6f4;
+      padding: 1em 1.1em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.62;
+      margin: 0;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #333 transparent;
+    }
+
+    .prompt-note {
+      font-family: var(--font-display);
+      font-size: clamp(0.85rem, 1.35vw, 1.18rem);
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: clamp(0.55rem, 1vh, 0.85rem);
+    }
+
+    /* =============================================
+       SLIDE 1 — Why Stitch, why MCP
+       ============================================= */
+    .s1-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+      gap: clamp(1.3rem, 3.2vw, 3.4rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .mcp-diagram {
+      min-height: clamp(280px, 48vh, 520px);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .tool-flow {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr clamp(4rem, 8vw, 8rem) 1fr;
+      gap: clamp(0.5rem, 1.4vw, 1.3rem);
+      align-items: center;
+    }
+
+    .tool-box {
+      min-height: clamp(7rem, 17vh, 12rem);
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.42);
+      border-radius: 8px;
+      padding: clamp(0.8rem, 1.6vw, 1.35rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+
+    .tool-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.3vw, 2.1rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .tool-sub {
+      font-size: var(--size-xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .mcp-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(0.3rem, 0.75vh, 0.55rem);
+      color: var(--text-muted);
+    }
+
+    .arrow-line {
+      width: 100%;
+      height: 2px;
+      background: var(--accent-lavender);
+      position: relative;
+      filter: brightness(0.88);
+    }
+
+    .arrow-line::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: clamp(0.55rem, 1.1vw, 0.9rem);
+      height: clamp(0.55rem, 1.1vw, 0.9rem);
+      border-top: 2px solid var(--accent-lavender);
+      border-right: 2px solid var(--accent-lavender);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .arrow-label {
+      font-family: var(--font-mono);
+      font-size: var(--size-xs);
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       SLIDE 2 — Two-screen prototype wireframes
+       ============================================= */
+    .s2-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(1rem, 3vw, 3rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .wire-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.75rem, 1.6vw, 1.3rem);
+      align-items: stretch;
+    }
+
+    .phone-wire {
+      min-height: clamp(270px, 50vh, 520px);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.45);
+      padding: clamp(0.75rem, 1.45vw, 1.1rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.8rem);
+    }
+
+    .wire-caption {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.8vw, 1.55rem);
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .wire-box {
+      border: 1px solid rgba(226,221,214,0.95);
+      border-radius: 7px;
+      background: var(--paper-edge);
+    }
+
+    .wire-map { flex: 1; min-height: clamp(5rem, 15vh, 10rem); }
+    .wire-field { height: clamp(2rem, 5vh, 3.5rem); }
+    .wire-card { height: clamp(4rem, 10vh, 7rem); }
+    .wire-button { height: clamp(2.3rem, 5vh, 3.6rem); border-radius: 999px; background: var(--accent-mint); opacity: 0.86; }
+    .wire-driver { height: clamp(4rem, 9vh, 6.5rem); display: grid; grid-template-columns: clamp(2.5rem, 4vw, 4rem) 1fr; gap: clamp(0.5rem, 1vw, 0.8rem); padding: clamp(0.5rem, 1vw, 0.8rem); }
+    .wire-avatar { border-radius: 50%; background: var(--accent-lavender); opacity: 0.65; }
+    .wire-actions { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.45rem, 0.9vw, 0.7rem); }
+    .wire-action { height: clamp(2rem, 4.5vh, 3rem); border-radius: 999px; background: rgba(168,216,234,0.65); }
+
+    /* =============================================
+       SLIDE 5 — Generated screens placeholders
+       ============================================= */
+    .s5-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: clamp(1.2rem, 3vw, 3rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .screenshot-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.75rem, 1.6vw, 1.3rem);
+      min-height: 0;
+    }
+
+    .shot-placeholder {
+      min-height: clamp(280px, 54vh, 560px);
+      border-radius: 12px;
+      border: 1px dashed rgba(85,85,85,0.3);
+      background: linear-gradient(145deg, rgba(237,234,227,0.82), rgba(255,255,255,0.44));
+      display: grid;
+      place-items: center;
+      padding: clamp(0.8rem, 1.4vw, 1.2rem);
+      text-align: center;
+      color: var(--text-muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shot-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: clamp(1rem, 2vw, 1.8rem);
+      border: 1px solid rgba(226,221,214,0.9);
+      border-radius: 10px;
+      background: repeating-linear-gradient(180deg, transparent 0, transparent 1.5rem, rgba(226,221,214,0.45) 1.55rem, rgba(226,221,214,0.45) 1.6rem);
+      opacity: 0.65;
+    }
+
+    .shot-label {
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border: 1px solid rgba(85,85,85,0.18);
+      border-radius: 999px;
+      padding: 0.4em 0.8em;
+      background: rgba(248,246,241,0.82);
+    }
+
+    /* =============================================
+       SLIDE 7 — Missing states activity
+       ============================================= */
+    .s7-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.78fr);
+      gap: clamp(1.2rem, 3vw, 3rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .notebook-list {
+      min-height: clamp(300px, 56vh, 560px);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background:
+        repeating-linear-gradient(180deg, transparent 0, transparent clamp(1.85rem, 3.25vh, 2.35rem), rgba(168,216,234,0.35) clamp(1.88rem, 3.3vh, 2.38rem), rgba(168,216,234,0.35) clamp(1.92rem, 3.35vh, 2.42rem)),
+        rgba(255,255,255,0.42);
+      padding: clamp(1rem, 2vw, 1.7rem);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .notebook-list::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: clamp(2.6rem, 4vw, 4rem);
+      width: 1px;
+      background: rgba(244,184,197,0.7);
+    }
+
+    .list-title {
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.2vw, 2rem);
+      font-style: italic;
+      line-height: 1.1;
+      margin-bottom: clamp(0.9rem, 2vh, 1.5rem);
+    }
+
+    .sample-list {
+      position: relative;
+      z-index: 1;
+      list-style: none;
+      display: grid;
+      gap: clamp(0.55rem, 1.3vh, 0.9rem);
+      padding-left: clamp(0.6rem, 1.2vw, 1rem);
+    }
+
+    .sample-list li {
+      font-family: var(--font-mono);
+      font-size: clamp(0.68rem, 1.05vw, 0.9rem);
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .sample-list li::before {
+      content: '□';
+      margin-right: 0.65em;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       RESPONSIVE LAYOUT ADJUSTMENTS
+       ============================================= */
+    @media (max-width: 900px) {
+      .s1-layout,
+      .s2-layout,
+      .s5-layout,
+      .s7-layout {
+        grid-template-columns: 1fr;
+        gap: clamp(0.75rem, 2vh, 1.4rem);
+      }
+
+      .mcp-diagram,
+      .phone-wire,
+      .shot-placeholder,
+      .notebook-list {
+        min-height: 0;
+        max-height: 38vh;
+      }
+    }
+
+    @media (max-height: 740px) {
+      .body-copy { line-height: 1.38; gap: clamp(0.34rem, 0.75vh, 0.55rem); }
+      .slide-title { font-size: clamp(1.35rem, 2.7vw, 2.4rem); }
+      .prompt-wrap { height: min(50vh, 430px); }
+      .prompt-text { font-size: clamp(0.58rem, 0.88vw, 0.78rem); line-height: 1.48; }
+      .phone-wire, .shot-placeholder, .notebook-list { min-height: clamp(220px, 46vh, 440px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- =============================================
+       SLIDE 1 — Why Stitch, why MCP
+       ============================================= -->
+  <section class="slide" id="slide-1" aria-label="Why Stitch why MCP">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Two ideas in one demo</p>
+              <h1 class="slide-title">Why Stitch, why MCP</h1>
+            </div>
+            <div class="s1-layout">
+              <div class="mcp-diagram reveal d2">
+                <div class="tool-flow" aria-label="Claude Code connects to Stitch through MCP">
+                  <div class="tool-box">
+                    <p class="tool-sub">agent</p>
+                    <p class="tool-name">Claude Code</p>
+                  </div>
+                  <div class="mcp-arrow">
+                    <span class="arrow-line"></span>
+                    <span class="arrow-label">MCP</span>
+                  </div>
+                  <div class="tool-box">
+                    <p class="tool-sub">design tool</p>
+                    <p class="tool-name">Stitch</p>
+                  </div>
+                </div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>We're about to design a two-screen ride hailing prototype using Stitch, Google's AI design tool, driven from Claude Code via MCP.</p>
+                <p>This demo is doing two things at once.</p>
+                <p>One: showing you Stitch. It's a different shape of tool from what you saw yesterday. Stitch generates <em>designs</em>, not code. Useful when you want to think in screens.</p>
+                <p>Two: showing you how MCP servers let your AI agent control other tools. Yesterday, Antigravity wrote code for you. Today, the same kind of agent will drive Stitch through an MCP connection.</p>
+                <p>After we generate the screens, we come back to states.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">1 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Why</div>
+        <div class="tab tab-why">Build</div>
+        <div class="tab tab-shift">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 2 — What we're building
+       ============================================= -->
+  <section class="slide" id="slide-2" aria-label="A two-screen ride hailing prototype">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Porter-style on-demand delivery</p>
+              <h2 class="slide-title">A two-screen ride hailing prototype</h2>
+            </div>
+            <div class="s2-layout">
+              <div class="wire-pair reveal d2">
+                <div class="phone-wire">
+                  <p class="wire-caption">Screen 1: Booking</p>
+                  <div class="wire-box wire-field"></div>
+                  <div class="wire-box wire-field"></div>
+                  <div class="wire-box wire-card"></div>
+                  <div class="wire-box wire-card"></div>
+                  <div class="wire-button"></div>
+                </div>
+                <div class="phone-wire">
+                  <p class="wire-caption">Screen 2: Ride in progress</p>
+                  <div class="wire-box wire-map"></div>
+                  <div class="wire-box wire-driver"><span class="wire-avatar"></span><span class="wire-box"></span></div>
+                  <div class="wire-actions"><span class="wire-action"></span><span class="wire-action"></span></div>
+                  <div class="wire-box wire-button"></div>
+                </div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>Two screens:</p>
+                <ul class="bullet-list">
+                  <li><strong>Booking screen</strong> — pickup, drop, vehicle type, fare estimate, confirm button.</li>
+                  <li><strong>Ride in progress</strong> — driver info, ETA, call / message, map, cancel.</li>
+                </ul>
+                <p>The point isn't to make a beautiful design. The point is to get a working happy-path prototype on screen quickly so we can ask the better question: <em>what's missing?</em></p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">2 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why active">Build</div>
+        <div class="tab tab-shift">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 3 — Prompt 1: Booking screen
+       ============================================= -->
+  <section class="slide prompt-slide" id="slide-3" aria-label="Prompt 1 booking screen">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Paste into Claude Code</p>
+              <h2 class="slide-title">Prompt 1 — Booking screen</h2>
+            </div>
+            <div class="prompt-slide-body reveal d2">
+              <p class="prompt-run-label">Run in Claude Code.</p>
+              <div class="prompt-wrap">
+                <div class="prompt-block">
+                  <div class="prompt-header">
+                    <span class="prompt-label">prompt-1 · booking-screen.txt</span>
+                    <button class="copy-btn" type="button" onclick="copyPrompt(this)">Copy</button>
+                  </div>
+                  <pre class="prompt-text">Using the Stitch MCP, design a ride booking screen for an
+on-demand delivery app like Porter (India).
+
+Include:
+- Pickup field
+- Drop-off field
+- Three vehicle options (bike, mini truck, large truck)
+- Fare estimate card
+- Confirm booking button
+
+Keep it minimal, mobile-first.</pre>
+                </div>
+              </div>
+              <p class="prompt-note">Watch Stitch generate. ~30-60 sec.</p>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">3 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why">Build</div>
+        <div class="tab tab-shift active">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 4 — Prompt 2: Ride in progress
+       ============================================= -->
+  <section class="slide prompt-slide" id="slide-4" aria-label="Prompt 2 ride in progress">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Paste into Claude Code</p>
+              <h2 class="slide-title">Prompt 2 — Ride in progress</h2>
+            </div>
+            <div class="prompt-slide-body reveal d2">
+              <p class="prompt-run-label">Run in Claude Code.</p>
+              <div class="prompt-wrap">
+                <div class="prompt-block">
+                  <div class="prompt-header">
+                    <span class="prompt-label">prompt-2 · ride-in-progress.txt</span>
+                    <button class="copy-btn" type="button" onclick="copyPrompt(this)">Copy</button>
+                  </div>
+                  <pre class="prompt-text">Using the Stitch MCP, design a ride-in-progress screen for
+the same Porter-style delivery app.
+
+Include:
+- Driver name and photo
+- Vehicle plate number
+- Current ETA
+- Call driver button
+- Message driver button
+- Small map area (placeholder fine)
+- Cancel ride button at the bottom
+
+Keep it minimal, mobile-first.</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">4 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why">Build</div>
+        <div class="tab tab-shift active">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 5 — Look what we got
+       ============================================= -->
+  <section class="slide" id="slide-5" aria-label="Two clean screens both showing the happy path">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Both showing the happy path</p>
+              <h2 class="slide-title">Two clean screens</h2>
+            </div>
+            <div class="s5-layout">
+              <div class="screenshot-pair reveal d2">
+                <div class="shot-placeholder"><span class="shot-label">Generated screen · Booking</span></div>
+                <div class="shot-placeholder"><span class="shot-label">Generated screen · Ride in progress</span></div>
+              </div>
+              <div class="body-copy reveal d3">
+                <p>Quick look at what Stitch gave us.</p>
+                <p>Both screens are competent. They show what happens when everything works: pickup is valid, fare loads, driver is assigned, ETA is reasonable.</p>
+                <p>Neither shows what happens when things go differently. That's not Stitch's fault. It's what we asked for. We described the happy path. We got the happy path.</p>
+                <p>Now the interesting question: <em>what states are these screens missing?</em></p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">5 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why active">Build</div>
+        <div class="tab tab-shift">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 6 — Ask the agent what's missing
+       ============================================= -->
+  <section class="slide prompt-slide" id="slide-6" aria-label="Now flip the question">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Ask Claude to critique its own work</p>
+              <h2 class="slide-title">Now flip the question</h2>
+            </div>
+            <div class="prompt-slide-body reveal d2">
+              <p class="prompt-run-label">Run in the same Claude Code session.</p>
+              <div class="prompt-wrap">
+                <div class="prompt-block">
+                  <div class="prompt-header">
+                    <span class="prompt-label">prompt-3 · missing-states.txt</span>
+                    <button class="copy-btn" type="button" onclick="copyPrompt(this)">Copy</button>
+                  </div>
+                  <pre class="prompt-text">Look at the two ride hailing screens we just generated.
+
+List every state these screens are NOT currently handling.
+Think about:
+- Loading and waiting states
+- Empty states
+- Error states (network, server, validation)
+- Permission states (location, notifications)
+- Edge cases (no drivers, invalid pickup, payment failure)
+
+Group your answer by screen.</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">6 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why">Build</div>
+        <div class="tab tab-shift active">Prompts</div>
+        <div class="tab tab-plan">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 7 — Find your missing states
+       ============================================= -->
+  <section class="slide" id="slide-7" aria-label="Find your missing states activity">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">An activity for your trio project, not for right now</p>
+              <h2 class="slide-title">Find your missing states</h2>
+            </div>
+            <div class="s7-layout">
+              <div class="body-copy reveal d2">
+                <p>You're building your trio project as a real working prototype: a few HTML screens, maybe a dummy API or two.</p>
+                <p>Open your Figma file alongside your code. Every time you hit a state in code that <em>wasn't</em> in your Figma file, add it to a list.</p>
+                <p>Loading screens you didn't draw. Empty states you didn't think of. Errors the API can throw. Edge cases that only show up when you wire things together.</p>
+                <p>This is the gap between what you designed and what a real product needs. The act of building will surface it.</p>
+                <p><strong>Bring the list to Day 3.</strong></p>
+              </div>
+              <aside class="notebook-list reveal d3">
+                <h3 class="list-title">Missing states from my food delivery prototype:</h3>
+                <ul class="sample-list">
+                  <li>cart loading</li>
+                  <li>address invalid</li>
+                  <li>no delivery to pincode</li>
+                  <li>payment timeout</li>
+                  <li>restaurant closed</li>
+                  <li>coupon code expired</li>
+                </ul>
+              </aside>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · Stitch Demo</span>
+            <span class="footer-num">7 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Why</div>
+        <div class="tab tab-why">Build</div>
+        <div class="tab tab-shift">Prompts</div>
+        <div class="tab tab-plan active">Activity</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       PRESENTATION CONTROLLER
+       Copy buttons, keyboard nav, mouse wheel, touch swipe, progress.
+       ============================================= -->
+  <script>
+    function copyPrompt(btn) {
+      const block = btn.closest('.prompt-block');
+      const text = block.querySelector('.prompt-text').textContent;
+
+      const markDone = () => {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      const markFail = () => {
+        btn.textContent = 'Failed';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text.trim()).then(markDone).catch(() => fallbackCopy(text, markDone, markFail));
+      } else {
+        fallbackCopy(text, markDone, markFail);
+      }
+    }
+
+    function fallbackCopy(text, onSuccess, onFail) {
+      const ta = document.createElement('textarea');
+      ta.value = text.trim();
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy') ? onSuccess() : onFail();
+      } catch (e) {
+        onFail();
+      }
+      document.body.removeChild(ta);
+    }
+
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+
+        this.slides.forEach(slide => io.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total) return;
+        if (this.isAnimating) return;
+
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault();
+              this.next();
+              break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault();
+              this.prev();
+              break;
+            case 'Home':
+              event.preventDefault();
+              this.goto(0);
+              break;
+            case 'End':
+              event.preventDefault();
+              this.goto(this.total - 1);
+              break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0;
+        let startX = 0;
+
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>

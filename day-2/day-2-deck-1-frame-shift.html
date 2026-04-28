@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2 Deck 1 — The Frame Shift</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES — Notebook Tabs Theme
+       Mirrors Day 1 deck tokens for visual continuity.
+       ============================================= */
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --accent-red: #cf665d;
+      --accent-amber: #d7ab57;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.78rem, 1.25vw, 1.02rem);
+      --size-md: clamp(0.95rem, 1.6vw, 1.28rem);
+      --size-lg: clamp(1.18rem, 2.15vw, 1.8rem);
+      --size-xl: clamp(1.7rem, 3.1vw, 3rem);
+      --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+      --size-3xl: clamp(3.2rem, 6.4vw, 6.8rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+    }
+
+    .feature-list, .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+    }
+
+    .feature-list li, .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    img, .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+        :root {
+            --slide-padding: clamp(0.75rem, 3vw, 2rem);
+            --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+            --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            --h2-size: clamp(1rem, 3vw, 1.75rem);
+            --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+            --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+            --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+    }
+
+    @media (max-height: 600px) {
+        :root {
+            --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+            --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            --title-size: clamp(1.1rem, 4vw, 2rem);
+            --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            --size-base: clamp(0.66rem, 1vw, 0.86rem);
+        }
+
+        .nav-dots, .keyboard-hint, .decorative {
+            display: none;
+        }
+    }
+
+    @media (max-height: 500px) {
+        :root {
+            --slide-padding: clamp(0.4rem, 2vw, 1rem);
+            --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+            --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    strong { font-weight: 600; color: var(--text-primary); }
+    em { font-family: var(--font-display); font-style: italic; }
+
+    /* =============================================
+       NOTEBOOK FRAME — shared Day 1 page treatment
+       ============================================= */
+    .slide {
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num {
+      font-weight: 400;
+      letter-spacing: 0.06em;
+    }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active {
+      opacity: 1;
+      box-shadow: inset -3px 0 0 rgba(0,0,0,0.12);
+    }
+
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+    .d6 { transition-delay: 0.54s; }
+
+    /* =============================================
+       SHARED TYPE AND CARD COMPONENTS
+       ============================================= */
+    .slide-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header {
+      margin-bottom: clamp(0.75rem, 1.5vh, 1.35rem);
+      flex-shrink: 0;
+    }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.9rem);
+      font-size: var(--size-base);
+      line-height: 1.52;
+      color: var(--text-secondary);
+    }
+
+    .body-copy p { max-width: 70ch; }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.42rem, 0.8vh, 0.72rem);
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: clamp(1rem, 1.5vw, 1.35rem);
+      color: var(--text-secondary);
+      line-height: 1.38;
+    }
+
+    .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: clamp(0.32rem, 0.55vw, 0.48rem);
+      height: clamp(0.32rem, 0.55vw, 0.48rem);
+      border-radius: 50%;
+      background: var(--accent-lavender);
+    }
+
+    .note-card {
+      background: var(--paper-edge);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.8rem, 1.6vw, 1.45rem);
+      min-width: 0;
+    }
+
+    .serif-callout {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 3.4rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .placeholder-screen {
+      background: linear-gradient(145deg, rgba(237,234,227,0.75), rgba(255,255,255,0.42));
+      border: 1px dashed rgba(85,85,85,0.28);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+    }
+
+    .placeholder-screen::after {
+      content: attr(data-label);
+      position: absolute;
+      left: clamp(0.7rem, 1.2vw, 1rem);
+      bottom: clamp(0.7rem, 1.2vw, 1rem);
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(85,85,85,0.5);
+      border: 1px solid rgba(85,85,85,0.18);
+      border-radius: 20px;
+      padding: 0.35em 0.75em;
+      background: rgba(248,246,241,0.7);
+    }
+
+    /* =============================================
+       SLIDE 1 — Happy path gap
+       ============================================= */
+    .s1-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(1.2rem, 3vw, 3.2rem);
+      align-items: center;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .coffee-shot {
+      width: min(100%, 540px);
+      aspect-ratio: 675 / 711;
+      margin: 0 auto;
+      border-radius: 10px;
+      background: #3b0d69;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 16px 42px rgba(0,0,0,0.2);
+    }
+
+    .shot-phone {
+      position: absolute;
+      top: 8%;
+      width: 43%;
+      height: 82%;
+      border-radius: clamp(1.4rem, 3vw, 2.4rem);
+      background: #050505;
+      padding: clamp(0.28rem, 0.65vw, 0.48rem);
+      box-shadow: 0 9px 22px rgba(0,0,0,0.44);
+    }
+
+    .shot-phone.left { left: 7%; }
+    .shot-phone.right { right: 4%; }
+
+    .shot-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: clamp(1.05rem, 2.35vw, 1.95rem);
+      background: #fff;
+      overflow: hidden;
+      padding: clamp(0.55rem, 1.2vw, 0.9rem);
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 45%;
+      height: 4.6%;
+      border-radius: 0 0 16px 16px;
+      background: #050505;
+      z-index: 2;
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: clamp(1rem, 2.2vh, 1.45rem);
+      font-size: clamp(0.42rem, 0.8vw, 0.62rem);
+      color: #111;
+      font-weight: 600;
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.55rem);
+    }
+
+    .phone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: clamp(0.55rem, 1vw, 0.82rem);
+      color: #111;
+      margin-bottom: clamp(0.6rem, 1.5vh, 1rem);
+    }
+
+    .phone-title {
+      font-size: clamp(0.72rem, 1.25vw, 1rem);
+      font-weight: 500;
+      margin-right: auto;
+      padding-left: 0.45em;
+    }
+
+    .back-dot {
+      width: clamp(0.9rem, 1.8vw, 1.25rem);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fafafa;
+      border: 1px solid #eee;
+      color: #555;
+    }
+
+    .empty-cart-panel {
+      margin-top: clamp(0.6rem, 1.8vh, 1.2rem);
+      height: 24%;
+      border-radius: 4px;
+      background: #fafafa;
+      display: grid;
+      place-items: center;
+      color: #333;
+      font-size: clamp(0.7rem, 1.3vw, 1rem);
+      font-weight: 600;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.04);
+    }
+
+    .empty-icon {
+      display: block;
+      font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+      line-height: 1;
+      margin-bottom: 0.2em;
+    }
+
+    .cart-list {
+      display: grid;
+      gap: clamp(0.45rem, 1.3vh, 0.8rem);
+    }
+
+    .cart-row {
+      display: grid;
+      grid-template-columns: 31% 1fr;
+      gap: clamp(0.35rem, 0.8vw, 0.6rem);
+      align-items: center;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.07);
+      padding: clamp(0.35rem, 0.8vw, 0.58rem);
+    }
+
+    .cart-thumb {
+      aspect-ratio: 1;
+      border-radius: 2px;
+      background:
+        radial-gradient(circle at 50% 30%, #f2c376 0 13%, transparent 14%),
+        linear-gradient(180deg, #4a1b0e, #120604);
+      box-shadow: inset 0 8px 16px rgba(255,255,255,0.12);
+    }
+
+    .cart-thumb.cold {
+      background:
+        radial-gradient(circle at 40% 30%, rgba(255,255,255,0.34) 0 9%, transparent 10%),
+        linear-gradient(180deg, #5c1b11, #1d0705);
+    }
+
+    .cart-name {
+      font-size: clamp(0.46rem, 0.8vw, 0.68rem);
+      color: #111;
+      margin-bottom: 0.22em;
+    }
+
+    .cart-rating {
+      font-size: clamp(0.42rem, 0.72vw, 0.58rem);
+      color: #666;
+      margin-bottom: 0.35em;
+    }
+
+    .cart-price {
+      font-size: clamp(0.48rem, 0.85vw, 0.68rem);
+      color: #111;
+      font-weight: 700;
+    }
+
+    .cart-total {
+      position: absolute;
+      left: clamp(0.75rem, 1.4vw, 1rem);
+      right: clamp(0.75rem, 1.4vw, 1rem);
+      bottom: clamp(0.55rem, 1.2vw, 0.9rem);
+      display: flex;
+      justify-content: space-between;
+      font-size: clamp(0.48rem, 0.85vw, 0.68rem);
+      color: #111;
+    }
+
+    .cart-total strong {
+      display: block;
+      margin-top: 1.35em;
+      font-size: clamp(0.74rem, 1.35vw, 1.05rem);
+    }
+
+    .product-card-shot {
+      position: absolute;
+      left: 7%;
+      bottom: 5.4%;
+      width: 35%;
+      height: 52%;
+      border-radius: clamp(0.65rem, 1.6vw, 1.2rem);
+      background: #fff;
+      padding: clamp(0.65rem, 1.35vw, 1.05rem);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.24);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .heart {
+      align-self: flex-end;
+      color: #ff4e5c;
+      font-size: clamp(0.95rem, 1.8vw, 1.45rem);
+      line-height: 1;
+    }
+
+    .coffee-cup {
+      align-self: center;
+      width: 70%;
+      aspect-ratio: 1.12 / 1;
+      border-radius: 8px 8px 22px 22px;
+      background:
+        radial-gradient(ellipse at 50% 18%, #e8b15d 0 31%, #5a260d 33%, #160603 60%, transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.28), transparent 45%),
+        linear-gradient(90deg, #0d0503, #5b240b 50%, #0f0503);
+      box-shadow: inset 10px 0 18px rgba(255,255,255,0.12), 0 8px 18px rgba(0,0,0,0.22);
+    }
+
+    .product-title-shot {
+      font-size: clamp(0.74rem, 1.35vw, 1.05rem);
+      line-height: 1.2;
+      color: #1c1c1c;
+    }
+
+    .product-price-shot {
+      font-size: clamp(0.86rem, 1.55vw, 1.2rem);
+      font-weight: 700;
+      color: #111;
+      margin-top: 0.2em;
+    }
+
+    .add-cart-shot {
+      border-radius: 8px;
+      background: #fbf4ef;
+      color: #9a4a17;
+      height: clamp(2rem, 5.8vh, 3.25rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+      font-size: clamp(0.74rem, 1.3vw, 1.05rem);
+    }
+
+    .s1-body {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.75rem, 1.4vh, 1.15rem);
+    }
+
+    .s1-body .body-copy { max-width: 62ch; }
+
+    .happy-word {
+      display: inline-block;
+      margin: clamp(0.2rem, 0.6vh, 0.45rem) 0;
+      padding-bottom: 0.06em;
+      border-bottom: 3px solid var(--accent-pink);
+    }
+
+    /* =============================================
+       SLIDE 2 — State variations
+       ============================================= */
+    .s2-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.7rem, 1.6vw, 1.5rem);
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .state-card {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.55rem, 1vh, 0.85rem);
+      min-width: 0;
+    }
+
+    .wire-cart {
+      flex: 1;
+      min-height: clamp(160px, 34vh, 360px);
+      border-radius: 9px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.45);
+      padding: clamp(0.6rem, 1.2vw, 1rem);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.45rem, 0.9vh, 0.75rem);
+      position: relative;
+    }
+
+    .wire-title {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .wire-box {
+      border-radius: 8px;
+      background: var(--paper-edge);
+      border: 1px solid rgba(226,221,214,0.9);
+    }
+
+    .wire-row {
+      height: clamp(1.7rem, 4.2vh, 3.4rem);
+      display: grid;
+      grid-template-columns: clamp(1.4rem, 3vw, 2.6rem) 1fr;
+      gap: clamp(0.45rem, 0.9vw, 0.8rem);
+      align-items: center;
+      padding: clamp(0.35rem, 0.8vw, 0.65rem);
+    }
+
+    .wire-thumb { aspect-ratio: 1; border-radius: 6px; background: rgba(199,184,234,0.45); }
+    .wire-copy { height: 40%; border-radius: 99px; background: rgba(85,85,85,0.14); }
+    .wire-copy.short { width: 62%; }
+    .fake-line {
+      height: clamp(0.45rem, 0.85vh, 0.75rem);
+      border-radius: 99px;
+      background: rgba(85,85,85,0.16);
+    }
+
+    .fake-line.medium { width: 74%; }
+    .fake-cta {
+      align-self: end;
+      height: clamp(1.5rem, 3vh, 2.2rem);
+      border-radius: 999px;
+      background: var(--accent-mint);
+    }
+
+    .wire-empty-center {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 2.3rem);
+      font-style: italic;
+    }
+
+    .skeleton .wire-copy,
+    .skeleton .wire-thumb {
+      background: linear-gradient(90deg, rgba(226,221,214,0.7), rgba(255,255,255,0.9), rgba(226,221,214,0.7));
+      background-size: 220% 100%;
+      animation: shimmer 2.2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 120% 0; }
+      100% { background-position: -120% 0; }
+    }
+
+    .wire-status {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .wire-status.success { color: #5b927a; }
+    .wire-status.error { color: var(--accent-red); }
+
+    .state-label {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.8vw, 1.55rem);
+      font-style: italic;
+      color: var(--text-primary);
+    }
+
+    .s2-definition {
+      max-width: 85ch;
+      margin-bottom: clamp(0.65rem, 1.2vh, 1.1rem);
+    }
+
+    /* =============================================
+       SLIDE 3 — Time gap timeline
+       ============================================= */
+    .s3-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: clamp(1rem, 3vw, 3rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .timeline-panel {
+      position: relative;
+      min-height: clamp(280px, 48vh, 540px);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.32);
+      display: flex;
+      align-items: center;
+      padding: clamp(1rem, 2vw, 2rem);
+      overflow: hidden;
+    }
+
+    .timeline-line {
+      position: absolute;
+      left: clamp(2rem, 4vw, 4rem);
+      right: clamp(2rem, 4vw, 4rem);
+      top: 50%;
+      height: 2px;
+      background: var(--border-color);
+    }
+
+    .timeline-row {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 0.75fr 1.4fr 0.75fr;
+      gap: clamp(0.7rem, 1.5vw, 1.5rem);
+      align-items: center;
+    }
+
+    .timeline-node {
+      height: clamp(6rem, 18vh, 12rem);
+      border-radius: 9px;
+      border: 1px solid var(--border-color);
+      background: var(--paper-bg);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.4vw, 2.4rem);
+      font-style: italic;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    .timeline-gap {
+      min-height: clamp(10rem, 28vh, 18rem);
+      border-radius: 11px;
+      background: linear-gradient(145deg, rgba(244,184,197,0.35), rgba(199,184,234,0.42));
+      border: 1px solid rgba(199,184,234,0.8);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .gap-mark {
+      font-family: var(--font-display);
+      font-size: clamp(3.4rem, 8vw, 8rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1;
+      color: rgba(26,26,26,0.78);
+    }
+
+    .gap-label {
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: clamp(0.86rem, 1.5vw, 1.35rem);
+      font-style: italic;
+      color: rgba(85,85,85,0.86);
+      background: rgba(248,246,241,0.8);
+      border: 1px solid rgba(226,221,214,0.9);
+      border-radius: 999px;
+      padding: 0.25em 0.65em;
+    }
+
+    .gap-loading { top: 12%; left: 8%; }
+    .gap-error { top: 14%; right: 10%; }
+    .gap-offline { bottom: 14%; left: 13%; }
+    .gap-timeout { bottom: 13%; right: 8%; }
+
+    /* =============================================
+       SLIDE 4 — Live audit companion
+       ============================================= */
+    .s4-layout {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: clamp(1.4rem, 4vw, 4rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .mirror-cue {
+      min-height: clamp(260px, 52vh, 560px);
+      border-radius: 12px;
+      border: 1px dashed rgba(85,85,85,0.28);
+      background: rgba(237,234,227,0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 2vw, 2rem);
+      text-align: center;
+    }
+
+    .mirror-cue-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(0.75rem, 1.5vh, 1.4rem);
+    }
+
+    .mirror-arrow {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 8rem);
+      font-weight: 900;
+      color: rgba(26,26,26,0.16);
+      line-height: 1;
+    }
+
+    .mirror-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .prompt-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.65rem, 1.35vh, 1rem);
+    }
+
+    .prompt-list li {
+      display: grid;
+      grid-template-columns: clamp(2rem, 3.4vw, 3.2rem) 1fr;
+      gap: clamp(0.7rem, 1.4vw, 1.2rem);
+      align-items: start;
+      padding: clamp(0.7rem, 1.25vw, 1.1rem);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.36);
+      color: var(--text-secondary);
+      font-size: clamp(0.82rem, 1.35vw, 1.1rem);
+      line-height: 1.35;
+    }
+
+    .prompt-num {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2.8vw, 2.6rem);
+      font-style: italic;
+      font-weight: 700;
+      color: var(--accent-lavender);
+      filter: brightness(0.84);
+      line-height: 0.9;
+    }
+
+    /* =============================================
+       SLIDES 5 AND 6 — Matched reference cards
+       ============================================= */
+    .reference-grid {
+      display: grid;
+      gap: clamp(0.65rem, 1.2vw, 1.1rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .reference-grid.six {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+    }
+
+    .reference-grid.four {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+    }
+
+    .ref-card {
+      display: grid;
+      grid-template-columns: clamp(3rem, 5vw, 4.8rem) 1fr;
+      gap: clamp(0.7rem, 1.3vw, 1.1rem);
+      align-items: start;
+      background: rgba(255,255,255,0.38);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: clamp(0.65rem, 1.15vw, 1rem);
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .ref-icon {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: var(--paper-edge);
+      border: 1px solid rgba(226,221,214,0.95);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ref-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.15rem, 2vw, 1.75rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      margin-bottom: clamp(0.28rem, 0.55vh, 0.48rem);
+      color: var(--text-primary);
+    }
+
+    .ref-copy {
+      font-size: clamp(0.66rem, 1vw, 0.86rem);
+      line-height: 1.34;
+      color: var(--text-secondary);
+    }
+
+    .mini-empty {
+      width: 54%;
+      height: 42%;
+      border: 2px dashed rgba(85,85,85,0.28);
+      border-radius: 6px;
+    }
+
+    .mini-bars,
+    .mini-list {
+      width: 68%;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .mini-bars span,
+    .mini-list span {
+      height: clamp(0.28rem, 0.55vh, 0.45rem);
+      border-radius: 99px;
+      background: rgba(85,85,85,0.18);
+    }
+
+    .mini-bars span:nth-child(2) { width: 82%; }
+    .mini-bars span:nth-child(3) { width: 58%; }
+    .mini-list span:nth-child(1) { background: rgba(152,212,187,0.65); }
+    .mini-list span:nth-child(2) { background: rgba(152,212,187,0.44); }
+    .mini-list span:nth-child(3) { background: rgba(85,85,85,0.16); }
+
+    .mini-check,
+    .mini-alert {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.6vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .mini-check { color: #5b927a; }
+    .mini-alert { color: var(--accent-red); }
+    .mini-edge {
+      width: 56%;
+      height: 50%;
+      background: var(--accent-pink);
+      opacity: 0.72;
+      clip-path: polygon(10% 22%, 58% 8%, 90% 42%, 70% 88%, 22% 74%);
+    }
+
+    .mini-offline {
+      width: 58%;
+      height: 58%;
+      border-radius: 50%;
+      border: 3px solid rgba(85,85,85,0.35);
+      position: relative;
+    }
+
+    .mini-offline::after {
+      content: '';
+      position: absolute;
+      left: 12%;
+      top: 48%;
+      width: 76%;
+      height: 3px;
+      background: var(--accent-red);
+      transform: rotate(-38deg);
+      border-radius: 99px;
+    }
+
+    .mini-permission {
+      width: 54%;
+      height: 62%;
+      border-radius: 999px 999px 8px 8px;
+      border: 3px solid rgba(85,85,85,0.3);
+      position: relative;
+    }
+
+    .mini-permission::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 34%;
+      height: 34%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: var(--accent-amber);
+      opacity: 0.8;
+    }
+
+    .mini-stale {
+      width: 62%;
+      height: 48%;
+      border-radius: 6px;
+      border: 2px solid rgba(85,85,85,0.28);
+      position: relative;
+    }
+
+    .mini-stale::after {
+      content: '2h';
+      position: absolute;
+      right: -0.4rem;
+      bottom: -0.35rem;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      background: var(--accent-sky);
+      border-radius: 99px;
+      padding: 0.15em 0.45em;
+    }
+
+    .mini-blocked {
+      width: 58%;
+      height: 38%;
+      border-radius: 999px;
+      background: rgba(207,102,93,0.22);
+      border: 2px solid rgba(207,102,93,0.56);
+      position: relative;
+    }
+
+    .mini-blocked::after {
+      content: '';
+      position: absolute;
+      left: 18%;
+      right: 18%;
+      top: 50%;
+      height: 3px;
+      background: var(--accent-red);
+      border-radius: 99px;
+    }
+
+    /* =============================================
+       SLIDE 7 — Recap and Stitch bridge
+       ============================================= */
+    .s7-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.72fr);
+      gap: clamp(1.2rem, 3vw, 3.2rem);
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .recap-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.7rem, 1.4vh, 1.1rem);
+    }
+
+    .recap-list li {
+      display: grid;
+      grid-template-columns: clamp(2rem, 3.5vw, 3.2rem) 1fr;
+      gap: clamp(0.7rem, 1.4vw, 1.2rem);
+      align-items: start;
+      font-size: clamp(0.86rem, 1.35vw, 1.1rem);
+      line-height: 1.42;
+      color: var(--text-secondary);
+    }
+
+    .recap-num {
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 3vw, 2.8rem);
+      font-weight: 900;
+      font-style: italic;
+      color: rgba(26,26,26,0.22);
+      line-height: 0.9;
+    }
+
+    .next-card {
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: linear-gradient(145deg, rgba(199,184,234,0.35), rgba(168,216,234,0.35));
+      padding: clamp(1rem, 2vw, 1.8rem);
+      min-height: clamp(230px, 42vh, 440px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .next-arrow {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 900;
+      color: rgba(26,26,26,0.18);
+      line-height: 0.9;
+      align-self: flex-end;
+    }
+
+    .next-label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.65rem);
+    }
+
+    .next-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.05;
+    }
+
+    .next-copy {
+      margin-top: clamp(0.6rem, 1.2vh, 1rem);
+      color: var(--text-secondary);
+      font-size: var(--size-sm);
+      line-height: 1.45;
+    }
+
+    /* =============================================
+       RESPONSIVE LAYOUT ADJUSTMENTS
+       ============================================= */
+    @media (max-width: 900px) {
+      .s1-layout,
+      .s3-layout,
+      .s4-layout,
+      .s7-layout {
+        grid-template-columns: 1fr;
+        gap: clamp(0.75rem, 2vh, 1.4rem);
+      }
+
+      .coffee-shot,
+      .timeline-panel,
+      .mirror-cue,
+      .next-card {
+        min-height: 0;
+        max-height: 36vh;
+      }
+
+      .s2-grid,
+      .reference-grid.six,
+      .reference-grid.four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .reference-grid.six {
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-height: 740px) {
+      .body-copy { line-height: 1.38; gap: clamp(0.34rem, 0.75vh, 0.55rem); }
+      .slide-title { font-size: clamp(1.35rem, 2.7vw, 2.4rem); }
+      .ref-copy { font-size: clamp(0.58rem, 0.85vw, 0.74rem); line-height: 1.24; }
+      .ref-title { font-size: clamp(0.95rem, 1.6vw, 1.35rem); }
+      .ref-card { padding: clamp(0.48rem, 0.8vw, 0.72rem); }
+      .wire-cart { min-height: clamp(110px, 28vh, 260px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- =============================================
+       SLIDE 1 — The happy path
+       ============================================= -->
+  <section class="slide" id="slide-1" aria-label="Most of what you have designed so far is the happy path">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Day 2 · Deck 1</p>
+              <h1 class="slide-title">Most of what you've designed so far is the happy path</h1>
+              <p class="slide-subtitle">And that's the gap</p>
+            </div>
+
+            <div class="s1-layout">
+              <div class="coffee-shot reveal d2" role="img" aria-label="Coffee cart app screenshot showing empty and filled cart states">
+                <div class="shot-phone left">
+                  <div class="shot-screen">
+                    <div class="phone-notch"></div>
+                    <div class="phone-status"><span>9:41</span><span>▮▮ ◒</span></div>
+                    <div class="phone-header"><span class="back-dot">‹</span><span class="phone-title">Cart</span><span>0 item(s)</span></div>
+                    <div class="empty-cart-panel"><span><span class="empty-icon">▱</span>Cart is Empty</span></div>
+                  </div>
+                </div>
+
+                <div class="shot-phone right">
+                  <div class="shot-screen">
+                    <div class="phone-notch"></div>
+                    <div class="phone-status"><span>9:41</span><span>▮▮ ◒</span></div>
+                    <div class="phone-header"><span class="back-dot">‹</span><span class="phone-title">Cart</span><span>3 item(s)</span></div>
+                    <div class="cart-list">
+                      <div class="cart-row">
+                        <span class="cart-thumb"></span>
+                        <span><span class="cart-name">Espresso</span><br><span class="cart-rating">★ 4.5</span><br><span class="cart-price">$12</span></span>
+                      </div>
+                      <div class="cart-row">
+                        <span class="cart-thumb"></span>
+                        <span><span class="cart-name">Caramel Frappucino</span><br><span class="cart-rating">★ 4.5</span><br><span class="cart-price">$45</span></span>
+                      </div>
+                      <div class="cart-row">
+                        <span class="cart-thumb cold"></span>
+                        <span><span class="cart-name">Ice Coffee</span><br><span class="cart-rating">★ 4.5</span><br><span class="cart-price">$24</span></span>
+                      </div>
+                    </div>
+                    <div class="cart-total"><span>Sub Total<br><strong>TOTAL</strong></span><span>81<br><strong>$81</strong></span></div>
+                  </div>
+                </div>
+
+                <div class="product-card-shot">
+                  <div class="heart">♥</div>
+                  <div class="coffee-cup"></div>
+                  <div>
+                    <p class="product-title-shot">Mixed Black Coffee</p>
+                    <p class="product-price-shot">$12</p>
+                  </div>
+                  <div class="add-cart-shot"><span>＋</span><span>Add to cart</span></div>
+                </div>
+              </div>
+
+              <div class="s1-body reveal d3">
+                <div class="body-copy">
+                  <p>Open any Figma file from your second year. You'll mostly see screens that show what happens when everything works.</p>
+                  <p>User logs in successfully. Cart has items. Internet is fast. The API responds. The address is valid. A driver is available.</p>
+                  <p><span class="serif-callout happy-word">happy path</span><br>This is the version where everything goes right. It's a fine starting point. It's not a finished design.</p>
+                  <p>A real product has to handle a hundred ways things can go differently: slow networks, empty data, wrong inputs, denied permissions, server errors, edge cases. All of those are design work too.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">1 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro active">Frame</div>
+        <div class="tab tab-why">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 2 — What's a state?
+       ============================================= -->
+  <section class="slide" id="slide-2" aria-label="What is a state">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">A screen, at one moment in time</p>
+              <h2 class="slide-title">What's a state?</h2>
+              <p class="slide-subtitle">A state is what your interface shows in a specific situation.</p>
+            </div>
+
+            <div class="body-copy s2-definition reveal d2">
+              <p>Same screen, different states. It's the same component and layout, but different things are visible, possible, and available.</p>
+              <p>You're not designing <em>a screen</em>. You're designing <em>every state that screen can be in</em>.</p>
+            </div>
+
+            <div class="s2-grid">
+              <div class="state-card reveal d3">
+                <div class="wire-cart">
+                  <p class="wire-title">Cart</p>
+                  <div class="wire-empty-center">empty</div>
+                </div>
+                <p class="state-label">Empty</p>
+              </div>
+
+              <div class="state-card reveal d4">
+                <div class="wire-cart skeleton">
+                  <p class="wire-title">Cart</p>
+                  <div class="wire-row wire-box"><span class="wire-thumb"></span><span class="wire-copy"></span></div>
+                  <div class="wire-row wire-box"><span class="wire-thumb"></span><span class="wire-copy short"></span></div>
+                  <div class="wire-row wire-box"><span class="wire-thumb"></span><span class="wire-copy"></span></div>
+                </div>
+                <p class="state-label">Loading</p>
+              </div>
+
+              <div class="state-card reveal d5">
+                <div class="wire-cart">
+                  <p class="wire-title">Cart</p>
+                  <div class="wire-status success">✓</div>
+                  <div class="fake-cta"></div>
+                </div>
+                <p class="state-label">Success</p>
+              </div>
+
+              <div class="state-card reveal d6">
+                <div class="wire-cart">
+                  <p class="wire-title">Cart</p>
+                  <div class="wire-status error">!</div>
+                  <div class="fake-line medium"></div>
+                </div>
+                <p class="state-label">Payment fails</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">2 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why active">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 3 — Designing for time
+       ============================================= -->
+  <section class="slide" id="slide-3" aria-label="States are about time not just space">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The thing Figma doesn't teach you</p>
+              <h2 class="slide-title">States are about time, not just space</h2>
+            </div>
+
+            <div class="s3-layout">
+              <div class="body-copy reveal d2">
+                <p>In Figma, you arrange things in <em>space</em>: left, right, padding, alignment, hierarchy.</p>
+                <p>In a real product, you also design for <em>time</em>: what happens between the user tapping a button and the screen finishing the job.</p>
+                <p>What does the screen show in that gap? What can the user still do? What if the gap is four seconds because the network is slow? What if it never finishes because the server is down?</p>
+                <p>Most of the states we'll talk about today are answers to that question: what does the screen show during the in-between?</p>
+              </div>
+
+              <div class="timeline-panel reveal d3">
+                <div class="timeline-line"></div>
+                <div class="timeline-row">
+                  <div class="timeline-node">tap</div>
+                  <div class="timeline-gap">
+                    <span class="gap-label gap-loading">loading?</span>
+                    <span class="gap-label gap-error">error?</span>
+                    <span class="gap-label gap-offline">offline?</span>
+                    <span class="gap-label gap-timeout">timeout?</span>
+                    <span class="gap-mark">???</span>
+                  </div>
+                  <div class="timeline-node">result</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">3 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why active">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 4 — Live audit companion
+       ============================================= -->
+  <section class="slide" id="slide-4" aria-label="Live audit companion">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Live walkthrough · phone mirror on screen</p>
+              <h2 class="slide-title">Let's look at a real app</h2>
+              <p class="slide-subtitle">Zomato, Uber, or Swiggy — watch the states as they appear.</p>
+            </div>
+
+            <div class="s4-layout">
+              <div class="mirror-cue reveal d2">
+                <div class="mirror-cue-inner">
+                  <p class="mirror-label">phone mirror</p>
+                  <p class="mirror-arrow">→</p>
+                  <p class="mirror-label">look at the projected device</p>
+                </div>
+              </div>
+
+              <ol class="prompt-list reveal d3">
+                <li><span class="prompt-num">1</span><span>Where does the screen change while data is loading?</span></li>
+                <li><span class="prompt-num">2</span><span>What does it show when there's no data yet?</span></li>
+                <li><span class="prompt-num">3</span><span>What happens when you turn off the internet?</span></li>
+                <li><span class="prompt-num">4</span><span>What happens when you type something invalid?</span></li>
+              </ol>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">4 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why">States</div>
+        <div class="tab tab-shift active">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 5 — Core state vocabulary
+       ============================================= -->
+  <section class="slide" id="slide-5" aria-label="Core state vocabulary">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">A shared language for the rest of the day</p>
+              <h2 class="slide-title">The core states</h2>
+            </div>
+
+            <div class="reference-grid six">
+              <article class="ref-card reveal d2">
+                <div class="ref-icon"><span class="mini-empty"></span></div>
+                <div><h3 class="ref-title">Empty</h3><p class="ref-copy">The screen has no data yet. No saved addresses, no cart items, no notifications. Often a design opportunity, not a placeholder.</p></div>
+              </article>
+              <article class="ref-card reveal d3">
+                <div class="ref-icon"><span class="mini-bars"><span></span><span></span><span></span></span></div>
+                <div><h3 class="ref-title">Loading</h3><p class="ref-copy">Data is on the way. Skeletons, spinners, shimmers. The user should know something is happening.</p></div>
+              </article>
+              <article class="ref-card reveal d4">
+                <div class="ref-icon"><span class="mini-list"><span></span><span></span><span></span></span></div>
+                <div><h3 class="ref-title">Partial</h3><p class="ref-copy">Some data is here, more is on the way. Top 5 items show while the next 20 fetch. Real apps live here more than designers expect.</p></div>
+              </article>
+              <article class="ref-card reveal d5">
+                <div class="ref-icon"><span class="mini-check">✓</span></div>
+                <div><h3 class="ref-title">Success</h3><p class="ref-copy">The thing the user wanted has happened. Confirmation, checkmark, next step.</p></div>
+              </article>
+              <article class="ref-card reveal d6">
+                <div class="ref-icon"><span class="mini-alert">!</span></div>
+                <div><h3 class="ref-title">Error</h3><p class="ref-copy">Something broke. Wrong input, server failed, network dropped. Has to say what broke and what to do next.</p></div>
+              </article>
+              <article class="ref-card reveal d6">
+                <div class="ref-icon"><span class="mini-edge"></span></div>
+                <div><h3 class="ref-title">Edge</h3><p class="ref-copy">The weird inputs. 100 items in cart. Username with emojis. Address in a city the app doesn't serve.</p></div>
+              </article>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">5 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why active">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 6 — The other states
+       ============================================= -->
+  <section class="slide" id="slide-6" aria-label="Other states worth naming">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Tied to network, permissions, and freshness</p>
+              <h2 class="slide-title">The other states worth naming</h2>
+            </div>
+
+            <div class="reference-grid four">
+              <article class="ref-card reveal d2">
+                <div class="ref-icon"><span class="mini-offline"></span></div>
+                <div><h3 class="ref-title">Offline</h3><p class="ref-copy">The user has no internet. The app should still show <em>something</em> useful. Cached data? A banner? A disabled submit?</p></div>
+              </article>
+              <article class="ref-card reveal d3">
+                <div class="ref-icon"><span class="mini-permission"></span></div>
+                <div><h3 class="ref-title">Permission denied</h3><p class="ref-copy">The user said no to location, camera, or notifications. Don't break the app — design for refusal.</p></div>
+              </article>
+              <article class="ref-card reveal d4">
+                <div class="ref-icon"><span class="mini-stale"></span></div>
+                <div><h3 class="ref-title">Stale</h3><p class="ref-copy">Data on screen is old and might be wrong. Cached pricing, expired session, last-synced two hours ago. Tell the user.</p></div>
+              </article>
+              <article class="ref-card reveal d5">
+                <div class="ref-icon"><span class="mini-blocked"></span></div>
+                <div><h3 class="ref-title">Rate-limited / blocked</h3><p class="ref-copy">Too many requests, or the action isn't allowed. Less common, but real on apps that talk to APIs.</p></div>
+              </article>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">6 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why active">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       SLIDE 7 — Recap and bridge to Stitch
+       ============================================= -->
+  <section class="slide" id="slide-7" aria-label="Recap before opening Stitch">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true">
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+          <div class="binder-hole"></div>
+        </div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">A quick recap</p>
+              <h2 class="slide-title">Before we open Stitch</h2>
+            </div>
+
+            <div class="s7-layout">
+              <div>
+                <ol class="recap-list reveal d2">
+                  <li><span class="recap-num">1</span><span>A screen has many states. Designing means designing all of them — not just the happy path.</span></li>
+                  <li><span class="recap-num">2</span><span>States are about time as much as space. What fills the gap matters.</span></li>
+                  <li><span class="recap-num">3</span><span>The vocabulary — empty, loading, partial, success, error, edge, offline, permission denied, stale — gives you a shared language for the rest of today.</span></li>
+                </ol>
+              </div>
+
+              <aside class="next-card reveal d3">
+                <div>
+                  <p class="next-label">next →</p>
+                  <h3 class="next-title">Block 2 — Stitch Demo</h3>
+                  <p class="next-copy">We'll prompt Stitch to design a ride booking screen, look at what it gives us, then re-prompt it with state thinking.</p>
+                </div>
+                <div class="next-arrow">→</div>
+              </aside>
+            </div>
+          </div>
+          <footer class="slide-footer">
+            <span class="footer-section">Day 2 · The Frame Shift</span>
+            <span class="footer-num">7 / 7</span>
+          </footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true">
+        <div class="tab tab-intro">Frame</div>
+        <div class="tab tab-why">States</div>
+        <div class="tab tab-shift">Audit</div>
+        <div class="tab tab-plan active">Stitch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       PRESENTATION CONTROLLER
+       Keyboard nav, mouse wheel, touch swipe, progress.
+       ============================================= -->
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+
+        this.slides.forEach(slide => io.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total) return;
+        if (this.isAnimating) return;
+
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault();
+              this.next();
+              break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault();
+              this.prev();
+              break;
+            case 'Home':
+              event.preventDefault();
+              this.goto(0);
+              break;
+            case 'End':
+              event.preventDefault();
+              this.goto(this.total - 1);
+              break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0;
+        let startX = 0;
+
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>
