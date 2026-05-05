@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 3 Deck 0 &mdash; Orientation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* =============================================
+       CSS CUSTOM PROPERTIES - Notebook Tabs Theme
+       Locked to Day 1, Day 2, and Day 3 Decks 1-4.
+       ============================================= */
+      :root {
+        --bg-outer: #2a2826;
+        --paper-bg: #f8f6f1;
+        --paper-edge: #edeae3;
+        --text-primary: #1a1a1a;
+        --text-secondary: #555;
+        --text-muted: #999;
+        --border-color: #e2ddd6;
+        --tab-intro: #98d4bb;
+        --tab-why: #c7b8ea;
+        --tab-shift: #f4b8c5;
+        --tab-plan: #a8d8ea;
+        --accent-lavender: #c7b8ea;
+        --accent-mint: #98d4bb;
+        --accent-pink: #f4b8c5;
+        --accent-sky: #a8d8ea;
+        --accent-red: #cf665d;
+        --accent-amber: #d7ab57;
+        --font-display: "Bodoni Moda", Georgia, serif;
+        --font-body: "DM Sans", system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+        --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+        --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+        --size-base: clamp(0.76rem, 1.2vw, 1rem);
+        --size-md: clamp(0.95rem, 1.55vw, 1.25rem);
+        --size-lg: clamp(1.18rem, 2.1vw, 1.8rem);
+        --size-xl: clamp(1.65rem, 3vw, 2.9rem);
+        --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+        --size-3xl: clamp(3.2rem, 6.4vw, 6.8rem);
+        --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+        --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+        --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+        --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+        --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+        --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
+
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+      }
+
+      .card,
+      .container,
+      .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+      }
+
+      .feature-list,
+      .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+      }
+
+      .feature-list li,
+      .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+      }
+
+      img,
+      .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+      }
+
+      @media (max-height: 700px) {
+        :root {
+          --slide-padding: clamp(0.75rem, 3vw, 2rem);
+          --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+          --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+          --h2-size: clamp(1rem, 3vw, 1.75rem);
+          --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+          --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+          --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+      }
+
+      @media (max-height: 600px) {
+        :root {
+          --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+          --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+          --title-size: clamp(1.1rem, 4vw, 2rem);
+          --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+          --size-base: clamp(0.64rem, 1vw, 0.84rem);
+        }
+
+        .nav-dots,
+        .keyboard-hint,
+        .decorative {
+          display: none;
+        }
+      }
+
+      @media (max-height: 500px) {
+        :root {
+          --slide-padding: clamp(0.4rem, 2vw, 1rem);
+          --title-size: clamp(1rem, 3.5vw, 1.5rem);
+          --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+          --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+      }
+
+      @media (max-width: 600px) {
+        :root {
+          --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.2s !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--bg-outer);
+        color: var(--text-primary);
+      }
+
+      strong {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      em {
+        font-family: var(--font-display);
+        font-style: italic;
+      }
+      code {
+        font-family: var(--font-mono);
+      }
+
+      /* =============================================
+       NOTEBOOK FRAME - shared page treatment
+       ============================================= */
+      .slide {
+        background: var(--bg-outer);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .notebook-wrapper {
+        display: flex;
+        width: clamp(280px, 94vw, 1800px);
+        height: clamp(200px, 92vh, 1020px);
+      }
+
+      .notebook-frame {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        border-radius: 6px 0 0 6px;
+        background-color: var(--paper-bg);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+        box-shadow:
+          0 14px 70px rgba(0, 0, 0, 0.5),
+          0 2px 8px rgba(0, 0, 0, 0.25);
+        min-width: 0;
+      }
+
+      .binder-strip {
+        width: clamp(2.2rem, 3.8vw, 4.2rem);
+        background: var(--paper-edge);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        flex-shrink: 0;
+        padding: clamp(2rem, 4vh, 4.5rem) 0;
+      }
+
+      .binder-hole {
+        width: clamp(0.9rem, 1.6vw, 1.5rem);
+        height: clamp(0.9rem, 1.6vw, 1.5rem);
+        border-radius: 50%;
+        background: var(--bg-outer);
+        box-shadow:
+          inset 0 2px 6px rgba(0, 0, 0, 0.55),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.2),
+          0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      .page-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+      }
+
+      .page-content {
+        flex: 1;
+        padding: var(--pad-outer);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 0;
+      }
+
+      .slide-footer {
+        height: clamp(1.8rem, 3.2vh, 2.8rem);
+        flex-shrink: 0;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--pad-outer);
+      }
+
+      .footer-section,
+      .footer-num {
+        font-family: var(--font-body);
+        font-size: var(--size-xs);
+        font-weight: 500;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .footer-num {
+        font-weight: 400;
+        letter-spacing: 0.06em;
+      }
+
+      .tabs-rail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: clamp(2rem, 3.5vw, 4.2rem);
+        flex-shrink: 0;
+        border-radius: 0 6px 6px 0;
+        overflow: hidden;
+      }
+
+      .tab {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        writing-mode: vertical-rl;
+        font-family: var(--font-body);
+        font-size: clamp(0.45rem, 1vh, 0.66rem);
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #1a1a1a;
+        opacity: 0.28;
+        transition:
+          opacity 0.35s ease,
+          box-shadow 0.35s ease;
+        user-select: none;
+      }
+
+      .tab.active {
+        opacity: 1;
+        box-shadow: inset -3px 0 0 rgba(0, 0, 0, 0.12);
+      }
+      .tab-intro {
+        background: var(--tab-intro);
+      }
+      .tab-why {
+        background: var(--tab-why);
+      }
+      .tab-shift {
+        background: var(--tab-shift);
+      }
+      .tab-plan {
+        background: var(--tab-plan);
+      }
+
+      /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        width: 0%;
+        background: var(--accent-mint);
+        z-index: 200;
+        transition: width 0.35s var(--ease-out);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 0.65s var(--ease-expo),
+          transform 0.65s var(--ease-expo);
+      }
+
+      .slide.visible .reveal {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .d1 {
+        transition-delay: 0.04s;
+      }
+      .d2 {
+        transition-delay: 0.14s;
+      }
+      .d3 {
+        transition-delay: 0.24s;
+      }
+
+      /* =============================================
+       SHARED TYPE
+       ============================================= */
+      .slide-kicker {
+        font-family: var(--font-body);
+        font-size: var(--size-xs);
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+      }
+
+      .opener-title {
+        font-family: var(--font-display);
+        font-size: var(--size-3xl);
+        font-weight: 900;
+        font-style: italic;
+        line-height: 0.92;
+        letter-spacing: -0.018em;
+      }
+
+      .opener-subtitle {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.15vw, 2.15rem);
+        font-style: italic;
+        color: var(--text-secondary);
+        margin-top: clamp(0.55rem, 1vh, 0.9rem);
+      }
+
+      .label {
+        font-family: var(--font-body);
+        font-size: var(--size-xs);
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      /* =============================================
+       ORIENTATION SLIDE
+       ============================================= */
+      .orientation-layout {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: clamp(1.1rem, 2.4vh, 2.2rem);
+      }
+
+      .orientation-header {
+        display: grid;
+        align-content: start;
+        gap: clamp(0.45rem, 0.9vh, 0.85rem);
+        flex-shrink: 0;
+      }
+
+      .orientation-body {
+        display: grid;
+        grid-template-columns: minmax(0, 0.37fr) minmax(0, 0.63fr);
+        min-height: 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .today-column,
+      .presentation-column {
+        min-width: 0;
+        min-height: 0;
+        padding: clamp(1.05rem, 2vw, 1.8rem) 0;
+        display: grid;
+        align-content: start;
+      }
+
+      .today-column {
+        grid-template-rows: auto 1fr;
+        padding-right: clamp(1rem, 2.4vw, 2.6rem);
+      }
+
+      .presentation-column {
+        border-left: 1px solid var(--border-color);
+        padding-left: clamp(1rem, 2.4vw, 2.6rem);
+        grid-template-rows: auto auto auto auto;
+      }
+
+      .orientation-label {
+        margin-bottom: clamp(0.75rem, 1.5vh, 1.2rem);
+        color: var(--text-primary);
+      }
+
+      .flow-stack {
+        display: grid;
+        align-content: start;
+        gap: clamp(0.68rem, 1.38vh, 1.15rem);
+        font-size: clamp(0.95rem, 1.42vw, 1.35rem);
+        line-height: 1.42;
+        color: var(--text-secondary);
+      }
+
+      .flow-line {
+        border-left: 4px solid rgba(26, 26, 26, 0.12);
+        padding-left: clamp(0.65rem, 1.1vw, 0.95rem);
+      }
+
+      .flow-line:nth-child(1) {
+        border-color: var(--accent-mint);
+      }
+      .flow-line:nth-child(2) {
+        border-color: var(--accent-lavender);
+      }
+      .flow-line:nth-child(3) {
+        border-color: var(--accent-pink);
+      }
+
+      .presentation-list {
+        list-style: none;
+        display: grid;
+        gap: clamp(0.42rem, 0.86vh, 0.75rem);
+        margin: clamp(0.15rem, 0.6vh, 0.4rem) 0 clamp(0.85rem, 1.65vh, 1.4rem);
+      }
+
+      .presentation-list li {
+        display: grid;
+        grid-template-columns: clamp(1.35rem, 2vw, 2rem) minmax(0, 1fr);
+        gap: clamp(0.5rem, 0.85vw, 0.75rem);
+        align-items: start;
+        color: var(--text-secondary);
+        font-size: clamp(0.8rem, 1.14vw, 1.03rem);
+        line-height: 1.34;
+        min-width: 0;
+      }
+
+      .presentation-list li span:last-child {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .row-arrow {
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2.15vw, 2rem);
+        font-weight: 900;
+        font-style: italic;
+        color: rgba(26, 26, 26, 0.38);
+        line-height: 0.85;
+      }
+
+      .constraint-line {
+        font-size: clamp(0.95rem, 1.36vw, 1.2rem);
+        line-height: 1.34;
+        color: var(--text-primary);
+        margin-bottom: clamp(1rem, 2vh, 1.6rem);
+      }
+
+      .rubric-block {
+        border-top: 1px solid var(--border-color);
+        padding-top: clamp(0.9rem, 1.8vh, 1.5rem);
+        display: grid;
+        gap: clamp(0.55rem, 1vh, 0.9rem);
+      }
+
+      .rubric-line {
+        font-family: var(--font-display);
+        font-size: clamp(1rem, 1.22vw, 1.45rem);
+        font-weight: 900;
+        font-style: italic;
+        line-height: 1;
+        letter-spacing: 0;
+        color: var(--text-primary);
+        white-space: nowrap;
+      }
+
+      .bonus-line {
+        max-width: 74ch;
+        font-size: clamp(0.72rem, 1vw, 0.92rem);
+        line-height: 1.42;
+        color: var(--text-muted);
+      }
+
+      /* =============================================
+       LINKS SLIDE
+       ============================================= */
+      .links-layout {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        align-content: center;
+        gap: clamp(1.1rem, 2.4vh, 2.2rem);
+        max-width: 1040px;
+      }
+
+      .links-list {
+        list-style: none;
+        display: grid;
+        gap: clamp(0.65rem, 1.3vh, 1.05rem);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: clamp(0.9rem, 1.8vh, 1.45rem) 0;
+      }
+
+      .link-row {
+        display: grid;
+        grid-template-columns: clamp(1.35rem, 2vw, 2rem) minmax(0, 1fr);
+        gap: clamp(0.55rem, 0.95vw, 0.8rem);
+        align-items: start;
+      }
+
+      .link-title {
+        display: block;
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.2vw, 2rem);
+        font-weight: 900;
+        font-style: italic;
+        line-height: 1;
+        color: var(--text-primary);
+        text-decoration: none;
+      }
+
+      .link-url {
+        display: block;
+        margin-top: clamp(0.35rem, 0.8vh, 0.6rem);
+        font-family: var(--font-mono);
+        font-size: clamp(0.62rem, 0.9vw, 0.82rem);
+        line-height: 1.4;
+        color: var(--text-muted);
+        overflow-wrap: anywhere;
+      }
+
+      .link-title:hover {
+        color: var(--accent-red);
+      }
+
+      @media (max-width: 900px) {
+        .orientation-body {
+          grid-template-columns: 1fr;
+          overflow: hidden;
+        }
+
+        .today-column {
+          grid-template-rows: auto auto;
+          padding-right: 0;
+          padding-bottom: clamp(0.75rem, 1.2vh, 1rem);
+        }
+
+        .presentation-column {
+          border-left: 0;
+          border-top: 1px solid var(--border-color);
+          padding-left: 0;
+          padding-top: clamp(0.75rem, 1.2vh, 1rem);
+        }
+
+        .flow-stack {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: clamp(0.45rem, 1vw, 0.7rem);
+          font-size: clamp(0.72rem, 1.7vw, 0.9rem);
+        }
+
+        .presentation-list {
+          gap: clamp(0.28rem, 0.65vh, 0.45rem);
+        }
+        .presentation-list li {
+          font-size: clamp(0.62rem, 1.45vw, 0.78rem);
+          line-height: 1.22;
+        }
+        .rubric-line {
+          white-space: normal;
+          font-size: clamp(1.15rem, 4vw, 1.9rem);
+        }
+      }
+
+      @media (max-height: 740px) {
+        .orientation-layout {
+          gap: clamp(0.65rem, 1.35vh, 1.1rem);
+        }
+        .opener-title {
+          font-size: clamp(2.4rem, 5.4vw, 5.2rem);
+        }
+        .opener-subtitle {
+          font-size: clamp(1.05rem, 1.8vw, 1.65rem);
+        }
+        .today-column,
+        .presentation-column {
+          padding-top: clamp(0.7rem, 1.2vh, 0.95rem);
+          padding-bottom: clamp(0.7rem, 1.2vh, 0.95rem);
+        }
+        .orientation-label {
+          margin-bottom: clamp(0.4rem, 0.8vh, 0.65rem);
+        }
+        .flow-stack {
+          gap: clamp(0.38rem, 0.75vh, 0.58rem);
+          font-size: clamp(0.78rem, 1.08vw, 1rem);
+          line-height: 1.28;
+        }
+        .presentation-list {
+          gap: clamp(0.26rem, 0.55vh, 0.42rem);
+          margin-bottom: clamp(0.48rem, 0.9vh, 0.75rem);
+        }
+        .presentation-list li {
+          font-size: clamp(0.66rem, 0.92vw, 0.82rem);
+          line-height: 1.22;
+        }
+        .constraint-line {
+          margin-bottom: clamp(0.5rem, 1vh, 0.8rem);
+          font-size: clamp(0.76rem, 1vw, 0.9rem);
+        }
+        .rubric-block {
+          padding-top: clamp(0.52rem, 1vh, 0.82rem);
+          gap: clamp(0.32rem, 0.7vh, 0.52rem);
+        }
+        .rubric-line {
+          font-size: clamp(1.18rem, 2.08vw, 2.05rem);
+        }
+        .bonus-line {
+          font-size: clamp(0.6rem, 0.8vw, 0.72rem);
+          line-height: 1.3;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+    <!-- Slide 1 -->
+    <section class="slide visible" id="slide-1" aria-label="Day 3 orientation">
+      <div class="notebook-wrapper">
+        <div class="notebook-frame">
+          <div class="binder-strip" aria-hidden="true">
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+          </div>
+          <div class="page-area">
+            <div class="page-content">
+              <div class="orientation-layout">
+                <header class="orientation-header reveal d1">
+                  <p class="slide-kicker">Orientation</p>
+                  <h1 class="opener-title">Day 3</h1>
+                  <p class="opener-subtitle">
+                    A quick orientation before we start.
+                  </p>
+                </header>
+
+                <div class="orientation-body reveal d2">
+                  <section class="today-column" aria-label="Today">
+                    <p class="label orientation-label">Today</p>
+                    <div class="flow-stack">
+                      <p class="flow-line">
+                        First half: four short topics we didn't have time for.
+                      </p>
+                      <p class="flow-line">30-minute prep break.</p>
+                      <p class="flow-line">
+                        Second half: your 5-minute showcases + prompt critique.
+                      </p>
+                    </div>
+                  </section>
+
+                  <section
+                    class="presentation-column"
+                    aria-label="Your 5-minute presentation"
+                  >
+                    <p class="label orientation-label">
+                      Your 5-minute presentation
+                    </p>
+                    <ul class="presentation-list">
+                      <li>
+                        <span class="row-arrow">&rarr;</span
+                        ><span
+                          >Your deployed project &mdash; the work itself</span
+                        >
+                      </li>
+                      <li>
+                        <span class="row-arrow">&rarr;</span
+                        ><span
+                          ><strong>States</strong> &mdash; what you mapped, what
+                          you designed beyond the happy path</span
+                        >
+                      </li>
+                      <li>
+                        <span class="row-arrow">&rarr;</span
+                        ><span
+                          ><strong>Design system / DESIGN.md</strong> &mdash;
+                          tokens, components, the decisions you made</span
+                        >
+                      </li>
+                      <li>
+                        <span class="row-arrow">&rarr;</span
+                        ><span
+                          ><strong>Prompt history</strong> &mdash; where you
+                          accepted, where you redirected, where you
+                          refined</span
+                        >
+                      </li>
+                      <li>
+                        <span class="row-arrow">&rarr;</span
+                        ><span
+                          ><strong>Individual Day 1/2 work</strong> &mdash;
+                          anything you built on your own counts</span
+                        >
+                      </li>
+                    </ul>
+
+                    <p class="constraint-line">
+                      Trios present together. <em>5 minutes, hard cap.</em>
+                    </p>
+
+                    <div class="rubric-block reveal d3">
+                      <p class="label">How you'll be graded</p>
+                      <p class="rubric-line">
+                        Research &middot; Understanding &middot; Application
+                        &middot; Presentation
+                      </p>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <footer class="slide-footer">
+              <span class="footer-section">Day 3 &middot; Orientation</span
+              ><span class="footer-num">1 / 2</span>
+            </footer>
+          </div>
+        </div>
+        <div class="tabs-rail" aria-hidden="true">
+          <div class="tab tab-intro active">Perf</div>
+          <div class="tab tab-why">Agents</div>
+          <div class="tab tab-shift">Post-UI</div>
+          <div class="tab tab-plan">Taste</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2 -->
+    <section class="slide" id="slide-2" aria-label="Links">
+      <div class="notebook-wrapper">
+        <div class="notebook-frame">
+          <div class="binder-strip" aria-hidden="true">
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+          </div>
+          <div class="page-area">
+            <div class="page-content">
+              <div class="links-layout">
+                <header class="orientation-header reveal d1">
+                  <p class="slide-kicker">Links</p>
+                  <h1 class="opener-title">Further watching</h1>
+                  <p class="opener-subtitle">One conference talk to keep nearby.</p>
+                </header>
+
+                <ul class="links-list reveal d2">
+                  <li class="link-row">
+                    <span class="row-arrow">&rarr;</span>
+                    <span>
+                      <a
+                        class="link-title"
+                        href="https://x.com/grinich/status/2042661817550541253"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Conference talk</a
+                      >
+                      <span class="link-url"
+                        >https://x.com/grinich/status/2042661817550541253</span
+                      >
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <footer class="slide-footer">
+              <span class="footer-section">Day 3 &middot; Orientation</span
+              ><span class="footer-num">2 / 2</span>
+            </footer>
+          </div>
+        </div>
+        <div class="tabs-rail" aria-hidden="true">
+          <div class="tab tab-intro active">Perf</div>
+          <div class="tab tab-why">Agents</div>
+          <div class="tab tab-shift">Post-UI</div>
+          <div class="tab tab-plan">Taste</div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      class SlidePresentation {
+        constructor() {
+          this.slides = Array.from(document.querySelectorAll(".slide"));
+          this.total = this.slides.length;
+          this.current = 0;
+          this.isAnimating = false;
+          this.progressBar = document.getElementById("progressBar");
+          this.initObserver();
+          this.initKeyboard();
+          this.initWheel();
+          this.initTouch();
+          this.updateProgress(0);
+          if (this.slides[0]) this.slides[0].classList.add("visible");
+        }
+
+        initObserver() {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  const idx = this.slides.indexOf(entry.target);
+                  if (idx !== -1) {
+                    this.current = idx;
+                    this.updateProgress(idx);
+                  }
+                }
+              });
+            },
+            { threshold: 0.55 },
+          );
+          this.slides.forEach((slide) => io.observe(slide));
+        }
+
+        goto(idx) {
+          if (idx < 0 || idx >= this.total || this.isAnimating) return;
+          this.isAnimating = true;
+          this.slides[idx].scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+          this.current = idx;
+          this.updateProgress(idx);
+          setTimeout(() => {
+            this.isAnimating = false;
+          }, 650);
+        }
+
+        next() {
+          this.goto(this.current + 1);
+        }
+        prev() {
+          this.goto(this.current - 1);
+        }
+
+        initKeyboard() {
+          document.addEventListener("keydown", (event) => {
+            if (event.metaKey || event.ctrlKey || event.altKey) return;
+            switch (event.key) {
+              case "ArrowRight":
+              case "ArrowDown":
+              case " ":
+              case "PageDown":
+                event.preventDefault();
+                this.next();
+                break;
+              case "ArrowLeft":
+              case "ArrowUp":
+              case "PageUp":
+                event.preventDefault();
+                this.prev();
+                break;
+              case "Home":
+                event.preventDefault();
+                this.goto(0);
+                break;
+              case "End":
+                event.preventDefault();
+                this.goto(this.total - 1);
+                break;
+            }
+          });
+        }
+
+        initWheel() {
+          let lastWheel = 0;
+          document.addEventListener(
+            "wheel",
+            (event) => {
+              event.preventDefault();
+              const now = Date.now();
+              if (now - lastWheel < 600) return;
+              lastWheel = now;
+              if (event.deltaY > 0) this.next();
+              else if (event.deltaY < 0) this.prev();
+            },
+            { passive: false },
+          );
+        }
+
+        initTouch() {
+          let startY = 0;
+          let startX = 0;
+          document.addEventListener(
+            "touchstart",
+            (event) => {
+              startY = event.touches[0].clientY;
+              startX = event.touches[0].clientX;
+            },
+            { passive: true },
+          );
+          document.addEventListener(
+            "touchend",
+            (event) => {
+              const dy = startY - event.changedTouches[0].clientY;
+              const dx = startX - event.changedTouches[0].clientX;
+              if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+                if (dy > 0) this.next();
+                else this.prev();
+              }
+            },
+            { passive: true },
+          );
+        }
+
+        updateProgress(idx) {
+          const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+          if (this.progressBar) this.progressBar.style.width = pct + "%";
+        }
+      }
+
+      new SlidePresentation();
+    </script>
+  </body>
+</html>
