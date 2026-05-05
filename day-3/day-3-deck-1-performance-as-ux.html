@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 3 Deck 1 &mdash; Performance as UX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES - Notebook Tabs Theme
+       Locked to Day 1 and Day 2 decks.
+       ============================================= */
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --accent-red: #cf665d;
+      --accent-amber: #d7ab57;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.76rem, 1.2vw, 1rem);
+      --size-md: clamp(0.95rem, 1.55vw, 1.25rem);
+      --size-lg: clamp(1.18rem, 2.1vw, 1.8rem);
+      --size-xl: clamp(1.65rem, 3vw, 2.9rem);
+      --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+      --size-3xl: clamp(3.2rem, 6.4vw, 6.8rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+    }
+
+    .feature-list, .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+    }
+
+    .feature-list li, .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    img, .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+        :root {
+            --slide-padding: clamp(0.75rem, 3vw, 2rem);
+            --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+            --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            --h2-size: clamp(1rem, 3vw, 1.75rem);
+            --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+            --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+            --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+    }
+
+    @media (max-height: 600px) {
+        :root {
+            --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+            --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            --title-size: clamp(1.1rem, 4vw, 2rem);
+            --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            --size-base: clamp(0.64rem, 1vw, 0.84rem);
+        }
+
+        .nav-dots, .keyboard-hint, .decorative {
+            display: none;
+        }
+    }
+
+    @media (max-height: 500px) {
+        :root {
+            --slide-padding: clamp(0.4rem, 2vw, 1rem);
+            --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+            --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    strong { font-weight: 600; color: var(--text-primary); }
+    em { font-family: var(--font-display); font-style: italic; }
+    code { font-family: var(--font-mono); }
+
+    /* =============================================
+       NOTEBOOK FRAME - shared page treatment
+       ============================================= */
+    .slide {
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num { font-weight: 400; letter-spacing: 0.06em; }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-mint);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+
+    /* =============================================
+       SHARED TYPE AND COMPOSITION
+       ============================================= */
+    .slide-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header {
+      margin-bottom: clamp(0.72rem, 1.45vh, 1.25rem);
+      flex-shrink: 0;
+    }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 0.95vh, 0.85rem);
+      font-size: var(--size-base);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .body-copy p { max-width: 72ch; }
+
+    .body-copy.wide p { max-width: 92ch; }
+
+    .label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .arrow {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--text-primary);
+      opacity: 0.72;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: max-content;
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      background: var(--paper-edge);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.34em 0.72em;
+    }
+
+    /* =============================================
+       OPENERS AND CLOSER
+       ============================================= */
+    .opener-layout,
+    .closing-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      gap: clamp(1.2rem, 2.8vh, 2.4rem);
+      max-width: 1040px;
+    }
+
+    .opener-title {
+      font-family: var(--font-display);
+      font-size: var(--size-3xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.92;
+      letter-spacing: -0.018em;
+    }
+
+    .opener-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.15vw, 2.15rem);
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-top: clamp(0.55rem, 1vh, 0.9rem);
+    }
+
+    .closing-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.2vw, 5.6rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      color: var(--text-primary);
+      max-width: 12ch;
+    }
+
+    .closing-copy {
+      display: grid;
+      gap: clamp(0.75rem, 1.5vh, 1.25rem);
+      max-width: 780px;
+      font-size: var(--size-md);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    /* =============================================
+       SLIDE 2 - Third side reframe
+       ============================================= */
+    .third-side-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      align-content: center;
+      gap: clamp(1rem, 2.1vh, 1.8rem);
+    }
+
+    .triad-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.6rem, 1.2vw, 1rem);
+    }
+
+    .triad-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      min-height: clamp(6rem, 14vh, 10rem);
+      padding: clamp(0.75rem, 1.4vw, 1.2rem);
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .triad-card::before {
+      content: '';
+      position: absolute;
+      inset: auto clamp(0.7rem, 1.2vw, 1rem) clamp(0.7rem, 1.2vw, 1rem) clamp(0.7rem, 1.2vw, 1rem);
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(26,26,26,0.08);
+    }
+
+    .triad-card.emphasis {
+      background: rgba(152,212,187,0.35);
+      border-color: rgba(152,212,187,0.9);
+    }
+
+    .triad-card.emphasis::before { background: var(--accent-mint); }
+
+    .triad-label {
+      font-family: var(--font-display);
+      font-size: clamp(1.28rem, 2.25vw, 2.2rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =============================================
+       SLIDE 3 - Three kinds of slow
+       ============================================= */
+    .slow-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.8rem, 1.7vw, 1.5rem);
+      align-items: stretch;
+    }
+
+    .slow-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.42);
+      padding: clamp(1rem, 2vw, 1.55rem);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: clamp(0.65rem, 1.2vh, 1rem);
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .slow-num {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.6vw, 4.7rem);
+      font-style: italic;
+      font-weight: 900;
+      line-height: 0.82;
+      color: rgba(26,26,26,0.13);
+    }
+
+    .slow-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.28rem, 2.2vw, 2.05rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .slow-copy {
+      font-size: clamp(0.76rem, 1.06vw, 0.95rem);
+      line-height: 1.38;
+      color: var(--text-secondary);
+    }
+
+    .fix-line {
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.55rem, 1vh, 0.85rem);
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1rem, 1.6vw, 1.4rem);
+      color: var(--text-primary);
+    }
+
+    .slow-card:nth-child(1) { background: rgba(244,184,197,0.28); }
+    .slow-card:nth-child(2) { background: rgba(199,184,234,0.28); }
+    .slow-card:nth-child(3) { background: rgba(168,216,234,0.3); }
+
+    /* =============================================
+       REFERENCE CARD TRIO - slides 4, 5, 6
+       ============================================= */
+    .reference-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: clamp(1rem, 2.8vw, 2.7rem);
+      align-items: center;
+    }
+
+    .reference-panel {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.95rem, 1.8vw, 1.45rem);
+      display: grid;
+      gap: clamp(0.75rem, 1.45vh, 1.15rem);
+      min-height: clamp(300px, 54vh, 560px);
+      align-content: start;
+      align-items: start;
+    }
+
+    .reference-panel.cut { background: rgba(244,184,197,0.24); }
+    .reference-panel.show { background: rgba(199,184,234,0.24); }
+    .reference-panel.degrade { background: rgba(168,216,234,0.24); }
+
+    .reference-lede {
+      font-size: clamp(0.82rem, 1.22vw, 1.04rem);
+      line-height: 1.48;
+      color: var(--text-secondary);
+    }
+
+    .reference-lede p + p { margin-top: clamp(0.55rem, 1vh, 0.8rem); }
+
+    .diagnostic-list,
+    .move-list,
+    .demo-list,
+    .metric-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.5rem, 1vh, 0.8rem);
+    }
+
+    .diagnostic-row,
+    .move-row,
+    .demo-row,
+    .metric-row {
+      display: grid;
+      grid-template-columns: clamp(1.6rem, 2.6vw, 2.5rem) 1fr;
+      gap: clamp(0.55rem, 1vw, 0.85rem);
+      align-items: start;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(248,246,241,0.72);
+      padding: clamp(0.52rem, 0.95vw, 0.82rem);
+      color: var(--text-secondary);
+      font-size: clamp(0.7rem, 1vw, 0.88rem);
+      line-height: 1.34;
+      min-width: 0;
+    }
+
+    .row-arrow {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.1vw, 1.9rem);
+      font-weight: 900;
+      font-style: italic;
+      color: rgba(26,26,26,0.34);
+      line-height: 0.9;
+    }
+
+    .row-title {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.55vw, 1.35rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+      margin-bottom: 0.2em;
+    }
+
+    .product-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.45rem, 0.9vw, 0.7rem);
+      margin-top: clamp(0.65rem, 1.2vh, 0.95rem);
+    }
+
+    .product-callout {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(248,246,241,0.72);
+      padding: clamp(0.55rem, 1vw, 0.82rem);
+      min-width: 0;
+    }
+
+    .product-name {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 1.55vw, 1.32rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.25em;
+    }
+
+    .product-note {
+      font-size: clamp(0.58rem, 0.82vw, 0.72rem);
+      line-height: 1.28;
+      color: var(--text-secondary);
+    }
+
+    .day-one-callback {
+      display: block;
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.65rem, 1.2vh, 0.9rem);
+      color: var(--text-secondary);
+      font-size: var(--size-sm);
+      line-height: 1.35;
+    }
+
+    .callback-note {
+      display: grid;
+      gap: clamp(0.45rem, 0.9vh, 0.7rem);
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.65rem, 1.2vh, 0.9rem);
+      margin-top: auto;
+    }
+
+    .callback-note p {
+      color: var(--text-secondary);
+      font-size: var(--size-sm);
+      line-height: 1.4;
+    }
+
+    /* =============================================
+       SLIDE 7 - Demo companion
+       ============================================= */
+    .demo-companion {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
+      gap: clamp(1.4rem, 4vw, 4rem);
+      align-items: center;
+    }
+
+    .projector-cue {
+      min-height: clamp(300px, 56vh, 600px);
+      border-radius: 12px;
+      border: 1px dashed rgba(85,85,85,0.28);
+      background: rgba(237,234,227,0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 2vw, 2rem);
+      text-align: center;
+    }
+
+    .projector-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 4rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(26,26,26,0.75);
+    }
+
+    .projector-arrow {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 900;
+      line-height: 0.8;
+      color: rgba(26,26,26,0.14);
+      margin-top: clamp(0.7rem, 1.5vh, 1.2rem);
+    }
+
+    .demo-rows {
+      display: grid;
+      gap: clamp(0.62rem, 1.2vh, 0.95rem);
+      margin-top: clamp(1rem, 2vh, 1.6rem);
+    }
+
+    /* =============================================
+       SLIDE 8 - Lighthouse metrics
+       ============================================= */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 1.8vw, 1.5rem);
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    .metric-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.42);
+      padding: clamp(1rem, 2vw, 1.55rem);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: clamp(0.7rem, 1.3vh, 1rem);
+      min-height: 0;
+    }
+
+    .metric-card:nth-child(1) { background: rgba(152,212,187,0.28); }
+    .metric-card:nth-child(2) { background: rgba(244,184,197,0.24); }
+
+    .metric-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.1vw, 4.2rem);
+      font-style: italic;
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.015em;
+    }
+
+    .metric-gloss {
+      font-family: var(--font-body);
+      font-size: clamp(1rem, 1.55vw, 1.3rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .metric-body {
+      display: grid;
+      gap: clamp(0.55rem, 1vh, 0.8rem);
+      align-content: start;
+      font-size: clamp(0.78rem, 1.12vw, 0.96rem);
+      line-height: 1.42;
+      color: var(--text-secondary);
+    }
+
+    .metric-disclaimer {
+      margin-top: clamp(0.9rem, 1.6vh, 1.3rem);
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.65rem, 1.15vh, 0.9rem);
+      font-size: var(--size-sm);
+      line-height: 1.45;
+      color: var(--text-muted);
+      max-width: 92ch;
+    }
+
+    /* =============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================= */
+    @media (max-width: 900px) {
+      .triad-strip,
+      .slow-grid,
+      .reference-layout,
+      .demo-companion,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .projector-cue,
+      .reference-panel {
+        min-height: 0;
+        max-height: 42vh;
+      }
+    }
+
+    @media (max-height: 740px) {
+      .body-copy { line-height: 1.36; gap: clamp(0.32rem, 0.7vh, 0.52rem); }
+      .slide-title { font-size: clamp(1.35rem, 2.7vw, 2.35rem); }
+      .opener-title { font-size: clamp(2.4rem, 5.4vw, 5.2rem); }
+      .closing-subtitle { font-size: clamp(1.9rem, 4.5vw, 4.4rem); }
+      .slow-card,
+      .metric-card,
+      .reference-panel { padding: clamp(0.65rem, 1.2vw, 0.95rem); }
+      .diagnostic-row,
+      .move-row,
+      .demo-row { font-size: clamp(0.62rem, 0.88vw, 0.78rem); line-height: 1.24; }
+      .row-title { font-size: clamp(0.86rem, 1.25vw, 1.08rem); }
+      .projector-cue { min-height: clamp(210px, 44vh, 430px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- Slide 1 -->
+  <section class="slide" id="slide-1" aria-label="Performance as UX">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="opener-layout">
+              <div class="reveal d1">
+                <p class="slide-kicker">If we had more time</p>
+                <h1 class="opener-title">Performance as UX</h1>
+                <p class="opener-subtitle">The thing we breezed past on Day 1.</p>
+              </div>
+              <div class="body-copy wide reveal d2">
+                <p>On Day 1 we listed performance as a constraint of the web. We moved on quickly. If this were a longer course, we'd spend half a day here.</p>
+                <p>Quick version: performance isn't an engineering problem you hand off. It's a UX problem you author. The kilobytes you ship, the order you ship them in, the way your interface responds while waiting &mdash; these are design decisions, made by you, on every project.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">1 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" id="slide-2" aria-label="Performance is the third side of design">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The reframe</p>
+              <h2 class="slide-title">Performance is the third side of design.</h2>
+              <p class="slide-subtitle">Aesthetics. Usability. Performance.</p>
+            </div>
+            <div class="third-side-layout">
+              <div class="triad-strip reveal d2">
+                <div class="triad-card"><p class="triad-label">Aesthetics</p></div>
+                <div class="triad-card"><p class="triad-label">Usability</p></div>
+                <div class="triad-card emphasis"><p class="triad-label">Performance</p></div>
+              </div>
+              <div class="body-copy wide reveal d3">
+                <p>You already think about aesthetics &mdash; does it look right. You already think about usability &mdash; does it work.</p>
+                <p>Performance is the third side. <em>Does it work fast enough that the first two matter?</em></p>
+                <p>Every kilobyte you ship is a design decision. The image you chose. The font weights you loaded. The animation library you didn't need. The twelve components your AI imported when you needed two. Pages don't get heavy by accident &mdash; they get heavy because someone, somewhere, didn't decide.</p>
+                <p>If your page is slow, your design is slow. There's no separation.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">2 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" id="slide-3" aria-label="There are three kinds of slow">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The headline reference</p>
+              <h2 class="slide-title">There are three kinds of slow.</h2>
+              <p class="slide-subtitle">Each needs a different design response.</p>
+            </div>
+            <div class="body-copy wide reveal d2">
+              <p>Most designers think there's one kind of slow ("the page takes a while"). There are three. They have different causes and different fixes &mdash; and the fix is <em>always</em> a design move, not just an engineering one.</p>
+            </div>
+            <div class="slow-grid reveal d3">
+              <article class="slow-card">
+                <p class="slow-num">01</p>
+                <h3 class="slow-name">Actually slow.</h3>
+                <p class="slow-copy">The page is too heavy. The work is too much.</p>
+                <p class="fix-line">Fix: cut.</p>
+              </article>
+              <article class="slow-card">
+                <p class="slow-num">02</p>
+                <h3 class="slow-name">Perceived slow.</h3>
+                <p class="slow-copy">The work is happening. The UI doesn't show it.</p>
+                <p class="fix-line">Fix: communicate.</p>
+              </article>
+              <article class="slow-card">
+                <p class="slow-num">03</p>
+                <h3 class="slow-name">Intermittently slow.</h3>
+                <p class="slow-copy">The network drops. The server hiccups.</p>
+                <p class="fix-line">Fix: degrade gracefully.</p>
+              </article>
+            </div>
+            <p class="slide-subtitle reveal d4">The next three slides take each in turn.</p>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">3 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" id="slide-4" aria-label="Actually slow">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Kind 01</p>
+              <h2 class="slide-title">Actually slow.</h2>
+              <p class="slide-subtitle">The page is too heavy. Cut.</p>
+            </div>
+            <div class="reference-layout">
+              <div class="reference-panel cut reveal d2">
+                <div class="reference-lede">
+                  <p>The hero image is 4MB. The font has nine weights when you used two. The animation library is 200KB but you used one transition. The page is 8MB before any user data has loaded.</p>
+                  <p>This isn't an engineering problem to fix later. It's a design audit problem to catch now. The fix is <em>less</em>.</p>
+                </div>
+                <span class="tag">Design audit</span>
+              </div>
+              <div class="reveal d3">
+                <p class="label">A few diagnostic questions</p>
+                <ul class="diagnostic-list" aria-label="Diagnostic questions">
+                  <li class="diagnostic-row"><span class="row-arrow">&rarr;</span><span>Is the hero image really that big, or did you upload the original?</span></li>
+                  <li class="diagnostic-row"><span class="row-arrow">&rarr;</span><span>Are you loading nine font weights when you use Regular and Bold?</span></li>
+                  <li class="diagnostic-row"><span class="row-arrow">&rarr;</span><span>Did your AI import a chart library to render two numbers?</span></li>
+                  <li class="diagnostic-row"><span class="row-arrow">&rarr;</span><span>What's your total page weight? You can check it in 10 seconds &mdash; coming up.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">4 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" id="slide-5" aria-label="Perceived slow">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Kind 02</p>
+              <h2 class="slide-title">Perceived slow.</h2>
+              <p class="slide-subtitle">The work is happening. Show it.</p>
+            </div>
+            <div class="reference-layout">
+              <div class="reference-panel show reveal d2">
+                <div class="reference-lede">
+                  <p>A 2-second wait with a skeleton screen feels faster than a 1-second wait with a blank screen.</p>
+                  <p>This isn't a trick. It's <em>showing the user that their click registered</em>. Motion &mdash; even fake motion &mdash; feels like progress. Silence after a tap feels like the app broke.</p>
+                </div>
+                <ul class="move-list" aria-label="Perceived performance moves">
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Skeleton screens</strong> &mdash; the placeholder shape of what's loading</span></li>
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Optimistic UI</strong> &mdash; assume the action worked, reconcile if it didn't</span></li>
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Instant interaction feedback</strong> &mdash; the button reacts in 0ms, even if the result takes 800ms</span></li>
+                </ul>
+              </div>
+              <div class="reveal d3">
+                <div class="body-copy wide">
+                  <p>The corollary: a loading state is a <em>brand moment</em>, not a fallback. Zomato's order tracking, Swiggy's delivery states, Notion's optimistic sync, Slack's send feedback &mdash; these aren't engineering details, they're brand decisions. The default spinner is a designer giving up.</p>
+                </div>
+                <div class="product-strip" aria-label="Product references">
+                  <article class="product-callout"><p class="product-name">Zomato</p><p class="product-note">Order progress that keeps anxiety low.</p></article>
+                  <article class="product-callout"><p class="product-name">Swiggy</p><p class="product-note">Delivery states as reassurance.</p></article>
+                  <article class="product-callout"><p class="product-name">Notion</p><p class="product-note">Optimistic sync as calm.</p></article>
+                  <article class="product-callout"><p class="product-name">Slack</p><p class="product-note">Send feedback before delivery.</p></article>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">5 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide" id="slide-6" aria-label="Intermittently slow">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Kind 03</p>
+              <h2 class="slide-title">Intermittently slow.</h2>
+              <p class="slide-subtitle">The network broke. Now what?</p>
+            </div>
+            <div class="reference-layout">
+              <div class="reference-panel degrade reveal d2">
+                <div class="reference-lede">
+                  <p>Performance is not only load speed. It is what the interface does when the network stops cooperating.</p>
+                  <p>Real users lose signal mid-action. Servers timeout. APIs return errors. When the happy path breaks, the UX still has a job: preserve what the user did, explain what changed, and offer a next step.</p>
+                </div>
+                <div class="callback-note">
+                  <span class="tag">&larr; Day 1 callback</span>
+                  <p>The <em>Error</em> lens in your four-lens audit lives here.</p>
+                </div>
+              </div>
+              <div class="reveal d3">
+                <p class="label">Three states most designs forget</p>
+                <ul class="move-list" aria-label="Forgotten intermittent states">
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Offline mode</strong> &mdash; what's still usable when the network is gone?</span></li>
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Retry affordances</strong> &mdash; when something fails, can the user try again without starting over?</span></li>
+                  <li class="move-row"><span class="row-arrow">&rarr;</span><span><strong>Stale data</strong> &mdash; the data they're seeing is ten minutes old. Do they know?</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">6 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 7 -->
+  <section class="slide" id="slide-7" aria-label="Watch this">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="demo-companion">
+              <div class="reveal d1">
+                <p class="slide-kicker">Live demo</p>
+                <h2 class="slide-title">Watch this.</h2>
+                <p class="slide-subtitle">A 30-second performance audit, free, built into your browser.</p>
+                <div class="demo-rows" aria-label="Demo sites">
+                  <div class="demo-row"><span class="row-arrow">&rarr;</span><span>A well-built news site</span></div>
+                  <div class="demo-row"><span class="row-arrow">&rarr;</span><span>A heavily ad-loaded news site</span></div>
+                  <div class="demo-row"><span class="row-arrow">&rarr;</span><span>One of your own projects</span></div>
+                </div>
+              </div>
+              <div class="projector-cue reveal d2" aria-hidden="true">
+                <div>
+                  <p class="projector-title">Lighthouse</p>
+                  <span class="projector-arrow">&rarr;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">7 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 8 -->
+  <section class="slide" id="slide-8" aria-label="Two numbers worth caring about">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">After the audit</p>
+              <h2 class="slide-title">Two numbers worth caring about.</h2>
+              <p class="slide-subtitle">You don't need to memorize the rest.</p>
+            </div>
+            <div class="metric-grid reveal d2">
+              <article class="metric-card">
+                <h3 class="metric-name">LCP</h3>
+                <p class="metric-gloss">Largest Contentful Paint</p>
+                <div class="metric-body">
+                  <p>When does the main content appear?</p>
+                  <p>Under 2.5s = fine. Over 4s = your user already gave up.</p>
+                </div>
+              </article>
+              <article class="metric-card">
+                <h3 class="metric-name">CLS</h3>
+                <p class="metric-gloss">Cumulative Layout Shift</p>
+                <div class="metric-body">
+                  <p>Does the page <em>jump</em> around as it loads?</p>
+                  <p>Every layout shift is a designed-by-accident moment. Aim for almost zero.</p>
+                </div>
+              </article>
+            </div>
+            <p class="metric-disclaimer reveal d3">These are starter metrics, not a curriculum. Knowing they exist, that they're measurable, and that <em>your design decisions move them</em> &mdash; that's enough for now.</p>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">8 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 9 -->
+  <section class="slide" id="slide-9" aria-label="Performance is design">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="closing-layout">
+              <div class="reveal d1">
+                <p class="slide-kicker">Takeaway</p>
+                <h2 class="slide-title">Performance is design.</h2>
+                <p class="closing-subtitle">Not later. Not someone else's job. Yours.</p>
+              </div>
+              <div class="closing-copy reveal d2">
+                <p>You can ship a beautiful, perfectly accessible, semantically correct page that no one will ever see &mdash; because they closed the tab before it loaded.</p>
+                <p>If your design loads slowly, your design <em>is</em> slow.</p>
+                <p>The good news: now you know to look. That's most of the job.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Performance as UX</span><span class="footer-num">9 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro active">Perf</div><div class="tab tab-why">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach(slide => io.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total || this.isAnimating) return;
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault(); this.next(); break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault(); this.prev(); break;
+            case 'Home':
+              event.preventDefault(); this.goto(0); break;
+            case 'End':
+              event.preventDefault(); this.goto(this.total - 1); break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0;
+        let startX = 0;
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>

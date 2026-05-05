@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 3 Deck 2 &mdash; Agentic Workflows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600;1,6..96,700;1,6..96,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES - Notebook Tabs Theme
+       Locked to Day 1, Day 2, and Day 3 Deck 1.
+       ============================================= */
+    :root {
+      --bg-outer: #2a2826;
+      --paper-bg: #f8f6f1;
+      --paper-edge: #edeae3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
+      --border-color: #e2ddd6;
+      --tab-intro: #98d4bb;
+      --tab-why: #c7b8ea;
+      --tab-shift: #f4b8c5;
+      --tab-plan: #a8d8ea;
+      --accent-lavender: #c7b8ea;
+      --accent-mint: #98d4bb;
+      --accent-pink: #f4b8c5;
+      --accent-sky: #a8d8ea;
+      --accent-red: #cf665d;
+      --accent-amber: #d7ab57;
+      --font-display: 'Bodoni Moda', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --size-xs: clamp(0.5rem, 0.8vw, 0.72rem);
+      --size-sm: clamp(0.65rem, 1vw, 0.85rem);
+      --size-base: clamp(0.76rem, 1.2vw, 1rem);
+      --size-md: clamp(0.95rem, 1.55vw, 1.25rem);
+      --size-lg: clamp(1.18rem, 2.1vw, 1.8rem);
+      --size-xl: clamp(1.65rem, 3vw, 2.9rem);
+      --size-2xl: clamp(2.35rem, 4.7vw, 4.7rem);
+      --size-3xl: clamp(3.2rem, 6.4vw, 6.8rem);
+      --slide-padding: clamp(1rem, 2.4vw, 2.8rem);
+      --content-gap: clamp(0.55rem, 1.25vw, 1.2rem);
+      --element-gap: clamp(0.35rem, 0.85vw, 0.85rem);
+      --pad-outer: clamp(1.2rem, 2.6vw, 3.2rem);
+      --gap-content: clamp(0.55rem, 1.25vw, 1.2rem);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       These styles ensure slides fit exactly in the viewport.
+       =========================================== */
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+    }
+
+    .card, .container, .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+    }
+
+    .feature-list, .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+    }
+
+    .feature-list li, .bullet-list li {
+        font-size: var(--body-size, var(--size-base));
+        line-height: 1.4;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    img, .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+    }
+
+    @media (max-height: 700px) {
+        :root {
+            --slide-padding: clamp(0.75rem, 3vw, 2rem);
+            --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+            --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            --h2-size: clamp(1rem, 3vw, 1.75rem);
+            --pad-outer: clamp(0.75rem, 2.5vw, 2rem);
+            --size-xl: clamp(1.35rem, 2.8vw, 2.2rem);
+            --size-2xl: clamp(1.7rem, 3.6vw, 3rem);
+        }
+    }
+
+    @media (max-height: 600px) {
+        :root {
+            --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+            --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            --title-size: clamp(1.1rem, 4vw, 2rem);
+            --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            --size-base: clamp(0.64rem, 1vw, 0.84rem);
+        }
+
+        .nav-dots, .keyboard-hint, .decorative {
+            display: none;
+        }
+    }
+
+    @media (max-height: 500px) {
+        :root {
+            --slide-padding: clamp(0.4rem, 2vw, 1rem);
+            --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+            --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+    }
+
+    @media (max-width: 600px) {
+        :root {
+            --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    /* =============================================
+       RESET AND GLOBAL BASE STYLES
+       ============================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-outer);
+      color: var(--text-primary);
+    }
+
+    strong { font-weight: 600; color: var(--text-primary); }
+    em { font-family: var(--font-display); font-style: italic; }
+    code { font-family: var(--font-mono); }
+
+    /* =============================================
+       NOTEBOOK FRAME - shared page treatment
+       ============================================= */
+    .slide {
+      background: var(--bg-outer);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notebook-wrapper {
+      display: flex;
+      width: clamp(280px, 94vw, 1800px);
+      height: clamp(200px, 92vh, 1020px);
+    }
+
+    .notebook-frame {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      border-radius: 6px 0 0 6px;
+      background-color: var(--paper-bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      box-shadow: 0 14px 70px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25);
+      min-width: 0;
+    }
+
+    .binder-strip {
+      width: clamp(2.2rem, 3.8vw, 4.2rem);
+      background: var(--paper-edge);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-shrink: 0;
+      padding: clamp(2rem, 4vh, 4.5rem) 0;
+    }
+
+    .binder-hole {
+      width: clamp(0.9rem, 1.6vw, 1.5rem);
+      height: clamp(0.9rem, 1.6vw, 1.5rem);
+      border-radius: 50%;
+      background: var(--bg-outer);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .page-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: var(--pad-outer);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      height: clamp(1.8rem, 3.2vh, 2.8rem);
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad-outer);
+    }
+
+    .footer-section,
+    .footer-num {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footer-num { font-weight: 400; letter-spacing: 0.06em; }
+
+    .tabs-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: clamp(2rem, 3.5vw, 4.2rem);
+      flex-shrink: 0;
+      border-radius: 0 6px 6px 0;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      font-family: var(--font-body);
+      font-size: clamp(0.45rem, 1vh, 0.66rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      opacity: 0.28;
+      transition: opacity 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    .tab.active { opacity: 1; box-shadow: inset -3px 0 0 rgba(0,0,0,0.12); }
+    .tab-intro { background: var(--tab-intro); }
+    .tab-why { background: var(--tab-why); }
+    .tab-shift { background: var(--tab-shift); }
+    .tab-plan { background: var(--tab-plan); }
+
+    /* =============================================
+       PROGRESS AND REVEAL ANIMATION
+       ============================================= */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: var(--accent-lavender);
+      z-index: 200;
+      transition: width 0.35s var(--ease-out);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+    }
+
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.14s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.34s; }
+    .d5 { transition-delay: 0.44s; }
+
+    /* =============================================
+       SHARED TYPE AND COMPOSITION
+       ============================================= */
+    .slide-kicker {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.35rem, 0.8vh, 0.7rem);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: var(--size-xl);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    .slide-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--size-sm);
+      color: var(--text-muted);
+      margin-top: clamp(0.25rem, 0.8vh, 0.65rem);
+    }
+
+    .section-header {
+      margin-bottom: clamp(0.72rem, 1.45vh, 1.25rem);
+      flex-shrink: 0;
+    }
+
+    .body-copy {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.5rem, 0.95vh, 0.85rem);
+      font-size: var(--size-base);
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .body-copy p { max-width: 72ch; }
+    .body-copy.wide p { max-width: 92ch; }
+
+    .label {
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: max-content;
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      background: var(--paper-edge);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.34em 0.72em;
+    }
+
+    /* =============================================
+       OPENERS AND CLOSER
+       ============================================= */
+    .opener-layout,
+    .closing-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      gap: clamp(1.2rem, 2.8vh, 2.4rem);
+      max-width: 1040px;
+    }
+
+    .opener-title {
+      font-family: var(--font-display);
+      font-size: var(--size-3xl);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.92;
+      letter-spacing: -0.018em;
+    }
+
+    .opener-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.15vw, 2.15rem);
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-top: clamp(0.55rem, 1vh, 0.9rem);
+    }
+
+    .closing-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.2vw, 5.6rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.95;
+      color: var(--text-primary);
+      max-width: 15ch;
+    }
+
+    .closing-copy {
+      display: grid;
+      gap: clamp(0.75rem, 1.5vh, 1.25rem);
+      max-width: 820px;
+      font-size: var(--size-md);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    /* =============================================
+       SLIDE 2 - BEFORE AND AFTER AGENCY
+       ============================================= */
+    .agency-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: clamp(0.9rem, 1.8vh, 1.45rem);
+    }
+
+    .agency-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 1.8vw, 1.55rem);
+      min-height: 0;
+    }
+
+    .agency-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.9rem, 1.65vw, 1.35rem);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(0.65rem, 1.2vh, 0.95rem);
+      min-height: 0;
+    }
+
+    .agency-card.new { background: rgba(199,184,234,0.28); border-color: rgba(199,184,234,0.85); }
+
+    .verb-mark {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 5.2vw, 5.4rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.86;
+      letter-spacing: -0.02em;
+    }
+
+    .verb-mark span {
+      display: block;
+      font-family: var(--font-body);
+      font-size: var(--size-xs);
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: clamp(0.3rem, 0.7vh, 0.55rem);
+    }
+
+    .mini-actions {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.45rem, 0.8vh, 0.68rem);
+      align-content: start;
+      color: var(--text-secondary);
+      font-size: clamp(0.76rem, 1.05vw, 0.92rem);
+      line-height: 1.32;
+    }
+
+    .mini-actions li {
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.38rem, 0.68vh, 0.55rem);
+    }
+
+    .human-line {
+      font-family: var(--font-display);
+      font-size: clamp(1.08rem, 1.8vw, 1.55rem);
+      font-style: italic;
+      line-height: 1.05;
+      color: var(--text-primary);
+    }
+
+    .agency-definition {
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.7rem, 1.3vh, 1rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: clamp(0.75rem, 1.5vw, 1.25rem);
+      align-items: center;
+      font-size: clamp(0.85rem, 1.22vw, 1.05rem);
+      line-height: 1.42;
+      color: var(--text-secondary);
+    }
+
+    .tool-worker {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 2.65vw, 2.6rem);
+      font-style: italic;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    /* =============================================
+       SLIDE 3 - SCREEN TO WORKFLOW TRANSITION
+       ============================================= */
+    .workflow-shift {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: clamp(1.1rem, 3vw, 3rem);
+      align-items: center;
+    }
+
+    .shift-mark {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(1rem, 2.2vw, 1.75rem);
+      min-height: clamp(300px, 54vh, 560px);
+      display: grid;
+      align-content: center;
+      gap: clamp(1rem, 2vh, 1.7rem);
+    }
+
+    .shift-word {
+      font-family: var(--font-display);
+      font-size: clamp(2.35rem, 5.4vw, 5.7rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      letter-spacing: -0.018em;
+    }
+
+    .shift-word.light { color: rgba(26,26,26,0.28); }
+    .shift-arrow { font-family: var(--font-display); font-size: clamp(3rem, 7vw, 7rem); line-height: 0.65; color: rgba(26,26,26,0.18); }
+
+    .artifact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(0.38rem, 0.8vw, 0.65rem);
+      margin-top: clamp(0.45rem, 0.9vh, 0.7rem);
+    }
+
+    /* =============================================
+       SLIDE 4 - WORKFLOW DIAGRAM
+       ============================================= */
+    .workflow-look {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(0.55rem, 1.1vh, 0.9rem);
+    }
+
+    .workflow-lede,
+    .workflow-note {
+      font-size: clamp(0.72rem, 1.02vw, 0.9rem);
+      line-height: 1.38;
+      color: var(--text-secondary);
+      max-width: 100ch;
+    }
+
+    .workflow-stage {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.34);
+      padding: clamp(0.55rem, 1.2vw, 1rem);
+      min-height: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .workflow-svg {
+      width: 100%;
+      height: 100%;
+      max-height: clamp(320px, 54vh, 560px);
+      overflow: visible;
+      font-family: var(--font-body);
+    }
+
+    .node rect {
+      rx: 10;
+      ry: 10;
+      fill: rgba(248,246,241,0.92);
+      stroke: #d8d1c7;
+      stroke-width: 2;
+    }
+
+    .node.trigger rect { fill: rgba(152,212,187,0.45); stroke: #86bfa6; }
+    .node.outcome rect { fill: rgba(168,216,234,0.46); stroke: #8dbed0; }
+    .node.pause rect { fill: rgba(244,184,197,0.38); stroke: #daa0ad; }
+    .node.decision rect { fill: rgba(199,184,234,0.34); stroke: #b8a9dc; }
+
+    .node-title {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 22px;
+      fill: #1a1a1a;
+    }
+
+    .node-copy {
+      font-size: 13px;
+      fill: #555;
+      font-weight: 500;
+    }
+
+    .edge {
+      stroke: rgba(26,26,26,0.45);
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    .edge-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      fill: #555;
+      font-weight: 500;
+    }
+
+    /* =============================================
+       SLIDES 5 AND 6 - MATCHED REFERENCE CARDS
+       ============================================= */
+    .paired-reference {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 1.7vw, 1.45rem);
+      align-items: stretch;
+    }
+
+    .audience-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.9rem, 1.65vw, 1.35rem);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: clamp(0.62rem, 1.15vh, 0.92rem);
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .audience-card:nth-child(1) { background: rgba(152,212,187,0.24); }
+    .audience-card:nth-child(2) { background: rgba(199,184,234,0.24); }
+
+    .abstract-icon {
+      width: clamp(3rem, 5vw, 4.8rem);
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: var(--paper-edge);
+      border: 1px solid rgba(226,221,214,0.95);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .abstract-icon.agent::before,
+    .abstract-icon.human::before {
+      content: '';
+      width: 58%;
+      height: 58%;
+      border: 3px solid rgba(26,26,26,0.28);
+      transform: rotate(45deg);
+    }
+
+    .abstract-icon.agent::after {
+      content: '';
+      position: absolute;
+      width: 18%;
+      height: 18%;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      right: 24%;
+      top: 22%;
+    }
+
+    .abstract-icon.human::after {
+      content: '';
+      position: absolute;
+      width: 56%;
+      height: 3px;
+      background: var(--accent-lavender);
+      transform: rotate(-28deg);
+    }
+
+    .audience-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.28rem, 2.2vw, 2.05rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+    }
+
+    .audience-copy {
+      display: grid;
+      gap: clamp(0.5rem, 0.95vh, 0.78rem);
+      font-size: clamp(0.69rem, 0.98vw, 0.86rem);
+      line-height: 1.34;
+      color: var(--text-secondary);
+      align-content: start;
+    }
+
+    .vocab-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.75rem, 1.4vw, 1.1rem);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(0.6rem, 1.1vh, 0.9rem);
+      min-height: 0;
+    }
+
+    .vocab-lede,
+    .vocab-closing {
+      font-size: clamp(0.75rem, 1.05vw, 0.92rem);
+      line-height: 1.38;
+      color: var(--text-secondary);
+    }
+
+    .vocab-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.42rem, 0.82vw, 0.65rem);
+      min-height: 0;
+    }
+
+    .vocab-row {
+      display: grid;
+      grid-template-columns: clamp(1.5rem, 2.4vw, 2.25rem) 1fr;
+      gap: clamp(0.45rem, 0.82vw, 0.65rem);
+      align-items: start;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(248,246,241,0.72);
+      padding: clamp(0.45rem, 0.82vw, 0.68rem);
+      min-width: 0;
+    }
+
+    .row-arrow {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.1vw, 1.9rem);
+      font-weight: 900;
+      font-style: italic;
+      color: rgba(26,26,26,0.34);
+      line-height: 0.9;
+    }
+
+    .term {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: clamp(0.66rem, 0.94vw, 0.82rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.16em;
+    }
+
+    .gloss {
+      display: block;
+      font-size: clamp(0.62rem, 0.88vw, 0.78rem);
+      line-height: 1.24;
+      color: var(--text-secondary);
+    }
+
+    /* =============================================
+       SLIDE 7 - PRODUCT ROWS
+       ============================================= */
+    .product-rows {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: repeat(5, minmax(0, 1fr)) auto;
+      gap: clamp(0.46rem, 0.95vh, 0.72rem);
+    }
+
+    .product-row {
+      display: grid;
+      grid-template-columns: clamp(1.8rem, 3vw, 2.6rem) minmax(10rem, 0.28fr) minmax(0, 1fr);
+      gap: clamp(0.65rem, 1.2vw, 1rem);
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.46rem, 0.95vw, 0.74rem);
+      min-height: 0;
+    }
+
+    .product-row:nth-child(2n) { background: rgba(237,234,227,0.58); }
+
+    .product-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.08rem, 1.8vw, 1.6rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .product-copy {
+      font-size: clamp(0.68rem, 0.96vw, 0.84rem);
+      line-height: 1.32;
+      color: var(--text-secondary);
+    }
+
+    .timeline-line {
+      border-top: 1px solid var(--border-color);
+      padding-top: clamp(0.7rem, 1.25vh, 0.95rem);
+      font-family: var(--font-display);
+      font-size: clamp(1.22rem, 2.25vw, 2.1rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1.04;
+      color: var(--text-primary);
+    }
+
+    /* =============================================
+       SLIDE 8 - WHAT THIS MEANS
+       ============================================= */
+    .meaning-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.98fr) minmax(0, 1.02fr);
+      gap: clamp(1rem, 2.7vw, 2.6rem);
+      align-items: center;
+    }
+
+    .craft-list {
+      list-style: none;
+      display: grid;
+      gap: clamp(0.55rem, 1.05vh, 0.82rem);
+      margin-top: clamp(0.8rem, 1.55vh, 1.2rem);
+    }
+
+    .craft-list li {
+      display: grid;
+      grid-template-columns: clamp(1.7rem, 2.7vw, 2.45rem) 1fr;
+      gap: clamp(0.55rem, 1vw, 0.85rem);
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.38);
+      padding: clamp(0.52rem, 0.95vw, 0.82rem);
+      font-size: clamp(0.72rem, 1vw, 0.9rem);
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    .walking-into-it {
+      min-height: clamp(300px, 54vh, 560px);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(244,184,197,0.22);
+      display: grid;
+      place-items: center;
+      padding: clamp(1rem, 2vw, 2rem);
+    }
+
+    .walking-into-it p {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6.2vw, 6.7rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.9;
+      letter-spacing: -0.018em;
+      max-width: 8ch;
+    }
+
+    /* =============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================= */
+    @media (max-width: 900px) {
+      .agency-columns,
+      .workflow-shift,
+      .paired-reference,
+      .meaning-layout,
+      .agency-definition {
+        grid-template-columns: 1fr;
+      }
+
+      .shift-mark,
+      .walking-into-it {
+        min-height: 0;
+        max-height: 38vh;
+      }
+
+      .vocab-list {
+        grid-template-columns: 1fr;
+      }
+
+      .product-row {
+        grid-template-columns: clamp(1.8rem, 3vw, 2.6rem) 1fr;
+      }
+
+      .product-copy { grid-column: 2; }
+    }
+
+    @media (max-height: 740px) {
+      .body-copy { line-height: 1.36; gap: clamp(0.32rem, 0.7vh, 0.52rem); }
+      .slide-title { font-size: clamp(1.35rem, 2.7vw, 2.35rem); }
+      .opener-title { font-size: clamp(2.4rem, 5.4vw, 5.2rem); }
+      .closing-subtitle { font-size: clamp(1.9rem, 4.5vw, 4.4rem); }
+      .agency-card,
+      .audience-card,
+      .vocab-card { padding: clamp(0.62rem, 1.1vw, 0.9rem); }
+      .audience-copy { font-size: clamp(0.6rem, 0.84vw, 0.74rem); line-height: 1.25; }
+      .workflow-svg { max-height: clamp(250px, 46vh, 430px); }
+      .vocab-row { padding: clamp(0.34rem, 0.62vw, 0.52rem); }
+      .gloss { font-size: clamp(0.55rem, 0.78vw, 0.68rem); line-height: 1.18; }
+      .product-row { padding: clamp(0.35rem, 0.7vw, 0.58rem); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- Slide 1 -->
+  <section class="slide" id="slide-1" aria-label="Agentic Workflows">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="opener-layout">
+              <div class="reveal d1">
+                <p class="slide-kicker">If we had more time</p>
+                <h1 class="opener-title">Agentic Workflows</h1>
+                <p class="opener-subtitle">The new design surface.</p>
+              </div>
+              <div class="body-copy wide reveal d2">
+                <p>We've spent two days designing screens with AI's help. Now the harder question &mdash; what happens when AI isn't just helping you build a screen, but <em>taking actions</em> on its own?</p>
+                <p>This deck is short on technical detail and long on lens. The point isn't to make you build agents. It's to show you why "designer of screens" is becoming "designer of workflows" &mdash; and why that's the most consequential shift in product design since mobile.</p>
+                <p>If we had another day, we'd build a small agentic workflow together. We don't, so we'll talk about it.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">1 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide" id="slide-2" aria-label="AI suggests to AI does">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The shift</p>
+              <h2 class="slide-title">AI suggests &rarr; AI does.</h2>
+              <p class="slide-subtitle">A small grammar change. A massive product shift.</p>
+            </div>
+            <div class="agency-layout">
+              <div class="agency-columns reveal d2">
+                <article class="agency-card">
+                  <h3 class="verb-mark"><span>Old AI</span>suggests</h3>
+                  <ul class="mini-actions">
+                    <li>Drafts your email.</li>
+                    <li>Suggests three colors.</li>
+                    <li>Autocompletes your code.</li>
+                  </ul>
+                  <p class="human-line">You read. You decide. You act.</p>
+                </article>
+                <article class="agency-card new">
+                  <h3 class="verb-mark"><span>New AI</span>does</h3>
+                  <ul class="mini-actions">
+                    <li>Sends the email.</li>
+                    <li>Books the flight.</li>
+                    <li>Refactors the codebase. Files the ticket.</li>
+                  </ul>
+                  <p class="human-line">You set the goal. It acts. You verify.</p>
+                </article>
+              </div>
+              <div class="agency-definition reveal d3">
+                <p>The difference isn't model size. It's <em>agency</em> &mdash; the system was given tools, given permission, and given a reason to take action without checking back at every step.</p>
+                <p class="tool-worker">tool &rarr; worker</p>
+                <p>When AI suggests, it's a tool. When AI does, it's a worker. Designing for a tool and designing for a worker are different problems.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">2 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide" id="slide-3" aria-label="From screens to workflows">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The unit of design changes</p>
+              <h2 class="slide-title">From screens to workflows.</h2>
+              <p class="slide-subtitle">When agents act, the unit of design changes.</p>
+            </div>
+            <div class="workflow-shift">
+              <div class="shift-mark reveal d2" aria-hidden="true">
+                <p class="shift-word light">screens</p>
+                <p class="shift-arrow">&rarr;</p>
+                <p class="shift-word">workflows</p>
+              </div>
+              <div class="body-copy wide reveal d3">
+                <p>For twenty years, design was about screens. Wireframes. Mockups. Prototypes. Each frame was a place a user looked.</p>
+                <p>When the system can <em>act</em> across multiple steps and tools, the unit of design isn't a screen anymore. It's a <em>workflow</em> &mdash; a sequence of decisions, actions, and handoffs, with humans showing up only at certain moments.</p>
+                <p>The deliverable changes. The vocabulary changes. The job changes.</p>
+                <p>Screens didn't go away. But they're now <em>one</em> artifact among several &mdash; sitting alongside workflow diagrams, prompt specs, tool schemas, and confirmation states. Designers who only design screens will keep designing screens. Designers who can <em>also</em> design workflows will be working on the things screens were never enough for.</p>
+                <div class="artifact-row" aria-label="Workflow artifacts"><span class="tag">Workflow diagrams</span><span class="tag">Prompt specs</span><span class="tag">Tool schemas</span><span class="tag">Confirmation states</span></div>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">3 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide" id="slide-4" aria-label="What does a workflow look like">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The artifact</p>
+              <h2 class="slide-title">What does a workflow look like?</h2>
+              <p class="slide-subtitle">Boxes and arrows. With teeth.</p>
+            </div>
+            <div class="workflow-look">
+              <p class="workflow-lede reveal d2">A workflow is a sequence of steps connected by triggers, actions, and decisions.</p>
+              <div class="workflow-stage reveal d3">
+                <svg class="workflow-svg" viewBox="0 0 1280 520" role="img" aria-label="Workflow diagram for processing a customer email">
+                  <defs>
+                    <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+                      <polygon points="0 0, 9 3.5, 0 7" fill="rgba(26,26,26,0.45)"></polygon>
+                    </marker>
+                  </defs>
+                  <g class="node trigger" transform="translate(38 186)">
+                    <rect width="190" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Trigger</text>
+                    <text x="22" y="64" class="node-copy">new email arrives</text>
+                  </g>
+                  <path class="edge" d="M228 234 H318"></path>
+                  <text class="edge-label" x="248" y="218">starts</text>
+                  <g class="node" transform="translate(318 186)">
+                    <rect width="210" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Classify intent</text>
+                    <text x="22" y="64" class="node-copy">refund / question / spam</text>
+                  </g>
+                  <path class="edge" d="M528 234 H620"></path>
+                  <text class="edge-label" x="552" y="218">then</text>
+                  <g class="node decision" transform="translate(620 186)">
+                    <rect width="180" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Branch</text>
+                    <text x="22" y="64" class="node-copy">on intent</text>
+                  </g>
+                  <path class="edge" d="M800 234 C850 234,850 86,908 86"></path>
+                  <path class="edge" d="M800 234 H908"></path>
+                  <path class="edge" d="M800 234 C850 234,850 382,908 382"></path>
+                  <text class="edge-label" x="836" y="104">refund</text>
+                  <text class="edge-label" x="836" y="218">question</text>
+                  <text class="edge-label" x="836" y="366">spam</text>
+                  <g class="node pause" transform="translate(908 38)">
+                    <rect width="306" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Check order</text>
+                    <text x="22" y="64" class="node-copy">draft response, wait for approval</text>
+                  </g>
+                  <g class="node outcome" transform="translate(908 186)">
+                    <rect width="306" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Search docs</text>
+                    <text x="22" y="64" class="node-copy">draft response, send</text>
+                  </g>
+                  <g class="node outcome" transform="translate(908 334)">
+                    <rect width="306" height="96"></rect>
+                    <text x="22" y="38" class="node-title">Archive</text>
+                    <text x="22" y="64" class="node-copy">spam path ends</text>
+                  </g>
+                </svg>
+              </div>
+              <p class="workflow-note reveal d4">Tools like n8n, Zapier, and Make let you draw these directly. Tools like Inngest and LangGraph let you code them. Tools like Claude with MCP let you describe them in language. The artifact looks deceptively simple. The hard work is in the branches, the failure paths, and the moments where a human steps in.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">4 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide" id="slide-5" aria-label="Two new audiences">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">A reference card</p>
+              <h2 class="slide-title">Two new audiences.</h2>
+              <p class="slide-subtitle">Designers serve humans. Now they also serve agents.</p>
+            </div>
+            <div class="paired-reference reveal d2">
+              <article class="audience-card">
+                <div class="abstract-icon agent" aria-hidden="true"></div>
+                <h3 class="audience-title">Agents as users.</h3>
+                <div class="audience-copy">
+                  <p>Your product is consumed by an agent. Stripe's API documentation is now read by AI tools as much as by engineers. Search results are summarized by AI before users see them. Your SaaS product gets queried by a Claude that's filing a report for someone else.</p>
+                  <p>Designing for agents means clean semantics, predictable structure, machine-readable affordances, well-described tools. The web's messiness is becoming a liability &mdash; agents need order.</p>
+                </div>
+              </article>
+              <article class="audience-card">
+                <div class="abstract-icon human" aria-hidden="true"></div>
+                <h3 class="audience-title">Humans assisted by agents.</h3>
+                <div class="audience-copy">
+                  <p>Your user delegates work to an agent. Antigravity. Granola. Cursor. Devin. All of these put a human and an agent in collaboration on a single task.</p>
+                  <p>Designing for this means deciding: what does the human see <em>while</em> the agent works? When does it pause for confirmation? What's the undo affordance? When does it say "I'm not sure &mdash; you handle this"? These are interaction-design questions, not engineering ones.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">5 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide" id="slide-6" aria-label="The new design vocabulary">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">A reference card</p>
+              <h2 class="slide-title">The new design vocabulary.</h2>
+              <p class="slide-subtitle">Words your screens didn't need.</p>
+            </div>
+            <article class="vocab-card reveal d2">
+              <p class="vocab-lede">When you design workflows, you'll need words you didn't need before. A starter set:</p>
+              <ul class="vocab-list" aria-label="Workflow vocabulary">
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Trigger</strong><span class="gloss">what kicks the workflow off</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Step</strong><span class="gloss">a discrete action the agent takes</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Branch</strong><span class="gloss">a decision point: the agent picks, or it asks</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Tool</strong><span class="gloss">something the agent is allowed to call</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Confirmation</strong><span class="gloss">a pause for human approval</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Handoff</strong><span class="gloss">work passes from agent to human, or agent to agent</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Exception path</strong><span class="gloss">what happens when something goes wrong</span></span></li>
+                <li class="vocab-row"><span class="row-arrow">&rarr;</span><span><strong class="term">Outcome</strong><span class="gloss">what "done" actually looks like</span></span></li>
+              </ul>
+              <p class="vocab-closing">Most of these used to be engineering concerns. They aren't anymore. If you can't reason about confirmation moments and exception paths, you can't design the product.</p>
+            </article>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">6 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 7 -->
+  <section class="slide" id="slide-7" aria-label="Where this is going">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">Proof of direction</p>
+              <h2 class="slide-title">Where this is going.</h2>
+              <p class="slide-subtitle">Five products designed around workflows, not screens.</p>
+            </div>
+            <div class="product-rows reveal d2">
+              <article class="product-row"><span class="row-arrow">&rarr;</span><h3 class="product-name">Antigravity</h3><p class="product-copy">You've been using one. Code agent. You set the goal, it plans, acts, verifies.</p></article>
+              <article class="product-row"><span class="row-arrow">&rarr;</span><h3 class="product-name">Granola</h3><p class="product-copy">Meeting notes agent. You're in the meeting; it listens, structures, summarizes.</p></article>
+              <article class="product-row"><span class="row-arrow">&rarr;</span><h3 class="product-name">Sierra</h3><p class="product-copy">Customer service agent. Handles tier-1 inquiries, escalates to a human at confidence thresholds.</p></article>
+              <article class="product-row"><span class="row-arrow">&rarr;</span><h3 class="product-name">Cognition Devin</h3><p class="product-copy">Software engineer agent. Takes a Jira ticket, ships a pull request.</p></article>
+              <article class="product-row"><span class="row-arrow">&rarr;</span><h3 class="product-name">Operator</h3><p class="product-copy">And the agentic-browser cohort. Books your flight, fills the form, returns the receipt.</p></article>
+              <p class="timeline-line">Three years ago, none of these existed. Five years from now, every product team will have shipped something like one.</p>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">7 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 8 -->
+  <section class="slide" id="slide-8" aria-label="What this means for you">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="section-header reveal d1">
+              <p class="slide-kicker">The career angle</p>
+              <h2 class="slide-title">Workflows are a designable thing.</h2>
+              <p class="slide-subtitle">Almost no one is doing it well yet.</p>
+            </div>
+            <div class="meaning-layout">
+              <div class="reveal d2">
+                <div class="body-copy wide">
+                  <p>The product teams that ship the best agentic experiences over the next five years will be the ones with designers who can think in <em>workflows</em>, not just screens. Right now, that skill barely exists.</p>
+                  <p>You don't need to learn to build agents. You need to learn to:</p>
+                </div>
+                <ul class="craft-list" aria-label="Workflow design skills">
+                  <li><span class="row-arrow">&rarr;</span><span>Read a workflow diagram and tell whether it's good or bad</span></li>
+                  <li><span class="row-arrow">&rarr;</span><span>Spot the missing confirmation moment</span></li>
+                  <li><span class="row-arrow">&rarr;</span><span>Notice when the human side of the experience is an afterthought</span></li>
+                  <li><span class="row-arrow">&rarr;</span><span>Argue for the cut that takes a 12-step workflow down to 5</span></li>
+                </ul>
+              </div>
+              <div class="walking-into-it reveal d3"><p>You're walking into it.</p></div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">8 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <!-- Slide 9 -->
+  <section class="slide" id="slide-9" aria-label="Screens are still here">
+    <div class="notebook-wrapper">
+      <div class="notebook-frame">
+        <div class="binder-strip" aria-hidden="true"><div class="binder-hole"></div><div class="binder-hole"></div><div class="binder-hole"></div></div>
+        <div class="page-area">
+          <div class="page-content">
+            <div class="closing-layout">
+              <div class="reveal d1">
+                <p class="slide-kicker">Takeaway</p>
+                <h2 class="slide-title">Screens are still here.</h2>
+                <p class="closing-subtitle">They're just not the whole job anymore.</p>
+              </div>
+              <div class="closing-copy reveal d2">
+                <p>Designers built careers designing screens. That work didn't disappear.</p>
+                <p>But the <em>next</em> generation of products is being built around what happens <em>between</em> screens &mdash; the workflows, the agents, the moments where the system acts without you watching.</p>
+                <p>Learning to design <em>those</em> moments is the skill that separates the designers who keep up from the designers who get caught up.</p>
+              </div>
+            </div>
+          </div>
+          <footer class="slide-footer"><span class="footer-section">Day 3 &middot; Agentic Workflows</span><span class="footer-num">9 / 9</span></footer>
+        </div>
+      </div>
+      <div class="tabs-rail" aria-hidden="true"><div class="tab tab-intro">Perf</div><div class="tab tab-why active">Agents</div><div class="tab tab-shift">Post-UI</div><div class="tab tab-plan">Taste</div></div>
+    </div>
+  </section>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.isAnimating = false;
+        this.progressBar = document.getElementById('progressBar');
+        this.initObserver();
+        this.initKeyboard();
+        this.initWheel();
+        this.initTouch();
+        this.updateProgress(0);
+        if (this.slides[0]) this.slides[0].classList.add('visible');
+      }
+
+      initObserver() {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              const idx = this.slides.indexOf(entry.target);
+              if (idx !== -1) {
+                this.current = idx;
+                this.updateProgress(idx);
+              }
+            }
+          });
+        }, { threshold: 0.55 });
+        this.slides.forEach(slide => io.observe(slide));
+      }
+
+      goto(idx) {
+        if (idx < 0 || idx >= this.total || this.isAnimating) return;
+        this.isAnimating = true;
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.current = idx;
+        this.updateProgress(idx);
+        setTimeout(() => { this.isAnimating = false; }, 650);
+      }
+
+      next() { this.goto(this.current + 1); }
+      prev() { this.goto(this.current - 1); }
+
+      initKeyboard() {
+        document.addEventListener('keydown', event => {
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+            case ' ':
+            case 'PageDown':
+              event.preventDefault(); this.next(); break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+            case 'PageUp':
+              event.preventDefault(); this.prev(); break;
+            case 'Home':
+              event.preventDefault(); this.goto(0); break;
+            case 'End':
+              event.preventDefault(); this.goto(this.total - 1); break;
+          }
+        });
+      }
+
+      initWheel() {
+        let lastWheel = 0;
+        document.addEventListener('wheel', event => {
+          event.preventDefault();
+          const now = Date.now();
+          if (now - lastWheel < 600) return;
+          lastWheel = now;
+          if (event.deltaY > 0) this.next();
+          else if (event.deltaY < 0) this.prev();
+        }, { passive: false });
+      }
+
+      initTouch() {
+        let startY = 0;
+        let startX = 0;
+        document.addEventListener('touchstart', event => {
+          startY = event.touches[0].clientY;
+          startX = event.touches[0].clientX;
+        }, { passive: true });
+        document.addEventListener('touchend', event => {
+          const dy = startY - event.changedTouches[0].clientY;
+          const dx = startX - event.changedTouches[0].clientX;
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+            if (dy > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      updateProgress(idx) {
+        const pct = this.total > 1 ? (idx / (this.total - 1)) * 100 : 100;
+        if (this.progressBar) this.progressBar.style.width = pct + '%';
+      }
+    }
+
+    new SlidePresentation();
+  </script>
+</body>
+</html>
